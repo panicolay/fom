@@ -5,6 +5,7 @@ export type Song = {
   artist?: string
   release?: string
   bpm?: number
+  length?: string
   time_signature?: string
   key?: string
 } 
