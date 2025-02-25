@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react'
-import { supabase } from '../lib/supabase'
+import { useState, useEffect } from 'react'
+import { songService } from '../services/songService'
 import type { Song } from '../types/song'
 
 export function useSongs() {
@@ -7,16 +7,11 @@ export function useSongs() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
-  async function fetchSongs() {
+  const fetchSongs = async () => {
     try {
       setLoading(true)
-      const { data, error } = await supabase
-        .from('songs')
-        .select('*')
-        .order('created_at', { ascending: false })
-
-      if (error) throw error
-
+      setError(null)
+      const data = await songService.getAll()
       setSongs(data)
     } catch (e) {
       setError(e instanceof Error ? e.message : 'An error occurred')

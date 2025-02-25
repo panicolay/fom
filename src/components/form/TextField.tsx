@@ -31,7 +31,7 @@ export function TextField({
                 placeholder={placeholder}
                 value={value}
                 onChange={(e) => onChange(e.target.value)}
-                className="flex-1 h-8 text-neutral-200 border border-neutral-500 p-1"
+                className="flex-1 h-8 text-neutral-200 border border-neutral-500 p-1 focus:outline-1 focus:outline-offset-2 focus:outline-neutral-300"
                 required={required}
             />
         </div>

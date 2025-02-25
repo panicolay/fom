@@ -1,10 +1,10 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Dialog } from '@headlessui/react'
-import { supabase } from '../../lib/supabase'
 import { TextField } from '../form/TextField'
 import { Button } from '../ui/Button'
 import { TapTempo } from '../form/TapTempo'
-import { convertTimeToSeconds, formatTimeInput } from '../../utils/timeUtils'
+import { useKeyboardShortcuts } from '../../contexts/KeyboardShortcutsContext'
+import { useSongMutation } from '../../hooks/useSongMutation'
 
 type Props = {
   onSongAdded: () => void
@@ -19,50 +19,53 @@ export function SongForm({ onSongAdded }: Props) {
   const [length, setLength] = useState<string>('')
   const [time_signature, setTimeSignature] = useState('')
   const [key, setKey] = useState('')
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+  
+  const { registerShortcut, unregisterShortcut } = useKeyboardShortcuts()
+  const { createSong, loading, error } = useSongMutation()
+
+  useEffect(() => {
+    registerShortcut('openSongForm', { key: 'n' }, () => setIsModalOpen(true))
+    return () => unregisterShortcut('openSongForm')
+  }, [registerShortcut, unregisterShortcut])
+
+  useEffect(() => {
+    if (isModalOpen) {
+      setTimeout(() => {
+        const titleInput = document.getElementById('title')
+        titleInput?.focus()
+      }, 0)
+    }
+  }, [isModalOpen])
+
+  const resetForm = () => {
+    setTitle('')
+    setArtist('')
+    setAlbum('')
+    setBpm(null)
+    setLength('')
+    setTimeSignature('')
+    setKey('')
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    setLoading(true)
-    setError(null)
-
-    const lengthInSeconds = convertTimeToSeconds(length);
-    if (length && lengthInSeconds === null) {
-      setError('Format de durée invalide. Utilisez MM:SS (ex: 3:45)');
-      setLoading(false);
-      return;
-    }
-
+    
     try {
-      const { error } = await supabase
-        .from('songs')
-        .insert([{ 
-          title, 
-          artist, 
-          album, 
-          bpm: bpm || null, 
-          length: lengthInSeconds, 
-          time_signature, 
-          key 
-        }])
-
-      if (error) throw error
-
-      // Reset the form
-      setTitle('')
-      setArtist('')
-      setAlbum('')
-      setBpm(null)
-      setLength('')
-      setTimeSignature('')
-      setKey('')
+      await createSong({
+        title,
+        artist,
+        album,
+        bpm,
+        length,
+        time_signature,
+        key
+      })
+      
+      resetForm()
       onSongAdded()
       setIsModalOpen(false)
-    } catch (e) {
-      setError(e instanceof Error ? e.message : 'An error occurred')
-    } finally {
-      setLoading(false)
+    } catch {
+      // L'erreur est déjà gérée dans le hook
     }
   }
 
@@ -82,14 +85,6 @@ export function SongForm({ onSongAdded }: Props) {
             
             <div className="p-6 border-b border-neutral-800">
               <Dialog.Title className="text-lg font-bold text-neutral-200">Add new song</Dialog.Title>
-            
-            {/* <button 
-              onClick={() => setIsModalOpen(false)}
-              className="absolute top-4 right-4 text-gray-300 hover:text-white"
-            >
-              ✕
-            </button> */}
-
             </div>
 
             <form onSubmit={handleSubmit} className="flex flex-col p-6 gap-6">
@@ -129,16 +124,11 @@ export function SongForm({ onSongAdded }: Props) {
                 <TextField
                   label="Length"
                   id="length"
+                  placeholder="3:03"
                   value={length}
-                  onChange={(value) => {
-                    const formatted = formatTimeInput(value as string);
-                    if (formatted.length <= 5) {
-                      setLength(formatted);
-                    }
-                  }}
+                  onChange={(value) => setLength(value as string)}
                   type="text"
                   required={false}
-                  placeholder="3:03"
                 />
                 
                 <div className="flex items-center gap-2">

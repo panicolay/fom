@@ -9,5 +9,6 @@
 }
 
 body {
-  @apply bg-neutral-950;
+  /* @apply bg-neutral-950; */
+  background-color: #000000;
 }

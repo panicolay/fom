@@ -24,7 +24,7 @@ export function Button({
   
   return (
     <button 
-      className={`flex items-center justify-center font-medium px-4 ${sizeClasses[size]} ${variantClasses[variant]} ${className}`}
+      className={`flex items-center justify-center font-medium px-4 focus:outline-1 focus:outline-offset-2 focus:outline-neutral-300 ${sizeClasses[size]} ${variantClasses[variant]} ${className}`}
       {...props}
     >
       {children}
