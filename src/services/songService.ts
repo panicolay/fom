@@ -1,5 +1,4 @@
 import { supabase } from '../lib/supabase'
-import type { Song } from '../types/song'
 
 type CreateSongData = {
   title: string
@@ -29,5 +28,25 @@ export const songService = {
     
     if (error) throw error
     return data
+  },
+
+  async update(id: string, songData: CreateSongData) {
+    const { data, error } = await supabase
+      .from('songs')
+      .update(songData)
+      .eq('id', id)
+      .select()
+    
+    if (error) throw error
+    return data
+  },
+
+  async delete(id: string) {
+    const { error } = await supabase
+      .from('songs')
+      .delete()
+      .eq('id', id)
+    
+    if (error) throw error
   }
 } 

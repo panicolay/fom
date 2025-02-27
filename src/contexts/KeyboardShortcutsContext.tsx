@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
 
 type ShortcutHandler = () => void;
 type Shortcut = {
@@ -41,20 +41,20 @@ export function KeyboardShortcutsProvider({ children }: { children: React.ReactN
     return () => window.removeEventListener('keydown', handleKeyPress);
   }, [shortcuts]);
 
-  const registerShortcut = (id: string, shortcut: Shortcut, handler: ShortcutHandler) => {
+  const registerShortcut = useCallback((id: string, shortcut: Shortcut, handler: ShortcutHandler) => {
     setShortcuts(prev => ({
       ...prev,
       [id]: { shortcut, handler }
     }));
-  };
+  }, []);
 
-  const unregisterShortcut = (id: string) => {
+  const unregisterShortcut = useCallback((id: string) => {
     setShortcuts(prev => {
       const newShortcuts = { ...prev };
       delete newShortcuts[id];
       return newShortcuts;
     });
-  };
+  }, []);
 
   return (
     <KeyboardShortcutsContext.Provider value={{ registerShortcut, unregisterShortcut }}>

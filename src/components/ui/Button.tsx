@@ -1,8 +1,10 @@
 type ButtonProps = {
-  children: React.ReactNode
+  children?: React.ReactNode
   className?: string
   size?: 'small' | 'medium'
   variant?: 'primary' | 'secondary'
+  icon?: React.ComponentType<{ className?: string }>
+  iconPosition?: 'left' | 'right'
 } & React.ButtonHTMLAttributes<HTMLButtonElement>
 
 export function Button({ 
@@ -10,6 +12,8 @@ export function Button({
   className = '', 
   size = 'medium', 
   variant = 'primary',
+  icon: Icon,
+  iconPosition = 'left',
   ...props 
 }: ButtonProps) {
   const sizeClasses = {
@@ -21,13 +25,20 @@ export function Button({
     primary: 'bg-neutral-300 text-neutral-950',
     secondary: 'bg-neutral-600 text-neutral-200'
   }
+
+  const iconClasses = {
+    small: 'w-4 h-4',
+    medium: 'w-5 h-5'
+  }
   
   return (
     <button 
-      className={`flex items-center justify-center font-medium px-4 focus:outline-1 focus:outline-offset-2 focus:outline-neutral-300 ${sizeClasses[size]} ${variantClasses[variant]} ${className}`}
+      className={`flex items-center justify-center gap-2 font-medium px-4 focus:outline-1 focus:outline-offset-2 focus:outline-neutral-300 ${sizeClasses[size]} ${variantClasses[variant]} ${className}`}
       {...props}
     >
+      {Icon && iconPosition === 'left' && <Icon className={iconClasses[size]} />}
       {children}
+      {Icon && iconPosition === 'right' && <Icon className={iconClasses[size]} />}
     </button>
   )
 } 
