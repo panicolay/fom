@@ -3,7 +3,7 @@ export type Song = {
   title: string
   created_at: string
   artist?: string
-  release?: string
+  album?: string
   bpm?: number
   length?: string
   time_signature?: string

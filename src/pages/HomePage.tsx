@@ -5,16 +5,33 @@ import { DialogCustom } from '../components/ui/DialogCustom'
 import { Button } from '../components/ui/Button'
 import { SongList } from '../components/songs/SongList'
 import { useKeyboardShortcuts } from '../contexts/KeyboardShortcutsContext'
+import { Song } from '../types/song'
 
 export function HomePage() {
     const { songs, loading: songsLoading, error: songsError, refresh } = useSongs()
     const { registerShortcut, unregisterShortcut } = useKeyboardShortcuts()
     const [isModalOpen, setIsModalOpen] = useState(false)
+    const [songToEdit, setSongToEdit] = useState<Song | null>(null)
 
     useEffect(() => {
-        registerShortcut('openSongForm', { key: 'n' }, () => setIsModalOpen(true))
-        return () => unregisterShortcut('openSongForm')
-    }, [registerShortcut, unregisterShortcut])
+        if (!isModalOpen) {
+            registerShortcut('openSongForm', { key: 'n' }, () => {
+                setSongToEdit(null)
+                setIsModalOpen(true)
+            })
+            return () => unregisterShortcut('openSongForm')
+        }
+    }, [registerShortcut, unregisterShortcut, isModalOpen])
+
+    const handleOpenModal = (song?: Song) => {
+        setSongToEdit(song || null)
+        setIsModalOpen(true)
+    }
+
+    const handleCloseModal = () => {
+        setIsModalOpen(false)
+        setSongToEdit(null)
+    }
 
     return (
         <>
@@ -22,18 +39,19 @@ export function HomePage() {
 
             <Button 
                 className="w-fit"
-                onClick={() => setIsModalOpen(true)}>
+                onClick={() => handleOpenModal()}>
                 Add new song
             </Button>
 
             <DialogCustom
                 isOpen={isModalOpen}
-                onClose={() => setIsModalOpen(false)}
-                title="Add new song"
+                onClose={handleCloseModal}
+                title={songToEdit ? "Edit song" : "Add new song"}
             >
                 <SongForm 
-                    onSongAdded={() => {
-                        setIsModalOpen(false)
+                    song={songToEdit}
+                    onSuccess={() => {
+                        handleCloseModal()
                         refresh()
                     }}
                 />
@@ -44,6 +62,7 @@ export function HomePage() {
                 loading={songsLoading}
                 error={songsError}
                 onRefresh={refresh}
+                onEdit={handleOpenModal}
             />
         </>
     )

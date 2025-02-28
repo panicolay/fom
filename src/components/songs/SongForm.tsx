@@ -3,20 +3,23 @@ import { TextField } from '../form/TextField'
 import { Button } from '../ui/Button'
 import { TapTempo } from '../form/TapTempo'
 import { useSongMutation } from '../../hooks/useSongMutation'
+import { Song } from '../../types/song'
+import { formatSecondsToTime } from '../../utils/timeUtils'
 
 type Props = {
-  onSongAdded: () => void
+  song?: Song | null
+  onSuccess: () => void
 }
 
-export function SongForm({ onSongAdded }: Props) {
-  const [title, setTitle] = useState('')
-  const [artist, setArtist] = useState('')
-  const [album, setAlbum] = useState('')
-  const [bpm, setBpm] = useState<number | null>(null)
-  const [length, setLength] = useState<string>('')
-  const [time_signature, setTimeSignature] = useState('')
-  const [key, setKey] = useState('')
-  const { createSong, loading, error } = useSongMutation()
+export function SongForm({ song, onSuccess }: Props) {
+  const [title, setTitle] = useState(song?.title || '')
+  const [artist, setArtist] = useState(song?.artist || '')
+  const [album, setAlbum] = useState(song?.album || '')
+  const [bpm, setBpm] = useState<number | null>(song?.bpm || null)
+  const [length, setLength] = useState(song?.length ? formatSecondsToTime(Number(song.length)) : '')
+  const [time_signature, setTimeSignature] = useState(song?.time_signature || '')
+  const [key, setKey] = useState(song?.key || '')
+  const { createSong, updateSong, loading, error } = useSongMutation()
 
   useEffect(() => {
     const titleInput = document.getElementById('title')
@@ -36,19 +39,25 @@ export function SongForm({ onSongAdded }: Props) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     
+    const formData = {
+      title,
+      artist,
+      album,
+      bpm,
+      length,
+      time_signature,
+      key
+    }
+
     try {
-      await createSong({
-        title,
-        artist,
-        album,
-        bpm,
-        length,
-        time_signature,
-        key
-      })
+      if (song) {
+        await updateSong(song.id, formData)
+      } else {
+        await createSong(formData)
+      }
       
-      resetForm()
-      onSongAdded()
+      if (!song) resetForm()
+      onSuccess()
     } catch {
       // L'erreur est déjà gérée dans le hook
     }
@@ -56,7 +65,6 @@ export function SongForm({ onSongAdded }: Props) {
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col p-6 gap-6">
-
       <TextField
           label="Title"
           id="title"
@@ -67,7 +75,6 @@ export function SongForm({ onSongAdded }: Props) {
       />
 
       <div className="flex flex-col gap-3">
-
         <TextField
           label="Artist"
           id="artist"
@@ -88,7 +95,6 @@ export function SongForm({ onSongAdded }: Props) {
       </div>
 
       <div className="flex flex-col gap-3">
-
         <TextField
           label="Length"
           id="length"
@@ -138,7 +144,7 @@ export function SongForm({ onSongAdded }: Props) {
         type="submit"
         disabled={loading}
       >
-        {loading ? 'Adding...' : 'Confirm'}
+        {loading ? (song ? 'Updating...' : 'Adding...') : (song ? 'Update' : 'Confirm')}
       </Button>
     </form>
   )

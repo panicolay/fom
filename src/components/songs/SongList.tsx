@@ -9,9 +9,10 @@ type Props = {
   loading: boolean
   error: string | null
   onRefresh: () => void
+  onEdit: (song: Song) => void
 }
 
-export function SongList({ songs, loading, error, onRefresh }: Props) {
+export function SongList({ songs, loading, error, onRefresh, onEdit }: Props) {
   if (loading) return <div>Loading...</div>
   if (error) return <div>Error: {error}</div>
   if (!songs.length) return <div className="text-neutral-200">No songs found</div>
@@ -37,7 +38,7 @@ export function SongList({ songs, loading, error, onRefresh }: Props) {
               <td className="text-right text-neutral-500">{song.length ? formatSecondsToTime(Number(song.length)) : ''}</td>
               <td className="text-right">
                 <div className="flex items-center justify-end gap-2">
-                  <Button size="small" variant="secondary" icon={PencilIcon}/>
+                  <Button size="small" variant="secondary" icon={PencilIcon} onClick={() => onEdit(song)}/>
                   <Button size="small" variant="secondary" icon={TrashIcon} onClick={() => handleDelete(song.id)}/>
                 </div>
               </td>
