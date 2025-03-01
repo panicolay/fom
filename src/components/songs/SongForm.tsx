@@ -5,6 +5,7 @@ import { TapTempo } from '../form/TapTempo'
 import { useSongMutation } from '../../hooks/useSongMutation'
 import { Song } from '../../types/song'
 import { formatSecondsToTime } from '../../utils/timeUtils'
+import { cn } from '../../utils/cn'
 
 type Props = {
   song?: Song | null
@@ -64,7 +65,7 @@ export function SongForm({ song, onSuccess }: Props) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col p-6 gap-6">
+    <form onSubmit={handleSubmit} className="">
       <TextField
           label="Title"
           id="title"
@@ -74,7 +75,6 @@ export function SongForm({ song, onSuccess }: Props) {
           required={true}
       />
 
-      <div className="flex flex-col gap-3">
         <TextField
           label="Artist"
           id="artist"
@@ -92,9 +92,7 @@ export function SongForm({ song, onSuccess }: Props) {
           type="text"
           required={false}
         />
-      </div>
 
-      <div className="flex flex-col gap-3">
         <TextField
           label="Length"
           id="length"
@@ -105,7 +103,7 @@ export function SongForm({ song, onSuccess }: Props) {
           required={false}
         />
         
-        <div className="flex items-center gap-2">
+        <div className="flex">
           <TextField
             label="BPM"
             id="bpm"
@@ -113,8 +111,9 @@ export function SongForm({ song, onSuccess }: Props) {
             onChange={(value) => setBpm(value === '' ? null : Number(value))}
             type="number"
             required={false}
+            className="flex-1"
           />
-          <TapTempo onBpmChange={setBpm} />
+          <TapTempo onBpmChange={setBpm} className={cn("h-22 w-30 border-l border-b border-neutral-500 focus:z-10")} />
         </div>
         
         <TextField
@@ -134,7 +133,6 @@ export function SongForm({ song, onSuccess }: Props) {
           type="text"
           required={false}
         />
-      </div>
 
       {error && (
         <div className="text-red-600 text-sm">{error}</div>
@@ -143,6 +141,7 @@ export function SongForm({ song, onSuccess }: Props) {
       <Button
         type="submit"
         disabled={loading}
+        className="w-full h-22"
       >
         {loading ? (song ? 'Updating...' : 'Adding...') : (song ? 'Update' : 'Confirm')}
       </Button>

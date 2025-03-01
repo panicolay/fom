@@ -3,9 +3,10 @@ import { Button } from '../ui/Button'
 
 type Props = {
   onBpmChange: (bpm: number) => void
+  className?: string
 }
 
-export function TapTempo({ onBpmChange }: Props) {
+export function TapTempo({ onBpmChange, className }: Props) {
   const [tapTimes, setTapTimes] = useState<number[]>([])
   const [tapTimeout, setTapTimeout] = useState<NodeJS.Timeout | null>(null)
 
@@ -46,6 +47,7 @@ export function TapTempo({ onBpmChange }: Props) {
       variant="secondary" 
       onClick={handleTap}
       type="button"
+      className={className}
     >
       Tap
     </Button>

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useSongs } from '../hooks/useSongs'
 import { SongForm } from '../components/songs/SongForm'
-import { DialogCustom } from '../components/ui/DialogCustom'
+import { Panel } from '../components/ui/Panel'
 import { Button } from '../components/ui/Button'
 import { SongList } from '../components/songs/SongList'
 import { useKeyboardShortcuts } from '../contexts/KeyboardShortcutsContext'
@@ -30,12 +30,14 @@ export function HomePage() {
 
     const handleCloseModal = () => {
         setIsModalOpen(false)
-        setSongToEdit(null)
+        setTimeout(() => {
+            setSongToEdit(null)
+        }, 200)
     }
 
     return (
         <>
-            <h1 className="text-3xl font-bold text-neutral-200">FORM OF MUSIC</h1>
+            <h1 className="font-display text-7xl font-semibold text-neutral-200">THE<br />FORM OF<br />MUSIC</h1>
 
             <Button 
                 className="w-fit"
@@ -43,10 +45,11 @@ export function HomePage() {
                 Add new song
             </Button>
 
-            <DialogCustom
+            <Panel
                 isOpen={isModalOpen}
                 onClose={handleCloseModal}
-                title={songToEdit ? "Edit song" : "Add new song"}
+                title={songToEdit ? <>Edit<br/>song</> : <>Add new<br/>song</>}
+                side="right"
             >
                 <SongForm 
                     song={songToEdit}
@@ -55,7 +58,7 @@ export function HomePage() {
                         refresh()
                     }}
                 />
-            </DialogCustom>
+            </Panel>
 
             <SongList
                 songs={songs}

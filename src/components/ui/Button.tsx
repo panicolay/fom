@@ -16,6 +16,7 @@ export function Button({
   iconPosition = 'left',
   ...props 
 }: ButtonProps) {
+  
   const sizeClasses = {
     small: 'h-8',
     medium: 'h-10',
@@ -33,7 +34,10 @@ export function Button({
   
   return (
     <button 
-      className={`flex items-center justify-center gap-2 font-medium px-4 focus:outline-1 focus:outline-offset-2 focus:outline-neutral-300 ${sizeClasses[size]} ${variantClasses[variant]} ${className}`}
+      className={`flex items-center justify-center gap-2 px-4
+        font-display font-medium uppercase text-lg
+        focus:outline-1 focus:outline-neutral-200 focus:outline-offset-1
+        ${sizeClasses[size]} ${variantClasses[variant]} ${className}`}
       {...props}
     >
       {Icon && iconPosition === 'left' && <Icon className={iconClasses[size]} />}
