@@ -23,6 +23,7 @@ export function TableButton({
         text-neutral-500
         hover:text-neutral-200
         focus:outline-1 focus:outline-neutral-200 focus:text-neutral-200
+        cursor-pointer
         ${className}`}
       {...props}
       onClick={action}

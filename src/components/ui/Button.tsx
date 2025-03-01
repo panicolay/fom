@@ -23,8 +23,8 @@ export function Button({
   }
 
   const variantClasses = {
-    primary: 'bg-neutral-300 text-neutral-950',
-    secondary: 'bg-neutral-600 text-neutral-200'
+    primary: 'bg-neutral-200 text-neutral-900',
+    secondary: 'bg-neutral-700 text-neutral-300'
   }
 
   const iconClasses = {
@@ -35,8 +35,9 @@ export function Button({
   return (
     <button 
       className={`flex items-center justify-center gap-2 px-4
-        font-display font-medium uppercase text-lg
+        font-display
         focus:outline-1 focus:outline-neutral-200 focus:outline-offset-1
+        cursor-pointer
         ${sizeClasses[size]} ${variantClasses[variant]} ${className}`}
       {...props}
     >

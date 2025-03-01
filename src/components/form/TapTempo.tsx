@@ -49,7 +49,7 @@ export function TapTempo({ onBpmChange, className }: Props) {
       type="button"
       className={className}
     >
-      Tap
+      tap
     </Button>
   )
 } 

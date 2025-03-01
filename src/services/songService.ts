@@ -1,17 +1,13 @@
 import { supabase } from '../lib/supabase'
-
-type CreateSongData = {
-  title: string
-  artist?: string
-  album?: string
-  bpm?: number | null
-  length?: number | null
-  time_signature?: string
-  key?: string
-}
+import { Song, SongFormData } from '../types/song'
 
 export const songService = {
-  async create(songData: CreateSongData) {
+  /**
+   * Crée une nouvelle chanson dans la base de données
+   * @param songData Les données de la chanson à créer
+   * @returns La chanson créée
+   */
+  async create(songData: SongFormData): Promise<Song[] | null> {
     const { data, error } = await supabase
       .from('songs')
       .insert([songData])
@@ -20,7 +16,11 @@ export const songService = {
     return data
   },
 
-  async getAll() {
+  /**
+   * Récupère toutes les chansons, triées par date de création décroissante
+   * @returns Liste des chansons
+   */
+  async getAll(): Promise<Song[] | null> {
     const { data, error } = await supabase
       .from('songs')
       .select('*')
@@ -30,7 +30,29 @@ export const songService = {
     return data
   },
 
-  async update(id: string, songData: CreateSongData) {
+  /**
+   * Récupère une chanson par son identifiant
+   * @param id Identifiant de la chanson
+   * @returns La chanson trouvée ou null
+   */
+  async getById(id: string): Promise<Song | null> {
+    const { data, error } = await supabase
+      .from('songs')
+      .select('*')
+      .eq('id', id)
+      .single()
+      
+    if (error) throw error
+    return data
+  },
+
+  /**
+   * Met à jour une chanson existante
+   * @param id Identifiant de la chanson à mettre à jour
+   * @param songData Nouvelles données de la chanson
+   * @returns La chanson mise à jour
+   */
+  async update(id: string, songData: SongFormData): Promise<Song[] | null> {
     const { data, error } = await supabase
       .from('songs')
       .update(songData)
@@ -41,7 +63,11 @@ export const songService = {
     return data
   },
 
-  async delete(id: string) {
+  /**
+   * Supprime une chanson
+   * @param id Identifiant de la chanson à supprimer
+   */
+  async delete(id: string): Promise<void> {
     const { error } = await supabase
       .from('songs')
       .delete()

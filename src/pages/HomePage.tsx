@@ -40,13 +40,13 @@ export function HomePage() {
             <Button 
                 className="w-fit"
                 onClick={() => handleOpenModal()}>
-                Add new song
+                add song
             </Button>
 
             <Panel
                 isOpen={isModalOpen}
                 onClose={handleCloseModal}
-                title={songToEdit ? <>Edit<br/>song</> : <>Add new<br/>song</>}
+                title={songToEdit ? <>Edit<br/>song</> : <>Add <br/>song</>}
                 side="right"
             >
                 <SongForm 

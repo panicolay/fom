@@ -70,72 +70,79 @@ export function SongForm({ song, onSuccess }: Props) {
   return (
     <form onSubmit={handleSubmit} className="">
       <TextField
-          label="Title"
-          id="title"
-          value={formData.title}
-          onChange={(value) => setFormData({ ...formData, title: value as string })}
-          type="text"
-          required={true}
+        variant="panel"
+        label="Title"
+        id="title"
+        value={formData.title}
+        onChange={(value) => setFormData({ ...formData, title: value as string })}
+        type="text"
+        required={true}
       />
 
-        <TextField
-          label="Artist"
-          id="artist"
-          value={formData.artist}
-          onChange={(value) => setFormData({ ...formData, artist: value as string })}
-          type="text"
-          required={true}
-        />
+      <TextField
+        variant="panel"
+        label="Artist"
+        id="artist"
+        value={formData.artist}
+        onChange={(value) => setFormData({ ...formData, artist: value as string })}
+        type="text"
+        required={true}
+      />
         
-        <TextField
-          label="Album"
-          id="album"
-          value={formData.album}
-          onChange={(value) => setFormData({ ...formData, album: value as string })}
-          type="text"
-          required={false}
-        />
+      <TextField
+        variant="panel"
+        label="Album"
+        id="album"
+        value={formData.album}
+        onChange={(value) => setFormData({ ...formData, album: value as string })}
+        type="text"
+        required={false}
+      />
 
-        <TextField
-          label="Length"
-          id="length"
-          placeholder="3:03"
-          value={formData.length}
-          onChange={(value) => setFormData({ ...formData, length: value as string })}
-          type="text"
-          required={false}
-        />
+      <TextField
+        variant="panel"
+        label="Length"
+        id="length"
+        placeholder="3:03"
+        value={formData.length}
+        onChange={(value) => setFormData({ ...formData, length: value as string })}
+        type="text"
+        required={false}
+      />
         
-        <div className="flex">
-          <TextField
-            label="BPM"
-            id="bpm"
-            value={formData.bpm === null ? '' : formData.bpm}
-            onChange={(value) => setFormData({ ...formData, bpm: value === '' ? null : Number(value) })}
-            type="number"
-            required={false}
-            className="flex-1"
-          />
-          <TapTempo onBpmChange={(value) => setFormData({ ...formData, bpm: value })} className={cn("h-22 w-30 border-l border-b border-neutral-500 focus:z-10")} />
-        </div>
-        
+      <div className="flex">
         <TextField
-          label="Time signature"
-          id="time_signature"
-          value={formData.time_signature}
-          onChange={(value) => setFormData({ ...formData, time_signature: value as string })}
-          type="text"
+          variant="panel"
+          label="BPM"
+          id="bpm"
+          value={formData.bpm === null ? '' : formData.bpm}
+          onChange={(value) => setFormData({ ...formData, bpm: value === '' ? null : Number(value) })}
+          type="number"
           required={false}
+          className="flex-1"
         />
+        <TapTempo onBpmChange={(value) => setFormData({ ...formData, bpm: value })} className={cn("h-22 w-30 border-l border-b border-neutral-500 focus:z-10")} />
+      </div>
+        
+      <TextField
+        variant="panel"
+        label="Time signature"
+        id="time_signature"
+        value={formData.time_signature}
+        onChange={(value) => setFormData({ ...formData, time_signature: value as string })}
+        type="text"
+        required={false}
+      />
 
-        <TextField
-          label="Key"
-          id="key"
-          value={formData.key}
-          onChange={(value) => setFormData({ ...formData, key: value as string })}
-          type="text"
-          required={false}
-        />
+      <TextField
+        variant="panel"
+        label="Key"
+        id="key"
+        value={formData.key}
+        onChange={(value) => setFormData({ ...formData, key: value as string })}
+        type="text"
+        required={false}
+      />
 
       {error && (
         <div className="text-red-600 text-sm">{error}</div>
@@ -146,7 +153,7 @@ export function SongForm({ song, onSuccess }: Props) {
         disabled={isLoading}
         className="w-full h-22"
       >
-        {isLoading ? (song ? 'Updating...' : 'Adding...') : (song ? 'Update' : 'Confirm')}
+        {isLoading ? (song ? 'updating...' : 'adding...') : (song ? 'update' : 'confirm')}
       </Button>
     </form>
   )

@@ -1,9 +1,19 @@
-import { Outlet } from 'react-router-dom'
+import { Outlet, Link, useLocation } from 'react-router-dom'
 
 export function RootLayout() {
+  const location = useLocation();
+  const isHomePage = location.pathname === '/';
+
   return (
     <div className="min-h-screen flex flex-col bg-neutral-950">
-      <header className=""></header>
+  
+      {!isHomePage && (
+        <header className="container mx-auto p-6 pb-0">
+          <Link to="/" className="font-display text-2xl font-semibold text-neutral-400 hover:text-neutral-200">
+            FOM
+          </Link>
+        </header>
+      )}
 
       <main className="">
         <div className="container mx-auto p-6 flex flex-col gap-6">

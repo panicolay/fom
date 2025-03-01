@@ -1,14 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { songService } from '../services/songService'
-import { Song } from '../types/song'
-
-// Type de retour pour plus de clarté
-type UseSongsReturn = {
-  data: Song[] | undefined
-  isLoading: boolean
-  error: Error | null
-  refetch: () => void
-}
+import { Song, UseSongsReturn } from '../types/song'
 
 // Options de base pour toutes les queries de songs
 const queryOptions = {
@@ -23,7 +15,9 @@ export function useSongs(): UseSongsReturn {
     queryKey: ['songs'],
     queryFn: async () => {
       try {
-        return await songService.getAll()
+        const songs = await songService.getAll()
+        if (!songs) return []
+        return songs
       } catch (error) {
         throw new Error(error instanceof Error ? error.message : 'Failed to fetch songs')
       }
@@ -36,9 +30,10 @@ export function useSong(songId: string | undefined) {
   return useQuery<Song | undefined, Error>({
     queryKey: ['songs', songId],
     queryFn: async () => {
+      if (!songId) return undefined
+      
       try {
-        const songs = await songService.getAll()
-        const song = songs.find(song => song.id === songId)
+        const song = await songService.getById(songId)
         if (!song) throw new Error('Song not found')
         return song
       } catch (error) {
