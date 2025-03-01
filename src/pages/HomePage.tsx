@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react'
-import { useSongs } from '../hooks/useSongs'
 import { SongForm } from '../components/songs/SongForm'
 import { Panel } from '../components/ui/Panel'
 import { Button } from '../components/ui/Button'
@@ -8,10 +7,9 @@ import { useKeyboardShortcuts } from '../contexts/KeyboardShortcutsContext'
 import { Song } from '../types/song'
 
 export function HomePage() {
-    const { songs, loading: songsLoading, error: songsError, refresh } = useSongs()
-    const { registerShortcut, unregisterShortcut } = useKeyboardShortcuts()
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [songToEdit, setSongToEdit] = useState<Song | null>(null)
+    const { registerShortcut, unregisterShortcut } = useKeyboardShortcuts()
 
     useEffect(() => {
         if (!isModalOpen) {
@@ -53,20 +51,11 @@ export function HomePage() {
             >
                 <SongForm 
                     song={songToEdit}
-                    onSuccess={() => {
-                        handleCloseModal()
-                        refresh()
-                    }}
+                    onSuccess={handleCloseModal}
                 />
             </Panel>
 
-            <SongList
-                songs={songs}
-                loading={songsLoading}
-                error={songsError}
-                onRefresh={refresh}
-                onEdit={handleOpenModal}
-            />
+            <SongList onEdit={handleOpenModal} />
         </>
     )
 }

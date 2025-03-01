@@ -13,14 +13,17 @@ type Props = {
 }
 
 export function SongForm({ song, onSuccess }: Props) {
-  const [title, setTitle] = useState(song?.title || '')
-  const [artist, setArtist] = useState(song?.artist || '')
-  const [album, setAlbum] = useState(song?.album || '')
-  const [bpm, setBpm] = useState<number | null>(song?.bpm || null)
-  const [length, setLength] = useState(song?.length ? formatSecondsToTime(Number(song.length)) : '')
-  const [time_signature, setTimeSignature] = useState(song?.time_signature || '')
-  const [key, setKey] = useState(song?.key || '')
-  const { createSong, updateSong, loading, error } = useSongMutation()
+  const [formData, setFormData] = useState({
+    title: song?.title || '',
+    artist: song?.artist || '',
+    album: song?.album || '',
+    bpm: song?.bpm || null,
+    length: song?.length ? formatSecondsToTime(Number(song.length)) : '',
+    time_signature: song?.time_signature || '',
+    key: song?.key || ''
+  })
+  
+  const { createSong, updateSong, isLoading, error } = useSongMutation()
 
   useEffect(() => {
     const titleInput = document.getElementById('title')
@@ -28,39 +31,39 @@ export function SongForm({ song, onSuccess }: Props) {
   }, [])
 
   const resetForm = () => {
-    setTitle('')
-    setArtist('')
-    setAlbum('')
-    setBpm(null)
-    setLength('')
-    setTimeSignature('')
-    setKey('')
+    setFormData({
+      title: '',
+      artist: '',
+      album: '',
+      bpm: null,
+      length: '',
+      time_signature: '',
+      key: ''
+    })
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     
-    const formData = {
-      title,
-      artist,
-      album,
-      bpm,
-      length,
-      time_signature,
-      key
-    }
-
-    try {
-      if (song) {
-        await updateSong(song.id, formData)
-      } else {
-        await createSong(formData)
-      }
-      
-      if (!song) resetForm()
-      onSuccess()
-    } catch {
-      // L'erreur est déjà gérée dans le hook
+    if (song) {
+      updateSong(
+        { id: song.id, data: formData },
+        {
+          onSuccess: () => {
+            onSuccess()
+          }
+        }
+      )
+    } else {
+      createSong(
+        formData,
+        {
+          onSuccess: () => {
+            resetForm()
+            onSuccess()
+          }
+        }
+      )
     }
   }
 
@@ -69,8 +72,8 @@ export function SongForm({ song, onSuccess }: Props) {
       <TextField
           label="Title"
           id="title"
-          value={title}
-          onChange={(value) => setTitle(value as string)}
+          value={formData.title}
+          onChange={(value) => setFormData({ ...formData, title: value as string })}
           type="text"
           required={true}
       />
@@ -78,8 +81,8 @@ export function SongForm({ song, onSuccess }: Props) {
         <TextField
           label="Artist"
           id="artist"
-          value={artist}
-          onChange={(value) => setArtist(value as string)}
+          value={formData.artist}
+          onChange={(value) => setFormData({ ...formData, artist: value as string })}
           type="text"
           required={true}
         />
@@ -87,8 +90,8 @@ export function SongForm({ song, onSuccess }: Props) {
         <TextField
           label="Album"
           id="album"
-          value={album}
-          onChange={(value) => setAlbum(value as string)}
+          value={formData.album}
+          onChange={(value) => setFormData({ ...formData, album: value as string })}
           type="text"
           required={false}
         />
@@ -97,8 +100,8 @@ export function SongForm({ song, onSuccess }: Props) {
           label="Length"
           id="length"
           placeholder="3:03"
-          value={length}
-          onChange={(value) => setLength(value as string)}
+          value={formData.length}
+          onChange={(value) => setFormData({ ...formData, length: value as string })}
           type="text"
           required={false}
         />
@@ -107,20 +110,20 @@ export function SongForm({ song, onSuccess }: Props) {
           <TextField
             label="BPM"
             id="bpm"
-            value={bpm === null ? '' : bpm}
-            onChange={(value) => setBpm(value === '' ? null : Number(value))}
+            value={formData.bpm === null ? '' : formData.bpm}
+            onChange={(value) => setFormData({ ...formData, bpm: value === '' ? null : Number(value) })}
             type="number"
             required={false}
             className="flex-1"
           />
-          <TapTempo onBpmChange={setBpm} className={cn("h-22 w-30 border-l border-b border-neutral-500 focus:z-10")} />
+          <TapTempo onBpmChange={(value) => setFormData({ ...formData, bpm: value })} className={cn("h-22 w-30 border-l border-b border-neutral-500 focus:z-10")} />
         </div>
         
         <TextField
           label="Time signature"
           id="time_signature"
-          value={time_signature}
-          onChange={(value) => setTimeSignature(value as string)}
+          value={formData.time_signature}
+          onChange={(value) => setFormData({ ...formData, time_signature: value as string })}
           type="text"
           required={false}
         />
@@ -128,8 +131,8 @@ export function SongForm({ song, onSuccess }: Props) {
         <TextField
           label="Key"
           id="key"
-          value={key}
-          onChange={(value) => setKey(value as string)}
+          value={formData.key}
+          onChange={(value) => setFormData({ ...formData, key: value as string })}
           type="text"
           required={false}
         />
@@ -140,10 +143,10 @@ export function SongForm({ song, onSuccess }: Props) {
 
       <Button
         type="submit"
-        disabled={loading}
+        disabled={isLoading}
         className="w-full h-22"
       >
-        {loading ? (song ? 'Updating...' : 'Adding...') : (song ? 'Update' : 'Confirm')}
+        {isLoading ? (song ? 'Updating...' : 'Adding...') : (song ? 'Update' : 'Confirm')}
       </Button>
     </form>
   )

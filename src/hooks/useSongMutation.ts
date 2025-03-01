@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { songService } from '../services/songService'
 import { convertTimeToSeconds } from '../utils/timeUtils'
 
@@ -13,8 +13,7 @@ type SongFormData = {
 }
 
 export function useSongMutation() {
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+  const queryClient = useQueryClient()
 
   const processSongData = (formData: SongFormData) => {
     const lengthInSeconds = formData.length ? convertTimeToSeconds(formData.length) : null
@@ -28,38 +27,50 @@ export function useSongMutation() {
     }
   }
 
-  const handleMutation = async <T>(mutation: () => Promise<T>) => {
-    try {
-      setLoading(true)
-      setError(null)
-      await mutation()
-    } catch (e) {
-      setError(e instanceof Error ? e.message : 'An error occurred')
-      throw e
-    } finally {
-      setLoading(false)
+  const createMutation = useMutation({
+    mutationFn: (data: SongFormData) => songService.create(processSongData(data)),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['songs'] })
+    },
+    onError: (error) => {
+      console.error('Failed to create song:', error)
     }
+  })
+
+  const updateMutation = useMutation({
+    mutationFn: ({ id, data }: { id: string; data: SongFormData }) => 
+      songService.update(id, processSongData(data)),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['songs'] })
+    },
+    onError: (error) => {
+      console.error('Failed to update song:', error)
+    }
+  })
+
+  const deleteMutation = useMutation({
+    mutationFn: (id: string) => songService.delete(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['songs'] })
+    },
+    onError: (error) => {
+      console.error('Failed to delete song:', error)
+    }
+  })
+
+  // Gestion de l'erreur pour avoir un message string
+  const getErrorMessage = (error: unknown) => {
+    if (error instanceof Error) return error.message
+    return 'An unexpected error occurred'
   }
 
-  const createSong = async (formData: SongFormData) => {
-    await handleMutation(async () => {
-      const processedData = processSongData(formData)
-      await songService.create(processedData)
-    })
+  return {
+    createSong: createMutation.mutateAsync,
+    updateSong: updateMutation.mutateAsync,
+    deleteSong: deleteMutation.mutateAsync,
+    isLoading: createMutation.isPending || updateMutation.isPending || deleteMutation.isPending,
+    error: createMutation.error || updateMutation.error || deleteMutation.error 
+      ? getErrorMessage(createMutation.error || updateMutation.error || deleteMutation.error)
+      : null
   }
-
-  const updateSong = async (id: string, formData: SongFormData) => {
-    await handleMutation(async () => {
-      const processedData = processSongData(formData)
-      await songService.update(id, processedData)
-    })
-  }
-
-  const deleteSong = async (id: string) => {
-    await handleMutation(async () => {
-      await songService.delete(id)
-    })
-  }
-
-  return { createSong, updateSong, deleteSong, loading, error }
 } 
