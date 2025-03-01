@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { songService } from '../services/songService'
 import type { Song } from '../types/song'
+import { useQuery } from '@tanstack/react-query'
 
 export function useSongs() {
   const [songs, setSongs] = useState<Song[]>([])
@@ -25,4 +26,14 @@ export function useSongs() {
   }, [])
 
   return { songs, loading, error, refresh: fetchSongs }
+}
+
+export function useSong(songId: string | undefined) {
+  return useQuery({
+    queryKey: ['songs', songId],
+    queryFn: () => songService.getAll().then(songs => 
+      songs.find(song => song.id === songId)
+    ),
+    enabled: !!songId
+  })
 } 

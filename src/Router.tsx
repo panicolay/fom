@@ -9,7 +9,7 @@ export function Router() {
     <Routes>
       <Route path="/" element={<RootLayout />}>
         <Route index element={<HomePage />} />
-        <Route path="songs" element={<SongStructurePage />} />
+        <Route path="songs/:songId" element={<SongStructurePage />} />
         <Route path="*" element={<NotFoundPage />} />
       </Route>
     </Routes>
