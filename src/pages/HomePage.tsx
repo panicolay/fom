@@ -47,7 +47,6 @@ export function HomePage() {
                 isOpen={isModalOpen}
                 onClose={handleCloseModal}
                 title={songToEdit ? <>Edit<br/>song</> : <>Add <br/>song</>}
-                side="right"
             >
                 <SongForm 
                     song={songToEdit}

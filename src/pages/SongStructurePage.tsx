@@ -5,7 +5,8 @@ import { Button } from '../components/ui/Button'
 import { useState } from 'react'
 import { formatSecondsToTime } from '../utils/timeUtils'
 import { TrackList } from '../components/track/TrackList'
-import { TrackPanel } from '../components/track/TrackPanel'
+import { Panel } from '../components/ui/Panel'
+import { TrackForm } from '../components/track/TrackForm'
 
 export function SongStructurePage() {
   const { songId } = useParams()
@@ -52,11 +53,13 @@ export function SongStructurePage() {
         add track
       </Button>
 
-      <TrackPanel
+      <Panel
         isOpen={isTrackPanelOpen}
         onClose={() => setIsTrackPanelOpen(false)}
-        songId={songId}
-      />
+        title={<>add<br/>track</>}
+      >
+        <TrackForm songId={songId} />
+      </Panel>
     </>
   )
 }
