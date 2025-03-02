@@ -114,5 +114,27 @@ export const trackService = {
             .eq('id', id)
             
         if (error) throw error
+    },
+
+    /**
+     * Met à jour les positions des pistes
+     * @param tracks Liste des pistes à mettre à jour
+     */
+    async updatePositions(tracks: Track[]): Promise<void> {
+        const updates = tracks.map(track => ({
+            id: track.id,
+            position: track.position,
+            name: track.name,
+            song_id: track.song_id
+        }));
+        
+        const { error } = await supabase
+            .from('tracks')
+            .upsert(updates, { 
+                onConflict: 'id',
+                ignoreDuplicates: false 
+            });
+            
+        if (error) throw error;
     }
 }

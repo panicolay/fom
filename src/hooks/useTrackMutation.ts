@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { trackService } from '../services/trackService'
-import { TrackFormData } from '../types/trackTypes'
+import { Track, TrackFormData } from '../types/trackTypes'
 
 export function useTrackMutation() {
     const queryClient = useQueryClient()
@@ -41,6 +41,16 @@ export function useTrackMutation() {
         }
     })
 
+    const reorderMutation = useMutation({
+        mutationFn: (tracks: Track[]) => trackService.updatePositions(tracks),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['tracks'] })
+        },
+        onError: (error) => {
+            console.error('Failed to reorder tracks:', error)
+        }
+    })
+
     // Gestion de l'erreur pour avoir un message string
     const getErrorMessage = (error: unknown) => {
         if (error instanceof Error) return error.message
@@ -51,9 +61,10 @@ export function useTrackMutation() {
         createTrack: createMutation.mutateAsync,
         updateTrack: updateMutation.mutateAsync,
         deleteTrack: deleteMutation.mutateAsync,
-        isLoading: createMutation.isPending || updateMutation.isPending || deleteMutation.isPending,
-        error: createMutation.error || updateMutation.error || deleteMutation.error 
-            ? getErrorMessage(createMutation.error || updateMutation.error || deleteMutation.error)
+        reorderTracks: reorderMutation.mutateAsync,
+        isLoading: createMutation.isPending || updateMutation.isPending || deleteMutation.isPending || reorderMutation.isPending,
+        error: createMutation.error || updateMutation.error || deleteMutation.error || reorderMutation.error 
+            ? getErrorMessage(createMutation.error || updateMutation.error || deleteMutation.error || reorderMutation.error)
             : null
     }
 }
