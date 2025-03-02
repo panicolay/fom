@@ -9,6 +9,7 @@ export type Track = {
 export type TrackFormData = {
     name: string
     comment?: string
+    song_id: string
 }
 
 export type UseTracksReturn = {
