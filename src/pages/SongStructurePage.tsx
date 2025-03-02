@@ -1,67 +1,26 @@
 import { useParams } from 'react-router-dom'
 import { useSong } from '../hooks/useSongs'
 import { useTracksBySong } from '../hooks/useTracks'
-import { Popover, PopoverButton, PopoverPanel } from '@headlessui/react'
-import { TextField } from '../components/form/TextField'
 import { Button } from '../components/ui/Button'
-import { TrackFormData } from '../types/trackTypes'
-import { useEffect, useState } from 'react'
-import { useTrackMutation } from '../hooks/useTrackMutation'
+import { useState } from 'react'
 import { formatSecondsToTime } from '../utils/timeUtils'
 import { TrackList } from '../components/track/TrackList'
+import { TrackPanel } from '../components/track/TrackPanel'
 
-type Props = {
-  onSuccess?: () => void
-}
-
-export function SongStructurePage({ onSuccess }: Props) {
+export function SongStructurePage() {
   const { songId } = useParams()
   const { data: song, isLoading: songLoading, error: songError } = useSong(songId)
   const { data: tracks, isLoading: tracksLoading } = useTracksBySong(songId)
-  const [isPopoverOpen, setIsPopoverOpen] = useState(false)
+  const [isTrackPanelOpen, setIsTrackPanelOpen] = useState(false)
 
-  const [formData, setFormData] = useState<TrackFormData>({
-    name: '',
-    comment: '',
-    song_id: songId || '',
-    position: 0
-  })
-
-  const { createTrack, isLoading: trackLoading, error: trackError } = useTrackMutation()
-
-  useEffect(() => {
-    if (isPopoverOpen) {
-      const nameInput = document.getElementById('track_name')
-      nameInput?.focus()
-    }
-  }, [isPopoverOpen])
-
-  const resetForm = () => {
-    setFormData({
-      name: '',
-      comment: '',
-      song_id: songId || '',
-      position: 0
-    })
-    setIsPopoverOpen(false)
-  }
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!songId) return
-
-    try {
-      await createTrack(formData)
-      resetForm()
-      onSuccess?.()
-    } catch (error) {
-      console.error('Failed to create track:', error)
-    }
+  const handleOpenTrackPanel = () => {
+    setIsTrackPanelOpen(true)
   }
 
   if (songLoading || tracksLoading) return <div>Loading...</div>
   if (songError) return <div>Error: {songError.message}</div>
   if (!song) return <div>Song not found</div>
+  if (!songId) return <div>No song ID provided</div>
 
   return (
     <>
@@ -86,48 +45,18 @@ export function SongStructurePage({ onSuccess }: Props) {
         <p>No tracks yet</p>
       )}
 
-      <Popover>
-        {({ open }) => {
-          useEffect(() => setIsPopoverOpen(open), [open])
-          return (
-            <>
-              <PopoverButton className="text-neutral-200">Add track</PopoverButton>
-              <PopoverPanel className="bg-neutral-900 border-1 border-neutral-500 w-80">
-                <form onSubmit={handleSubmit} className="flex flex-col">
-                  <TextField
-                    variant="popover"
-                    label="track name"
-                    id="track_name"
-                    value={formData.name}
-                    onChange={(value) => setFormData({ ...formData, name: value as string })}
-                    type="text"
-                    required={true}
-                  />
-                  <TextField
-                    variant="popover"
-                    label="comment"
-                    id="track_comment"
-                    value={formData.comment || ''}
-                    onChange={(value) => setFormData({ ...formData, comment: value as string })}
-                    type="text"
-                    required={false}
-                  />
-                  {trackError && (
-                    <div className="text-red-600 text-sm">{trackError}</div>
-                  )}
-                  <Button 
-                    type="submit"
-                    variant="secondary"
-                    disabled={trackLoading}
-                    className="w-fill">
-                    {trackLoading ? 'adding...' : 'confirm'}
-                  </Button>
-                </form>
-              </PopoverPanel>
-            </>
-          )
-        }}
-      </Popover>
+      <Button 
+        variant="secondary"
+        className="w-fit"
+        onClick={() => handleOpenTrackPanel()}>
+        add track
+      </Button>
+
+      <TrackPanel
+        isOpen={isTrackPanelOpen}
+        onClose={() => setIsTrackPanelOpen(false)}
+        songId={songId}
+      />
     </>
   )
 }

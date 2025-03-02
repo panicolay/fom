@@ -4,7 +4,7 @@ type TextFieldProps = {
   id: string
   placeholder?: string
   autocomplete?: 'off' | 'on'
-  value: string | number
+  value: string | number | undefined
   onChange: (value: string | number) => void
   type: 'text' | 'number'
   required: boolean
@@ -45,7 +45,7 @@ export function TextField({
                 type={type}
                 id={id}
                 placeholder={placeholder}
-                value={value}
+                value={value ?? ''}
                 autoComplete={autocomplete}
                 onChange={(e) => onChange(e.target.value)}
                 className={`text-lg text-neutral-200

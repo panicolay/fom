@@ -27,16 +27,19 @@ export function Track({ track }: TrackProps) {
         <div 
             ref={setNodeRef}
             style={style}
-            className="flex items-center gap-2 h-10"
+            className={`flex items-center gap-2 h-10 ${isDragging ? 'cursor-grabbing' : ''}`}
         >
             <button
                 {...attributes}
                 {...listeners}
                 className="cursor-grab active:cursor-grabbing"
+                aria-label={`Réorganiser la piste ${track.name}`}
             >
                 <GripVertical size={18} strokeWidth={1.75} className="text-neutral-600" />
             </button>
-            <span className="text-neutral-400">{track.name}</span>
+            <div className="text-neutral-400 hover:text-neutral-200">
+                {track.name}
+            </div>
         </div>
     );
 }
