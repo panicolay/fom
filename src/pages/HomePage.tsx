@@ -4,7 +4,7 @@ import { Panel } from '../components/ui/Panel'
 import { Button } from '../components/ui/Button'
 import { SongList } from '../components/songs/SongList'
 import { useKeyboardShortcuts } from '../contexts/KeyboardShortcutsContext'
-import { Song } from '../types/song'
+import { Song } from '../types/songTypes'
 
 export function HomePage() {
     const [isModalOpen, setIsModalOpen] = useState(false)

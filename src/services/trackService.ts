@@ -1,16 +1,40 @@
 import { supabase } from '../lib/supabase'
-import { Track, TrackFormData } from '../types/track'
+import { Track, TrackFormData } from '../types/trackTypes'
 
 export const trackService = {
+    /**
+     * Obtient la position maximale actuelle pour une chanson donnée
+     * @param songId Identifiant de la chanson
+     * @returns La position maximale ou 0 si aucune track n'existe
+     */
+    async getMaxPosition(songId: string): Promise<number> {
+        const { data, error } = await supabase
+            .from('tracks')
+            .select('position')
+            .eq('song_id', songId)
+            .order('position', { ascending: false })
+            .limit(1)
+            
+        if (error) throw error
+        return data && data.length > 0 ? data[0].position : 0
+    },
+
     /**
      * Crée une nouvelle piste dans la base de données
      * @param trackData Les données de la piste à créer
      * @returns La piste créée
      */
     async create(trackData: TrackFormData): Promise<Track[] | null> {
+        // Obtenir la position maximale actuelle et ajouter 1
+        const maxPosition = await this.getMaxPosition(trackData.song_id)
+        const dataWithPosition = {
+            ...trackData,
+            position: maxPosition + 1
+        }
+
         const { data, error } = await supabase
             .from('tracks')
-            .insert([trackData])
+            .insert([dataWithPosition])
             
         if (error) throw error
         return data
@@ -56,7 +80,7 @@ export const trackService = {
             .from('tracks')
             .select('*')
             .eq('song_id', songId)
-            .order('created_at', { ascending: false })
+            .order('position', { ascending: true })
             
         if (error) throw error
         return data

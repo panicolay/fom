@@ -1,4 +1,4 @@
-import { Song } from '../../types/song'
+import { Song } from '../../types/songTypes'
 import { formatSecondsToTime } from '../../utils/timeUtils'
 import { Pencil, Trash } from 'lucide-react'
 import { TableButton } from '../table/TableButton'

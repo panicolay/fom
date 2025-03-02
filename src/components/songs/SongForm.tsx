@@ -3,7 +3,7 @@ import { TextField } from '../form/TextField'
 import { Button } from '../ui/Button'
 import { TapTempo } from '../form/TapTempo'
 import { useSongMutation } from '../../hooks/useSongMutation'
-import { Song } from '../../types/song'
+import { Song } from '../../types/songTypes'
 import { formatSecondsToTime } from '../../utils/timeUtils'
 import { cn } from '../../utils/cn'
 

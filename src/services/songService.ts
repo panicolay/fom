@@ -1,5 +1,5 @@
 import { supabase } from '../lib/supabase'
-import { Song, SongFormData } from '../types/song'
+import { Song, SongFormData } from '../types/songTypes'
 
 export const songService = {
   /**

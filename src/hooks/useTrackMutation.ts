@@ -1,12 +1,17 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { trackService } from '../services/trackService'
-import { TrackFormData } from '../types/track'
+import { TrackFormData } from '../types/trackTypes'
 
 export function useTrackMutation() {
     const queryClient = useQueryClient()
 
     const createMutation = useMutation({
-        mutationFn: (data: TrackFormData) => trackService.create(data),
+        mutationFn: (data: TrackFormData) => 
+            trackService.getMaxPosition(data.song_id)
+                .then(maxPosition => trackService.create({
+                    ...data,
+                    position: maxPosition + 1
+                })),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['tracks'] })
         },

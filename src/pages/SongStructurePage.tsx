@@ -4,9 +4,11 @@ import { useTracksBySong } from '../hooks/useTracks'
 import { Popover, PopoverButton, PopoverPanel } from '@headlessui/react'
 import { TextField } from '../components/form/TextField'
 import { Button } from '../components/ui/Button'
-import { TrackFormData } from '../types/track'
+import { TrackFormData } from '../types/trackTypes'
 import { useEffect, useState } from 'react'
 import { useTrackMutation } from '../hooks/useTrackMutation'
+import { formatSecondsToTime } from '../utils/timeUtils'
+import { TrackList } from '../components/track/TrackList'
 
 type Props = {
   onSuccess?: () => void
@@ -21,7 +23,8 @@ export function SongStructurePage({ onSuccess }: Props) {
   const [formData, setFormData] = useState<TrackFormData>({
     name: '',
     comment: '',
-    song_id: songId || ''
+    song_id: songId || '',
+    position: 0
   })
 
   const { createTrack, isLoading: trackLoading, error: trackError } = useTrackMutation()
@@ -37,7 +40,8 @@ export function SongStructurePage({ onSuccess }: Props) {
     setFormData({
       name: '',
       comment: '',
-      song_id: songId || ''
+      song_id: songId || '',
+      position: 0
     })
     setIsPopoverOpen(false)
   }
@@ -47,18 +51,11 @@ export function SongStructurePage({ onSuccess }: Props) {
     if (!songId) return
 
     try {
-      console.log('Creating track with data:', formData)
       await createTrack(formData)
-      console.log('Track created successfully')
       resetForm()
       onSuccess?.()
     } catch (error) {
       console.error('Failed to create track:', error)
-      if (error instanceof Error) {
-        console.error('Error details:', error.message)
-      } else {
-        console.error('Unknown error:', error)
-      }
     }
   }
 
@@ -73,73 +70,64 @@ export function SongStructurePage({ onSuccess }: Props) {
       </h1>
 
       {/* song general info */}
-      <ul className="flex gap-4 text-neutral-400">
+      <ul className="flex flex-col text-neutral-400">
         {song.artist && <li>{song.artist}</li>}
         {song.album && <li>{song.album}</li>}
-        {song.length && <li>{song.length}</li>}
+        {song.length && <li>{formatSecondsToTime(Number(song.length))}</li>}
         {song.bpm && <li>{song.bpm} bpm</li>}
         {song.time_signature && <li>{song.time_signature}</li>}
         {song.key && <li>{song.key}</li>}
       </ul>
 
-      <div>
-        {/* Tracks list */}
-        {tracks && tracks.length > 0 ? (
-          <ul className="text-neutral-400">
-            {tracks.map((track) => (
-              <li key={track.id}>
-                <h3>{track.name}</h3>
-                {track.comment && <p>{track.comment}</p>}
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p>No tracks yet</p>
-        )}
+      {/* Tracks list */}
+      {tracks && tracks.length > 0 ? (
+        <TrackList tracks={tracks} />
+      ) : (
+        <p>No tracks yet</p>
+      )}
 
-        <Popover>
-          {({ open }) => {
-            useEffect(() => setIsPopoverOpen(open), [open])
-            return (
-              <>
-                <PopoverButton className="text-neutral-200">Add track</PopoverButton>
-                <PopoverPanel className="bg-neutral-900 border-1 border-neutral-500 w-80">
-                  <form onSubmit={handleSubmit} className="flex flex-col">
-                    <TextField
-                      variant="popover"
-                      label="track name"
-                      id="track_name"
-                      value={formData.name}
-                      onChange={(value) => setFormData({ ...formData, name: value as string })}
-                      type="text"
-                      required={true}
-                    />
-                    <TextField
-                      variant="popover"
-                      label="comment"
-                      id="track_comment"
-                      value={formData.comment || ''}
-                      onChange={(value) => setFormData({ ...formData, comment: value as string })}
-                      type="text"
-                      required={false}
-                    />
-                    {trackError && (
-                      <div className="text-red-600 text-sm">{trackError}</div>
-                    )}
-                    <Button 
-                      type="submit"
-                      variant="secondary"
-                      disabled={trackLoading}
-                      className="w-fill">
-                      {trackLoading ? 'adding...' : 'confirm'}
-                    </Button>
-                  </form>
-                </PopoverPanel>
-              </>
-            )
-          }}
-        </Popover>
-      </div>
+      <Popover>
+        {({ open }) => {
+          useEffect(() => setIsPopoverOpen(open), [open])
+          return (
+            <>
+              <PopoverButton className="text-neutral-200">Add track</PopoverButton>
+              <PopoverPanel className="bg-neutral-900 border-1 border-neutral-500 w-80">
+                <form onSubmit={handleSubmit} className="flex flex-col">
+                  <TextField
+                    variant="popover"
+                    label="track name"
+                    id="track_name"
+                    value={formData.name}
+                    onChange={(value) => setFormData({ ...formData, name: value as string })}
+                    type="text"
+                    required={true}
+                  />
+                  <TextField
+                    variant="popover"
+                    label="comment"
+                    id="track_comment"
+                    value={formData.comment || ''}
+                    onChange={(value) => setFormData({ ...formData, comment: value as string })}
+                    type="text"
+                    required={false}
+                  />
+                  {trackError && (
+                    <div className="text-red-600 text-sm">{trackError}</div>
+                  )}
+                  <Button 
+                    type="submit"
+                    variant="secondary"
+                    disabled={trackLoading}
+                    className="w-fill">
+                    {trackLoading ? 'adding...' : 'confirm'}
+                  </Button>
+                </form>
+              </PopoverPanel>
+            </>
+          )
+        }}
+      </Popover>
     </>
   )
 }

@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { trackService } from '../services/trackService'
-import { Track, UseTracksReturn } from '../types/track'
+import { Track, UseTracksReturn } from '../types/trackTypes'
 
 // Options de base pour toutes les queries de tracks
 const queryOptions = {

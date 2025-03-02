@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { songService } from '../services/songService'
-import { Song, UseSongsReturn } from '../types/song'
+import { Song, UseSongsReturn } from '../types/songTypes'
 
 // Options de base pour toutes les queries de songs
 const queryOptions = {
