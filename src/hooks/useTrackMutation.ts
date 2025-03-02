@@ -43,11 +43,33 @@ export function useTrackMutation() {
 
     const reorderMutation = useMutation({
         mutationFn: (tracks: Track[]) => trackService.updatePositions(tracks),
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['tracks'] })
+        onMutate: async (newTracks) => {
+            await queryClient.cancelQueries({ 
+                queryKey: ['tracks', 'by-song', newTracks[0].song_id] 
+            })
+
+            const previousTracks = queryClient.getQueryData(
+                ['tracks', 'by-song', newTracks[0].song_id]
+            )
+
+            queryClient.setQueryData(
+                ['tracks', 'by-song', newTracks[0].song_id], 
+                newTracks
+            )
+
+            return { previousTracks }
         },
-        onError: (error) => {
+        onError: (error, newTracks, context) => {
+            queryClient.setQueryData(
+                ['tracks', 'by-song', newTracks[0].song_id], 
+                context?.previousTracks
+            )
             console.error('Failed to reorder tracks:', error)
+        },
+        onSettled: (_, __, newTracks) => {
+            queryClient.invalidateQueries({ 
+                queryKey: ['tracks', 'by-song', newTracks[0].song_id] 
+            })
         }
     })
 
