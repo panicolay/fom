@@ -1,20 +1,23 @@
 import { useParams } from 'react-router-dom'
 import { useSong } from '../hooks/useSongs'
 import { useTracksBySong } from '../hooks/useTracks'
-import { Button } from '../components/ui/Button'
+import { Button } from '../components/buttons/Button'
 import { useState } from 'react'
 import { formatSecondsToTime } from '../utils/timeUtils'
 import { TrackList } from '../components/track/TrackList'
-import { Panel } from '../components/ui/Panel'
+import { Panel } from '../components/overlays/Panel'
 import { TrackForm } from '../components/track/TrackForm'
+import { Track } from '../types/trackTypes'
 
 export function SongStructurePage() {
   const { songId } = useParams()
   const { data: song, isLoading: songLoading, error: songError } = useSong(songId)
   const { data: tracks, isLoading: tracksLoading } = useTracksBySong(songId)
   const [isTrackPanelOpen, setIsTrackPanelOpen] = useState(false)
+  const [trackToEdit, setTrackToEdit] = useState<Track | null>(null)
 
-  const handleOpenTrackPanel = () => {
+  const handleOpenTrackPanel = (track?: Track) => {
+    setTrackToEdit(track || null)
     setIsTrackPanelOpen(true)
   }
 
@@ -41,13 +44,13 @@ export function SongStructurePage() {
 
       {/* Tracks list */}
       {tracks && tracks.length > 0 ? (
-        <TrackList tracks={tracks} />
+        <TrackList tracks={tracks} onEdit={handleOpenTrackPanel} />
       ) : (
         <p>No tracks yet</p>
       )}
 
       <Button 
-        variant="secondary"
+        variant="inverted"
         className="w-fit"
         onClick={() => handleOpenTrackPanel()}>
         add track
@@ -56,9 +59,14 @@ export function SongStructurePage() {
       <Panel
         isOpen={isTrackPanelOpen}
         onClose={() => setIsTrackPanelOpen(false)}
-        title={<>add<br/>track</>}
+        title={trackToEdit ? <>edit<br/>track</> : <>add<br/>track</>}
       >
-        <TrackForm songId={songId} />
+        <TrackForm
+          isOpen={isTrackPanelOpen}
+          onClose={() => setIsTrackPanelOpen(false)}
+          songId={songId}
+          track={trackToEdit}
+        />
       </Panel>
     </>
   )

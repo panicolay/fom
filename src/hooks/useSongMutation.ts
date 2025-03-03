@@ -1,34 +1,26 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { songService } from '../services/songService'
 import { convertTimeToSeconds } from '../utils/timeUtils'
-
-type SongFormData = {
-  title: string
-  artist: string
-  album: string
-  bpm: number | null
-  length: string
-  time_signature: string
-  key: string
-}
+import { SongFormInput, SongFormData } from '../types/songTypes'
 
 export function useSongMutation() {
   const queryClient = useQueryClient()
 
-  const processSongData = (formData: SongFormData) => {
-    const lengthInSeconds = formData.length ? convertTimeToSeconds(formData.length) : null
+  const processSongData = (formData: SongFormInput): Omit<SongFormData, 'id'> => {
+    const lengthInSeconds = formData.length ? convertTimeToSeconds(formData.length) : undefined
     if (formData.length && lengthInSeconds === null) {
       throw new Error('Invalid duration format. Use MM:SS (ex: 3:03)')
     }
 
+    const { length, ...rest } = formData
     return {
-      ...formData,
-      length: lengthInSeconds
+      ...rest,
+      length: lengthInSeconds ?? undefined
     }
   }
 
   const createMutation = useMutation({
-    mutationFn: (data: SongFormData) => songService.create(processSongData(data)),
+    mutationFn: (data: SongFormInput) => songService.create(processSongData(data)),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['songs'] })
     },
@@ -38,7 +30,7 @@ export function useSongMutation() {
   })
 
   const updateMutation = useMutation({
-    mutationFn: ({ id, data }: { id: string; data: SongFormData }) => 
+    mutationFn: ({ id, data }: { id: string; data: SongFormInput }) => 
       songService.update(id, processSongData(data)),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['songs'] })

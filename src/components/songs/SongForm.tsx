@@ -1,49 +1,51 @@
 import { useState, useEffect } from 'react'
 import { TextField } from '../form/TextField'
-import { Button } from '../ui/Button'
 import { TapTempo } from '../form/TapTempo'
 import { useSongMutation } from '../../hooks/useSongMutation'
-import { Song } from '../../types/songTypes'
+import { Song, SongFormInput } from '../../types/songTypes'
 import { formatSecondsToTime } from '../../utils/timeUtils'
 import { cn } from '../../utils/cn'
+import { PanelButton } from '../buttons/PanelButton'
 
 type Props = {
   song?: Song | null
-  onSuccess: () => void
+  isOpen: boolean
+  onClose: () => void
 }
 
-export function SongForm({ song, onSuccess }: Props) {
+export function SongForm({ song, isOpen, onClose }: Props) {
   
-  const [formData, setFormData] = useState({
-    title: song?.title || '',
-    artist: song?.artist || '',
-    album: song?.album || '',
-    bpm: song?.bpm || null,
-    length: song?.length ? formatSecondsToTime(Number(song.length)) : '',
-    time_signature: song?.time_signature || '',
-    key: song?.key || ''
+  const [formData, setFormData] = useState<SongFormInput>({
+    title: '',
+    artist: undefined,
+    album: undefined,
+    bpm: undefined,
+    length: '',
+    time_signature: undefined,
+    key: undefined
   })
-  
-  const { createSong, updateSong, isLoading, error } = useSongMutation()
+
+  useEffect(() => {
+    if (isOpen) {
+      setFormData({
+        title: song?.title || '',
+        artist: song?.artist || undefined,
+        album: song?.album || undefined,
+        bpm: song?.bpm || undefined,
+        length: song?.length ? formatSecondsToTime(song.length) : '',
+        time_signature: song?.time_signature || undefined,
+        key: song?.key || undefined
+      })
+    }
+  }, [isOpen, song])
+  const { createSong, updateSong, deleteSong, isLoading, error } = useSongMutation()
 
   useEffect(() => {
     const titleInput = document.getElementById('title')
     titleInput?.focus()
   }, [])
 
-  const resetForm = () => {
-    setFormData({
-      title: '',
-      artist: '',
-      album: '',
-      bpm: null,
-      length: '',
-      time_signature: '',
-      key: ''
-    })
-  }
-
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     
     if (song) {
@@ -51,7 +53,7 @@ export function SongForm({ song, onSuccess }: Props) {
         { id: song.id, data: formData },
         {
           onSuccess: () => {
-            onSuccess()
+            onClose()
           }
         }
       )
@@ -60,16 +62,25 @@ export function SongForm({ song, onSuccess }: Props) {
         formData,
         {
           onSuccess: () => {
-            resetForm()
-            onSuccess()
+            onClose()
           }
         }
       )
     }
   }
 
+  const handleDelete = () => {
+    if (!song?.id) return;
+    
+    deleteSong(song.id, {
+      onSuccess: () => {
+        onClose()
+      }
+    })
+  }
+
   return (
-    <form onSubmit={handleSubmit} className="">
+    <form onSubmit={handleSubmit}>
       <TextField
         variant="panel"
         label="Title"
@@ -87,7 +98,7 @@ export function SongForm({ song, onSuccess }: Props) {
         value={formData.artist}
         onChange={(value) => setFormData({ ...formData, artist: value as string })}
         type="text"
-        required={true}
+        required={false}
       />
         
       <TextField
@@ -116,8 +127,8 @@ export function SongForm({ song, onSuccess }: Props) {
           variant="panel"
           label="BPM"
           id="bpm"
-          value={formData.bpm === null ? '' : formData.bpm}
-          onChange={(value) => setFormData({ ...formData, bpm: value === '' ? null : Number(value) })}
+          value={formData.bpm ?? ''}
+          onChange={(value) => setFormData({ ...formData, bpm: value === '' ? undefined : Number(value) })}
           type="number"
           required={false}
           className="flex-1"
@@ -149,13 +160,23 @@ export function SongForm({ song, onSuccess }: Props) {
         <div className="text-red-600 text-sm">{error}</div>
       )}
 
-      <Button
-        type="submit"
-        disabled={isLoading}
-        className="w-full h-22"
-      >
-        {isLoading ? (song ? 'updating...' : 'adding...') : (song ? 'update' : 'confirm')}
-      </Button>
+      <div className="flex divide-x divide-neutral-500 border-b border-neutral-500">
+        <PanelButton 
+          label={isLoading ? (song ? 'updating...' : 'adding...') : (song ? 'update' : 'confirm')}
+          type="submit"
+          variant="primary"
+          disabled={isLoading}
+          className="flex-1"
+        />
+        {song && (
+          <PanelButton 
+            label="delete"
+            variant="secondary"
+            className="flex-1"
+            onClick={handleDelete}
+          />
+        )}
+      </div>
     </form>
   )
 } 

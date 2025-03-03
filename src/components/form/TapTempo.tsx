@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Button } from '../ui/Button'
+import { Button } from '../buttons/Button'
 
 type Props = {
   onBpmChange: (bpm: number) => void

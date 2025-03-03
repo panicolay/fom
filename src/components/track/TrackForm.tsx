@@ -1,17 +1,17 @@
 import { useState, useEffect } from "react";
 import { TextField } from "../form/TextField";
-import { Button } from "../ui/Button";
-import { TrackFormData } from "../../types/trackTypes";
+import { TrackFormData, Track } from "../../types/trackTypes";
 import { useTrackMutation } from "../../hooks/useTrackMutation";    
-import { usePanelContext } from "../../hooks/usePanelContext";
-
+import { PanelButton } from "../buttons/PanelButton";
 type Props = {
     songId: string
+    track?: Track | null
+    isOpen: boolean
+    onClose: () => void
 }
 
-export function TrackForm({ songId }: Props) {
-    const { isOpen, onClose } = usePanelContext()
-    // Initialize form data
+export function TrackForm({ songId, track, isOpen, onClose }: Props) {
+    // Initialize form data with empty values
     const [formData, setFormData] = useState<TrackFormData>({
         name: '',
         comment: undefined,
@@ -19,26 +19,51 @@ export function TrackForm({ songId }: Props) {
         position: 0
     })
 
+    // TODO: improve song form to use the same logic
     // Reset form data when the modal is opened
     useEffect(() => {
         if (isOpen) {
             setFormData({
-                name: '',
-                comment: undefined,
+                name: track?.name || '',
+                comment: track?.comment || undefined,
                 song_id: songId,
-                position: 0
+                position: track?.position || 0
             })
         }
-    }, [isOpen, songId])
+    }, [isOpen, songId, track])
 
     // Create a new track
-    const { createTrack, isLoading, error } = useTrackMutation()
+    const { createTrack, updateTrack, deleteTrack, isLoading, error } = useTrackMutation()
 
     // Handle form submission
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
         
-        createTrack(formData, {
+        if (track) {
+            updateTrack(
+                { id: track.id, data: formData },
+                {
+                    onSuccess: () => {
+                        onClose()
+                    }
+                }
+            )
+        } else {
+            createTrack(
+                formData,
+                {
+                    onSuccess: () => {
+                        onClose()
+                    }
+                }
+            )
+        }
+    }
+
+    const handleDelete = () => {
+        if (!track?.id) return;
+        
+        deleteTrack(track.id, {
             onSuccess: () => {
                 onClose()
             }
@@ -70,13 +95,23 @@ export function TrackForm({ songId }: Props) {
                     {error}
                 </div>
             )}
-            <Button 
-                type="submit"
-                variant="secondary"
-                disabled={isLoading}
-                className="w-fill">
-                {isLoading ? 'adding...' : 'confirm'}
-            </Button>
+            <div className="flex divide-x divide-neutral-500 border-b border-neutral-500">
+                <PanelButton 
+                    label={isLoading ? (track ? 'updating...' : 'adding...') : (track ? 'update' : 'confirm')}
+                    type="submit"
+                    variant="primary"
+                    disabled={isLoading}
+                    className="flex-1"
+                />
+                {track && (
+                    <PanelButton 
+                        label="delete"
+                        variant="secondary"
+                        className="flex-1"
+                        onClick={handleDelete}
+                    />
+                )}
+            </div>
         </form>
     )
 }

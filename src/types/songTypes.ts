@@ -4,8 +4,18 @@ export type Song = {
   created_at: string
   artist?: string
   album?: string
-  bpm?: number | null
-  length?: number | null
+  bpm?: number | undefined
+  length?: number | undefined
+  time_signature?: string
+  key?: string
+}
+
+export type SongFormInput = {
+  title: string
+  artist?: string
+  album?: string
+  bpm?: number | undefined
+  length?: string
   time_signature?: string
   key?: string
 }
@@ -14,8 +24,8 @@ export type SongFormData = {
   title: string
   artist?: string
   album?: string
-  bpm?: number | null
-  length?: number | null
+  bpm?: number | undefined
+  length?: number | undefined
   time_signature?: string
   key?: string
 }
@@ -25,4 +35,4 @@ export type UseSongsReturn = {
   isLoading: boolean
   error: Error | null
   refetch: () => void
-} 
+}

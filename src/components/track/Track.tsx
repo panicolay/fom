@@ -5,9 +5,10 @@ import { CSS } from "@dnd-kit/utilities";
 
 interface TrackProps {
     track: TrackType;
+    onEdit: (track: TrackType) => void;
 }
 
-export function Track({ track }: TrackProps) {
+export function Track({ track, onEdit }: TrackProps) {
     const {
         attributes,
         listeners,
@@ -37,9 +38,13 @@ export function Track({ track }: TrackProps) {
             >
                 <GripVertical size={18} strokeWidth={1.75} className="text-neutral-600" />
             </button>
-            <div className="text-neutral-400 hover:text-neutral-200">
+            <button
+                className="text-neutral-400 hover:text-neutral-200 cursor-pointer"
+                onClick={() => { onEdit(track) }}
+                type="button"
+            >
                 {track.name}
-            </div>
+            </button>
         </div>
     );
 }

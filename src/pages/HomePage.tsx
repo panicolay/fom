@@ -1,36 +1,29 @@
 import { useEffect, useState } from 'react'
 import { SongForm } from '../components/songs/SongForm'
-import { Panel } from '../components/ui/Panel'
-import { Button } from '../components/ui/Button'
+import { Panel } from '../components/overlays/Panel'
+import { Button } from '../components/buttons/Button'
 import { SongList } from '../components/songs/SongList'
 import { useKeyboardShortcuts } from '../contexts/KeyboardShortcutsContext'
 import { Song } from '../types/songTypes'
 
 export function HomePage() {
-    const [isModalOpen, setIsModalOpen] = useState(false)
+    const [isSongPanelOpen, setIsSongPanelOpen] = useState(false)
     const [songToEdit, setSongToEdit] = useState<Song | null>(null)
     const { registerShortcut, unregisterShortcut } = useKeyboardShortcuts()
 
     useEffect(() => {
-        if (!isModalOpen) {
+        if (!isSongPanelOpen) {
             registerShortcut('openSongForm', { key: 'n' }, () => {
                 setSongToEdit(null)
-                setIsModalOpen(true)
+                setIsSongPanelOpen(true)
             })
             return () => unregisterShortcut('openSongForm')
         }
-    }, [registerShortcut, unregisterShortcut, isModalOpen])
+    }, [registerShortcut, unregisterShortcut, isSongPanelOpen])
 
-    const handleOpenModal = (song?: Song) => {
+    const handleOpenSongPanel = (song?: Song) => {
         setSongToEdit(song || null)
-        setIsModalOpen(true)
-    }
-
-    const handleCloseModal = () => {
-        setIsModalOpen(false)
-        setTimeout(() => {
-            setSongToEdit(null)
-        }, 200)
+        setIsSongPanelOpen(true)
     }
 
     return (
@@ -38,23 +31,25 @@ export function HomePage() {
             <h1 className="font-display text-7xl font-semibold text-neutral-200">THE<br />FORM OF<br />MUSIC</h1>
 
             <Button 
+                variant="inverted"
                 className="w-fit"
-                onClick={() => handleOpenModal()}>
+                onClick={() => handleOpenSongPanel()}>
                 add song
             </Button>
 
             <Panel
-                isOpen={isModalOpen}
-                onClose={handleCloseModal}
-                title={songToEdit ? <>Edit<br/>song</> : <>Add <br/>song</>}
+                isOpen={isSongPanelOpen}
+                onClose={() => setIsSongPanelOpen(false)}
+                title={songToEdit ? <>edit<br/>song</> : <>add <br/>song</>}
             >
                 <SongForm 
+                    isOpen={isSongPanelOpen}
+                    onClose={() => setIsSongPanelOpen(false)}
                     song={songToEdit}
-                    onSuccess={handleCloseModal}
                 />
             </Panel>
 
-            <SongList onEdit={handleOpenModal} />
+            <SongList onEdit={handleOpenSongPanel} />
         </>
     )
 }
