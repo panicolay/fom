@@ -5,50 +5,78 @@ import { Track, TrackFormData } from '../types/trackTypes'
 export function useTrackMutation() {
     const queryClient = useQueryClient()
 
-    const createMutation = useMutation({
-        mutationFn: (data: TrackFormData) => 
-            trackService.getMaxPosition(data.song_id)
-                .then(maxPosition => trackService.create({
-                    ...data,
-                    position: maxPosition + 1
-                })),
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['tracks'] })
+    const createMutation = useMutation<Track, Error, TrackFormData>({
+        mutationFn: async (data: TrackFormData) => {
+            const maxPosition = await trackService.getMaxPosition(data.song_id)
+            const dataWithPosition = {
+                ...data,
+                position: maxPosition + 1
+            }
+            return trackService.create(dataWithPosition)
+        },
+        onSuccess: (newTrack) => {
+            queryClient.setQueryData(['tracks', 'by-song', newTrack.song_id], 
+                (oldTracks: Track[] | undefined) => {
+                    if (!oldTracks) return [newTrack];
+                    return [...oldTracks, newTrack];
+                }
+            );
         },
         onError: (error) => {
             console.error('Failed to create track:', error)
         }
     })
 
-    const updateMutation = useMutation({
-        mutationFn: ({ id, data }: { id: string; data: TrackFormData }) => 
-            trackService.update(id, data),
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['tracks'] })
+    const updateMutation = useMutation<Track, Error, { id: string; data: TrackFormData }>({
+        mutationFn: ({ id, data }) => trackService.update(id, data),
+        onSuccess: (updatedTrack) => {
+            // Mise à jour optimiste du cache
+            queryClient.setQueryData(['tracks', updatedTrack.id], updatedTrack);
+            queryClient.setQueryData(
+                ['tracks', 'by-song', updatedTrack.song_id],
+                (oldTracks: Track[] | undefined) => {
+                    if (!oldTracks) return [updatedTrack];
+                    return oldTracks.map(track => 
+                        track.id === updatedTrack.id ? updatedTrack : track
+                    );
+                }
+            );
         },
         onError: (error) => {
             console.error('Failed to update track:', error)
         }
     })
 
-    const deleteMutation = useMutation({
+    const deleteMutation = useMutation<Track, Error, string>({
         mutationFn: (id: string) => trackService.delete(id),
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['tracks'] })
+        onSuccess: (deletedTrack) => {
+            // Invalider le cache pour la liste des tracks de la chanson
+            queryClient.invalidateQueries({ 
+                queryKey: ['tracks', 'by-song', deletedTrack.song_id] 
+            })
+            // Supprimer la track du cache
+            queryClient.removeQueries({ 
+                queryKey: ['tracks', deletedTrack.id] 
+            })
         },
         onError: (error) => {
             console.error('Failed to delete track:', error)
         }
     })
 
-    const reorderMutation = useMutation({
-        mutationFn: (tracks: Track[]) => trackService.updatePositions(tracks),
+    const reorderMutation = useMutation<
+        Track[],                                   // Type de retour
+        Error,                                     // Type d'erreur
+        Track[],                                   // Type des variables
+        { previousTracks: Track[] | undefined }    // Type du contexte
+    >({
+        mutationFn: trackService.updatePositions,
         onMutate: async (newTracks) => {
             await queryClient.cancelQueries({ 
                 queryKey: ['tracks', 'by-song', newTracks[0].song_id] 
             })
 
-            const previousTracks = queryClient.getQueryData(
+            const previousTracks = queryClient.getQueryData<Track[]>(
                 ['tracks', 'by-song', newTracks[0].song_id]
             )
 
@@ -60,10 +88,12 @@ export function useTrackMutation() {
             return { previousTracks }
         },
         onError: (error, newTracks, context) => {
-            queryClient.setQueryData(
-                ['tracks', 'by-song', newTracks[0].song_id], 
-                context?.previousTracks
-            )
+            if (context?.previousTracks) {
+                queryClient.setQueryData(
+                    ['tracks', 'by-song', newTracks[0].song_id], 
+                    context.previousTracks
+                )
+            }
             console.error('Failed to reorder tracks:', error)
         },
         onSettled: (_, __, newTracks) => {

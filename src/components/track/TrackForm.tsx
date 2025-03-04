@@ -19,7 +19,6 @@ export function TrackForm({ songId, track, isOpen, onClose }: Props) {
         position: 0
     })
 
-    // TODO: improve song form to use the same logic
     // Reset form data when the modal is opened
     useEffect(() => {
         if (isOpen) {

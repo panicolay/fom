@@ -60,7 +60,7 @@ export function TrackList({ tracks, onEdit }: TrackListProps) {
                 items={tracks}
                 strategy={verticalListSortingStrategy}
             >
-                <ul className="">
+                <ul className="-ml-7">
                     {tracks.map((track) => (
                         <Track key={track.id} track={track} onEdit={onEdit} />
                     ))}

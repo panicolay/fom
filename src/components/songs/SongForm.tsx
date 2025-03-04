@@ -6,7 +6,7 @@ import { Song, SongFormInput } from '../../types/songTypes'
 import { formatSecondsToTime } from '../../utils/timeUtils'
 import { cn } from '../../utils/cn'
 import { PanelButton } from '../buttons/PanelButton'
-
+import { useNavigate } from 'react-router-dom'
 type Props = {
   song?: Song | null
   isOpen: boolean
@@ -14,6 +14,8 @@ type Props = {
 }
 
 export function SongForm({ song, isOpen, onClose }: Props) {
+  const { createSong, updateSong, deleteSong, isLoading, error } = useSongMutation()
+  const navigate = useNavigate()
   
   const [formData, setFormData] = useState<SongFormInput>({
     title: '',
@@ -38,7 +40,6 @@ export function SongForm({ song, isOpen, onClose }: Props) {
       })
     }
   }, [isOpen, song])
-  const { createSong, updateSong, deleteSong, isLoading, error } = useSongMutation()
 
   useEffect(() => {
     const titleInput = document.getElementById('title')
@@ -61,8 +62,8 @@ export function SongForm({ song, isOpen, onClose }: Props) {
       createSong(
         formData,
         {
-          onSuccess: () => {
-            onClose()
+          onSuccess: (newSong) => {
+            navigate(`/songs/${newSong.id}`)
           }
         }
       )

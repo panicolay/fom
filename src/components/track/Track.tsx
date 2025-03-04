@@ -28,12 +28,12 @@ export function Track({ track, onEdit }: TrackProps) {
         <div 
             ref={setNodeRef}
             style={style}
-            className={`flex items-center gap-2 h-10 ${isDragging ? 'cursor-grabbing' : ''}`}
+            className={`group flex items-center gap-2 h-10 ${isDragging ? 'cursor-grabbing' : ''}`}
         >
             <button
                 {...attributes}
                 {...listeners}
-                className="cursor-grab active:cursor-grabbing"
+                className="p-px opacity-0 group-hover:opacity-100 cursor-grab active:cursor-grabbing"
                 aria-label={`Réorganiser la piste ${track.name}`}
             >
                 <GripVertical size={18} strokeWidth={1.75} className="text-neutral-600" />

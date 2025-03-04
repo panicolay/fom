@@ -18,7 +18,7 @@ export function PanelButton({
 
     return (
         <button
-            className={`flex items-center justify-center h-16
+            className={`flex items-center justify-center h-22
                 font-display lowercase text-neutral-200
                 focus:outline-1 focus:outline-neutral-200 focus:z-10
                 cursor-pointer
