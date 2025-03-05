@@ -11,15 +11,20 @@ import { Track } from '../types/trackTypes'
 import { User, Disc3, Timer, Activity } from 'lucide-react'
 import { useSongMutation } from '../hooks/useSongMutation'
 import { useNavigate } from 'react-router-dom'
+import { Song } from '../types/songTypes'
+import { SongForm } from '../components/songs/SongForm'
 
 export function SongStructurePage() {
   const { songId } = useParams()
   const { data: song, isLoading: songLoading, error: songError } = useSong(songId)
   const { data: tracks, isLoading: tracksLoading } = useTracksBySong(songId)
   const { deleteSong } = useSongMutation()
+  const [isSongPanelOpen, setIsSongPanelOpen] = useState(false)
+  const [songToEdit, setSongToEdit] = useState<Song | null>(null)
   const [isTrackPanelOpen, setIsTrackPanelOpen] = useState(false)
   const [trackToEdit, setTrackToEdit] = useState<Track | null>(null)
   const navigate = useNavigate()
+
 
   const handleOpenTrackPanel = (track?: Track) => {
     setTrackToEdit(track || null)
@@ -30,6 +35,11 @@ export function SongStructurePage() {
   if (songError) return <div>Error: {songError.message}</div>
   if (!song) return <div>Song not found</div>
   if (!songId) return <div>No song ID provided</div>
+
+  const handleOpenSongPanel = (song?: Song) => {
+    setSongToEdit(song || null)
+    setIsSongPanelOpen(true)
+  }
 
   const handleDeleteSong = async () => {
     try {
@@ -46,24 +56,31 @@ export function SongStructurePage() {
 
   return (
     <>
-      <div className="flex flex-col gap-4">
-        <h1 className="font-display uppercase text-6xl font-semibold text-neutral-200">
-          {song.title}
-        </h1>
+      <div className="flex justify-between">
+        <div className="flex flex-col gap-4">
+          <h1 className="font-display uppercase text-6xl font-semibold text-neutral-200">
+            {song.title}
+          </h1>
 
-        {/* song general info */}
-        <ul className="flex text-neutral-400 gap-6">
-          {song.artist && <li className="flex items-center gap-2"><User size={16} strokeWidth={1.75} className="text-neutral-500" /> {song.artist}</li>}
-          {song.album && <li className="flex items-center gap-2"><Disc3 size={16} strokeWidth={1.75} className="text-neutral-500" /> {song.album}</li>}
-          {song.length && <li className="flex items-center gap-2"><Timer size={16} strokeWidth={1.75} className="text-neutral-500" /> {formatSecondsToTime(Number(song.length))}</li>}
-          {song.bpm && <li className="flex items-center gap-2"><Activity size={16} strokeWidth={1.75} className="text-neutral-500" /> {song.bpm} bpm</li>}
-          {song.time_signature && <li>{song.time_signature}</li>}
-          {song.key && <li>{song.key}</li>}
-        </ul>
+          {/* song general info */}
+          <ul className="flex text-neutral-400 gap-6">
+            {song.artist && <li className="flex items-center gap-2"><User size={16} strokeWidth={1.75} className="text-neutral-500" /> {song.artist}</li>}
+            {song.album && <li className="flex items-center gap-2"><Disc3 size={16} strokeWidth={1.75} className="text-neutral-500" /> {song.album}</li>}
+            {song.length && <li className="flex items-center gap-2"><Timer size={16} strokeWidth={1.75} className="text-neutral-500" /> {formatSecondsToTime(Number(song.length))}</li>}
+            {song.bpm && <li className="flex items-center gap-2"><Activity size={16} strokeWidth={1.75} className="text-neutral-500" /> {song.bpm} bpm</li>}
+            {song.time_signature && <li>{song.time_signature}</li>}
+            {song.key && <li>{song.key}</li>}
+          </ul>
+        </div>
 
-        <Button variant="inverted" className="w-fit" onClick={handleDeleteSong}>
-          delete song
-        </Button>
+        <div className="flex gap-2">
+          <Button variant="inverted" className="w-fit" onClick={() => handleOpenSongPanel(song)}>
+            edit song
+          </Button>
+          <Button variant="inverted" className="w-fit" onClick={handleDeleteSong}>
+            delete song
+          </Button>
+        </div>
       </div>
 
       {/* Tracks list */}
@@ -80,6 +97,7 @@ export function SongStructurePage() {
         add track
       </Button>
 
+      {/* Panel pour les tracks */}
       <Panel
         isOpen={isTrackPanelOpen}
         onClose={() => setIsTrackPanelOpen(false)}
@@ -90,6 +108,19 @@ export function SongStructurePage() {
           onClose={() => setIsTrackPanelOpen(false)}
           songId={songId}
           track={trackToEdit}
+        />
+      </Panel>
+
+      {/* Panel pour l'édition de chanson */}
+      <Panel
+        isOpen={isSongPanelOpen}
+        onClose={() => setIsSongPanelOpen(false)}
+        title={<>edit<br/>song</>}
+      >
+        <SongForm
+          isOpen={isSongPanelOpen}
+          onClose={() => setIsSongPanelOpen(false)}
+          song={songToEdit}
         />
       </Panel>
     </>

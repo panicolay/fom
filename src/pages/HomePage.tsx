@@ -49,7 +49,7 @@ export function HomePage() {
                 />
             </Panel>
 
-            <SongList onEdit={handleOpenSongPanel} />
+            <SongList/>
         </>
     )
 }
