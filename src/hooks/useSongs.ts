@@ -1,14 +1,8 @@
 import { useQuery } from '@tanstack/react-query'
 import { songService } from '../services/songService'
 import { Song, UseSongsReturn } from '../types/songTypes'
-
-// Options de base pour toutes les queries de songs
-const queryOptions = {
-  staleTime: 30000,  // Les données restent "fraîches" pendant 30s
-  retry: 2,          // Réessaie 2 fois en cas d'échec
-  refetchOnWindowFocus: false,  // Ne refetch pas quand la fenêtre reprend le focus
-  cacheTime: 5 * 60 * 1000,    // Garde en cache pendant 5 minutes
-}
+import { createErrorWithMessage } from '../utils/errorUtils'
+import { defaultQueryOptions } from '../utils/queryUtils'
 
 export function useSongs(): UseSongsReturn {
   return useQuery<Song[], Error>({
@@ -19,10 +13,10 @@ export function useSongs(): UseSongsReturn {
         if (!songs) return []
         return songs
       } catch (error) {
-        throw new Error(error instanceof Error ? error.message : 'Failed to fetch songs')
+        throw createErrorWithMessage(error, 'Failed to fetch songs')
       }
     },
-    ...queryOptions
+    ...defaultQueryOptions
   })
 }
 
@@ -37,10 +31,10 @@ export function useSong(songId: string | undefined) {
         if (!song) throw new Error('Song not found')
         return song
       } catch (error) {
-        throw new Error(error instanceof Error ? error.message : 'Failed to fetch song')
+        throw createErrorWithMessage(error, 'Failed to fetch song')
       }
     },
-    ...queryOptions,
+    ...defaultQueryOptions,
     enabled: !!songId
   })
 }

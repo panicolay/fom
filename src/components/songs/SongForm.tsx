@@ -73,11 +73,12 @@ export function SongForm({ song, isOpen, onClose }: Props) {
   const handleDelete = () => {
     if (!song?.id) return;
     
-    deleteSong(song.id, {
-      onSuccess: () => {
-        onClose()
+    deleteSong(
+      song.id, 
+      {
+        onSuccess: () => onClose()
       }
-    })
+    )
   }
 
   return (

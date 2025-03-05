@@ -1,14 +1,8 @@
 import { useQuery } from '@tanstack/react-query'
 import { trackService } from '../services/trackService'
 import { Track, UseTracksReturn } from '../types/trackTypes'
-
-// Options de base pour toutes les queries de tracks
-const queryOptions = {
-  staleTime: 30000,  // Les données restent "fraîches" pendant 30s
-  retry: 2,          // Réessaie 2 fois en cas d'échec
-  refetchOnWindowFocus: false,  // Ne refetch pas quand la fenêtre reprend le focus
-  cacheTime: 5 * 60 * 1000,    // Garde en cache pendant 5 minutes
-}
+import { createErrorWithMessage } from '../utils/errorUtils'
+import { defaultQueryOptions } from '../utils/queryUtils'
 
 export function useTracks(): UseTracksReturn {
   return useQuery<Track[], Error>({
@@ -19,10 +13,10 @@ export function useTracks(): UseTracksReturn {
         if (!tracks) return []
         return tracks
       } catch (error) {
-        throw new Error(error instanceof Error ? error.message : 'Failed to fetch tracks')
+        throw createErrorWithMessage(error, 'Failed to fetch tracks')
       }
     },
-    ...queryOptions
+    ...defaultQueryOptions
   })
 }
 
@@ -37,10 +31,10 @@ export function useTrack(trackId: string | undefined) {
         if (!track) throw new Error('Track not found')
         return track
       } catch (error) {
-        throw new Error(error instanceof Error ? error.message : 'Failed to fetch track')
+        throw createErrorWithMessage(error, 'Failed to fetch track')
       }
     },
-    ...queryOptions,
+    ...defaultQueryOptions,
     enabled: !!trackId
   })
 }
@@ -57,10 +51,10 @@ export function useTracksBySong(songId: string | undefined) {
         if (!tracks) return []
         return tracks
       } catch (error) {
-        throw new Error(error instanceof Error ? error.message : 'Failed to fetch tracks for song')
+        throw createErrorWithMessage(error, 'Failed to fetch tracks for song')
       }
     },
-    ...queryOptions,
+    ...defaultQueryOptions,
     enabled: !!songId
   })
 }

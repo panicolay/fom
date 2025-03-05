@@ -33,7 +33,12 @@ export function SongStructurePage() {
 
   const handleDeleteSong = async () => {
     try {
-      await deleteSong(song.id, () => navigate('/'))
+      await deleteSong(
+        song.id, 
+        {
+          onSuccess: () => navigate('/')
+        }
+      )
     } catch (error) {
       console.error('Failed to delete song:', error)
     }

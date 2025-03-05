@@ -41,14 +41,14 @@ export const trackService = {
      * Récupère toutes les pistes, triées par date de création décroissante
      * @returns Liste des pistes
      */
-    async getAll(): Promise<Track[] | null> {
+    async getAll(): Promise<Track[]> {
         const { data, error } = await supabase
             .from('tracks')
             .select('*')
             .order('created_at', { ascending: false })
             
         if (error) throw error
-        return data
+        return data || []
     },
 
     /**
@@ -71,7 +71,7 @@ export const trackService = {
      * Récupère toutes les pistes d'une chanson
      * @param songId Identifiant de la chanson
      * @returns Liste des pistes de la chanson
-     * @throws Error si la récupération échoue ou si aucune donnée n'est retournée
+     * @throws Error si la récupération échoue
      */
     async getTracksBySongId(songId: string): Promise<Track[]> {
         const { data, error } = await supabase
@@ -81,8 +81,7 @@ export const trackService = {
             .order('position', { ascending: true })
             
         if (error) throw error
-        if (!data) throw new Error('No data returned from getTracksBySongId operation')
-        return data
+        return data || []
     },
 
     /**
@@ -106,62 +105,25 @@ export const trackService = {
     },
 
     /**
-     * Supprime une piste et réorganise les positions des pistes restantes
+     * Supprime une piste
      * @param id Identifiant de la piste à supprimer
-     * @returns La piste supprimée
      */
-    async delete(id: string): Promise<Track> {
-        // D'abord, récupérer la track à supprimer pour avoir son song_id et sa position
-        const { data: trackToDelete, error: getError } = await supabase
-            .from('tracks')
-            .select('*')
-            .eq('id', id)
-            .single();
-
-        if (getError) throw getError;
-        if (!trackToDelete) throw new Error('Track not found');
-
-        // Supprimer la track
-        const { data: deletedTrack, error: deleteError } = await supabase
+    async delete(id: string): Promise<void> {
+        const { error } = await supabase
             .from('tracks')
             .delete()
             .eq('id', id)
-            .select()
-            .single();
-
-        if (deleteError) throw deleteError;
-        if (!deletedTrack) throw new Error('No data returned from delete operation');
-
-        // Récupérer toutes les tracks restantes de la même chanson avec une position supérieure
-        const { data: tracksToUpdate, error: getTracksError } = await supabase
-            .from('tracks')
-            .select('*')
-            .eq('song_id', trackToDelete.song_id)
-            .gt('position', trackToDelete.position)
-            .order('position', { ascending: true });
-
-        if (getTracksError) throw getTracksError;
-        if (!tracksToUpdate) return deletedTrack;
-
-        // Mettre à jour les positions si nécessaire
-        if (tracksToUpdate.length > 0) {
-            const updatedTracks = tracksToUpdate.map((track, index) => ({
-                ...track,
-                position: trackToDelete.position + index
-            }));
-
-            await this.updatePositions(updatedTracks);
-        }
-
-        return deletedTrack;
+            
+        if (error) throw error
     },
 
     /**
      * Met à jour les positions des pistes
      * @param tracks Liste des pistes à mettre à jour
-     * @returns Les pistes mises à jour
      */
-    async updatePositions(tracks: Track[]): Promise<Track[]> {
+    async updatePositions(tracks: Track[]): Promise<void> {
+        if (tracks.length === 0) return;
+        
         const updates = tracks.map(track => ({
             id: track.id,
             position: track.position,
@@ -169,16 +131,13 @@ export const trackService = {
             song_id: track.song_id
         }));
         
-        const { data, error } = await supabase
+        const { error } = await supabase
             .from('tracks')
             .upsert(updates, { 
                 onConflict: 'id',
                 ignoreDuplicates: false 
-            })
-            .select();
+            });
             
         if (error) throw error;
-        if (!data) throw new Error('No data returned from updatePositions operation')
-        return data;
     }
 }

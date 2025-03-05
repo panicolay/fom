@@ -6,7 +6,6 @@ export const songService = {
    * Crée une nouvelle chanson dans la base de données
    * @param songData Les données de la chanson à créer
    * @returns La chanson créée
-   * @throws Error si la création échoue ou si aucune donnée n'est retournée
    */
   async create(songData: SongFormData): Promise<Song> {
     const { data, error } = await supabase
@@ -24,14 +23,14 @@ export const songService = {
    * Récupère toutes les chansons, triées par date de création décroissante
    * @returns Liste des chansons
    */
-  async getAll(): Promise<Song[] | null> {
+  async getAll(): Promise<Song[]> {
     const { data, error } = await supabase
       .from('songs')
       .select('*')
       .order('created_at', { ascending: false })
     
     if (error) throw error
-    return data
+    return data || []
   },
 
   /**
@@ -55,7 +54,6 @@ export const songService = {
    * @param id Identifiant de la chanson à mettre à jour
    * @param songData Nouvelles données de la chanson
    * @returns La chanson mise à jour
-   * @throws Error si la mise à jour échoue ou si aucune donnée n'est retournée
    */
   async update(id: string, songData: SongFormData): Promise<Song> {
     const { data, error } = await supabase
@@ -71,65 +69,15 @@ export const songService = {
   },
 
   /**
-   * Supprime une chanson et toutes ses pistes associées
+   * Supprime une chanson
    * @param id Identifiant de la chanson à supprimer
-   * @returns La chanson supprimée
    */
-  async delete(id: string): Promise<Song> {
-    console.log('Début de la suppression de la chanson:', id)
-
-    // D'abord, vérifier si la chanson existe
-    const { data: existingSong, error: checkError } = await supabase
-      .from('songs')
-      .select('*')
-      .eq('id', id)
-      .single()
-
-    if (checkError) {
-      console.error('Erreur lors de la vérification de la chanson:', checkError)
-      throw checkError
-    }
-
-    if (!existingSong) {
-      console.error('La chanson n\'existe pas:', id)
-      throw new Error('Song not found')
-    }
-
-    console.log('Suppression des tracks associées...')
-    // Supprimer toutes les tracks associées
-    const { data: deletedTracks, error: deleteTracksError } = await supabase
-      .from('tracks')
-      .delete()
-      .eq('song_id', id)
-      .select()
-
-    if (deleteTracksError) {
-      console.error('Erreur lors de la suppression des tracks:', deleteTracksError)
-      throw deleteTracksError
-    }
-
-    console.log('Tracks supprimées:', deletedTracks?.length || 0, 'tracks')
-
-    console.log('Suppression de la chanson...')
-    // Ensuite, supprimer la chanson
-    const { data, error } = await supabase
+  async delete(id: string): Promise<void> {
+    const { error } = await supabase
       .from('songs')
       .delete()
       .eq('id', id)
-      .select()
-      .single()
     
-    if (error) {
-      console.error('Erreur lors de la suppression de la chanson:', error)
-      throw error
-    }
-
-    if (!data) {
-      console.error('Aucune donnée retournée après la suppression')
-      throw new Error('No data returned from delete operation')
-    }
-
-    console.log('Chanson supprimée avec succès:', data)
-    return data
+    if (error) throw error
   }
 } 
