@@ -13,6 +13,7 @@ import { useSongMutation } from '../hooks/useSongMutation'
 import { useNavigate } from 'react-router-dom'
 import { Song } from '../types/songTypes'
 import { SongForm } from '../components/songs/SongForm'
+import { Pencil, Trash } from 'lucide-react'
 
 export function SongStructurePage() {
   const { songId } = useParams()
@@ -74,12 +75,8 @@ export function SongStructurePage() {
         </div>
 
         <div className="flex gap-2">
-          <Button variant="inverted" className="w-fit" onClick={() => handleOpenSongPanel(song)}>
-            edit song
-          </Button>
-          <Button variant="inverted" className="w-fit" onClick={handleDeleteSong}>
-            delete song
-          </Button>
+          <Button variant="inverted" size="medium" icon={Pencil} ariaLabel="edit song" onClick={() => handleOpenSongPanel(song)} />
+          <Button variant="inverted" size="medium" icon={Trash} ariaLabel="delete song" onClick={handleDeleteSong} />
         </div>
       </div>
 
@@ -87,7 +84,7 @@ export function SongStructurePage() {
       {tracks && tracks.length > 0 ? (
         <TrackList tracks={tracks} onEdit={handleOpenTrackPanel} />
       ) : (
-        <p>No tracks yet</p>
+        <p className="text-neutral-400">No tracks yet</p>
       )}
 
       <Button 
