@@ -1,8 +1,9 @@
-import { GripVertical } from "lucide-react";
+import { GripVertical, Plus } from "lucide-react";
 import { Track as TrackType } from "../../types/trackTypes";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-
+import { Button } from "../buttons/Button";
+import { PatternPopover } from "../pattern/PatternPopover";
 interface TrackProps {
     track: TrackType;
     onEdit: (track: TrackType) => void;
@@ -39,12 +40,14 @@ export function Track({ track, onEdit }: TrackProps) {
                 <GripVertical size={18} strokeWidth={1.75} className="text-neutral-600" />
             </button>
             <button
-                className="text-neutral-400 hover:text-neutral-200 cursor-pointer"
+                className="w-30 text-neutral-400 hover:text-neutral-200 cursor-pointer text-left"
                 onClick={() => { onEdit(track) }}
                 type="button"
             >
                 {track.name}
             </button>
+            <Button variant="ghost" icon={Plus} size="small" />
+            <PatternPopover />
         </div>
     );
 }

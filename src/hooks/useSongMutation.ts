@@ -42,6 +42,9 @@ export function useSongMutation() {
     }
   })
 
+  // Note: La suppression d'une chanson suivie d'une redirection peut générer une erreur
+  // dans la console liée à l'invalidation des requêtes après navigation.
+  // Cette erreur n'affecte pas le fonctionnement de l'application.
   const deleteMutation = useMutation<void, Error, string>({
     mutationFn: (id: string) => songService.delete(id),
     onSuccess: () => {

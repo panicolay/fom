@@ -2,7 +2,7 @@ type ButtonProps = {
   children?: React.ReactNode
   className?: string
   size?: 'small' | 'medium'
-  variant?: 'primary' | 'secondary' | 'inverted'
+  variant?: 'primary' | 'secondary' | 'inverted' | 'ghost'
   icon?: React.ComponentType<{ className?: string, size?: number, strokeWidth?: number }>
   iconPosition?: 'left' | 'right'
   /**
@@ -26,7 +26,8 @@ export function Button({
   const variantClasses = {
     primary: 'bg-neutral-200 text-neutral-900',
     secondary: 'bg-neutral-700 text-neutral-300',
-    inverted: 'bg-neutral-950 text-neutral-200 border-1 border-neutral-700 hover:border-neutral-400 transition-colors duration-160'
+    inverted: 'bg-neutral-950 text-neutral-400 hover:text-neutral-200 border-1 border-neutral-700 hover:border-neutral-400 transition-colors duration-160',
+    ghost: 'text-neutral-400 hover:text-neutral-200 transition-colors duration-160'
   }
   
   // Structure unifiée pour les tailles
@@ -62,7 +63,7 @@ export function Button({
       className={`flex items-center justify-center gap-2
         font-display lowercase
         cursor-pointer
-        focus:outline-1 focus-visible:outline-neutral-200 focus-visible:outline-offset-1
+        focus-visible:outline-1 focus-visible:outline-neutral-200 focus-visible:outline-offset-1
         ${buttonSizeClasses} ${variantClasses[variant]} ${className}`}
       aria-label={isIconOnly ? ariaLabel : undefined}
       {...props}
