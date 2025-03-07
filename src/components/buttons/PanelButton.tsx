@@ -4,6 +4,7 @@ type Props = {
     className?: string
 } & React.ButtonHTMLAttributes<HTMLButtonElement>
 
+// TODO: add a variant for the button that is used in the popover (smalle)
 export function PanelButton({ 
     label, 
     className = '', 

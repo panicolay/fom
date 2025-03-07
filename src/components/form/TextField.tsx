@@ -35,7 +35,10 @@ export function TextField({
     }
     
     return (
-        <div className={`group relative flex flex-col ${className}`}>
+        <div className={`group relative flex flex-col ${className}
+            border-b border-neutral-500
+            bg-neutral-900 focus-within:bg-neutral-800
+            `}>
             <label htmlFor={id}
                 className={`absolute text-neutral-400 group-focus-within:text-neutral-300
                 ${labelClasses[variant]}`}>
@@ -50,8 +53,8 @@ export function TextField({
                 onChange={(e) => onChange(e.target.value)}
                 className={`text-lg text-neutral-200
                     ${inputClasses[variant]}
-                    border-b border-neutral-500
-                    focus:text-neutral-100 focus:bg-neutral-800 focus:outline-1 focus:outline-neutral-200`}
+                    focus:text-neutral-100
+                    focus:outline-1 focus:outline-offset-0 focus:outline-neutral-200`}
                 required={required}
             />
         </div>

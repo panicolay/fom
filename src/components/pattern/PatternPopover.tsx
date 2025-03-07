@@ -3,6 +3,8 @@ import { TextField } from "../form/TextField";
 import { Button } from "../buttons/Button";
 import { useState } from "react";
 import { PatternFormData } from "../../types/patternTypes";
+import { Plus } from "lucide-react";
+import { PanelButton } from "../buttons/PanelButton";
 
 export const PatternPopover = () => {
 
@@ -18,10 +20,10 @@ export const PatternPopover = () => {
         <Popover>
             <PopoverBackdrop transition className="fixed inset-0 bg-neutral-950/40 z-10
                 transition duration-160 ease-out data-[closed]:opacity-0" />
-            <PopoverButton className="text-neutral-400 relative z-20">blabla</PopoverButton>
-            <PopoverPanel transition anchor="bottom start" className="absolute top-0 left-0 w-80 [--anchor-gap:8px]
-                bg-neutral-900 border border-neutral-500 z-30
-                transition duration-160 ease-out data-[closed]:opacity-0">
+            <PopoverButton as={Button} variant="ghost"  className="relative z-20" icon={Plus} size="small" />
+            <PopoverPanel transition anchor="bottom start" className="p-px w-80 [--anchor-gap:8px]
+                bg-neutral-500 z-30
+                transition duration-160 ease-out data-[closed]:scale-96 data-[closed]:opacity-0">
                 <form className="flex flex-col w-full">
                     <div className="flex w-full
                         divide-neutral-500 divide-x">
@@ -50,7 +52,9 @@ export const PatternPopover = () => {
                         value={formData.comment || ""} 
                         onChange={(value) => setFormData({ ...formData, comment: value as string })} 
                         type="text" required={false} />
-                    <Button variant="secondary" type="submit">Confirm</Button>
+                    <PanelButton label="confirm" variant="primary" type="submit"
+                        className="!h-12"
+                    >Confirm</PanelButton>
                 </form>
             </PopoverPanel>
         </Popover>
