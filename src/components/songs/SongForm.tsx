@@ -7,37 +7,46 @@ import { formatSecondsToTime } from '../../utils/timeUtils'
 import { cn } from '../../utils/cn'
 import { PanelButton } from '../buttons/PanelButton'
 import { useNavigate } from 'react-router-dom'
+
 type Props = {
   song?: Song | null
   isOpen: boolean
   onClose: () => void
 }
 
+// Définir les valeurs par défaut une seule fois
+const DEFAULT_FORM_DATA: SongFormInput = {
+  title: '',
+  artist: undefined,
+  album: undefined,
+  bpm: 120,
+  length: '',
+  time_signature: '4/4',
+  key: undefined
+}
+
 export function SongForm({ song, isOpen, onClose }: Props) {
   const { createSong, updateSong, deleteSong, isLoading, error } = useSongMutation()
   const navigate = useNavigate()
   
-  const [formData, setFormData] = useState<SongFormInput>({
-    title: '',
-    artist: undefined,
-    album: undefined,
-    bpm: undefined,
-    length: '',
-    time_signature: undefined,
-    key: undefined
-  })
+  // Utiliser la constante dans le useState
+  const [formData, setFormData] = useState<SongFormInput>(DEFAULT_FORM_DATA)
 
+  // Dans le useEffect, ne gérer que les valeurs du song existant
   useEffect(() => {
-    if (isOpen) {
+    if (isOpen && song) {
       setFormData({
-        title: song?.title || '',
-        artist: song?.artist || undefined,
-        album: song?.album || undefined,
-        bpm: song?.bpm || undefined,
-        length: song?.length ? formatSecondsToTime(song.length) : '',
-        time_signature: song?.time_signature || undefined,
-        key: song?.key || undefined
+        title: song.title,
+        artist: song.artist,
+        album: song.album,
+        bpm: song.bpm,
+        length: formatSecondsToTime(song.length),
+        time_signature: song.time_signature,
+        key: song.key
       })
+    } else {
+      // Si pas de song, on revient aux valeurs par défaut
+      setFormData(DEFAULT_FORM_DATA)
     }
   }, [isOpen, song])
 
@@ -121,7 +130,7 @@ export function SongForm({ song, isOpen, onClose }: Props) {
         value={formData.length}
         onChange={(value) => setFormData({ ...formData, length: value as string })}
         type="text"
-        required={false}
+        required={true}
       />
         
       <div className="flex">
@@ -130,9 +139,9 @@ export function SongForm({ song, isOpen, onClose }: Props) {
           label="BPM"
           id="bpm"
           value={formData.bpm ?? ''}
-          onChange={(value) => setFormData({ ...formData, bpm: value === '' ? undefined : Number(value) })}
+          onChange={(value) => setFormData({ ...formData, bpm: value as number })}
           type="number"
-          required={false}
+          required={true}
           className="flex-1"
         />
         <TapTempo onBpmChange={(value) => setFormData({ ...formData, bpm: value })} className={cn("h-22 w-30 border-l border-b border-neutral-500 focus:z-10")} />
@@ -145,7 +154,7 @@ export function SongForm({ song, isOpen, onClose }: Props) {
         value={formData.time_signature}
         onChange={(value) => setFormData({ ...formData, time_signature: value as string })}
         type="text"
-        required={false}
+        required={true}
       />
 
       <TextField

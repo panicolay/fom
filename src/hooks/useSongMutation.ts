@@ -8,16 +8,16 @@ import { getErrorMessage } from '../utils/errorUtils'
 export function useSongMutation() {
   const queryClient = useQueryClient()
 
-  const processSongData = (formData: SongFormInput): Omit<SongFormData, 'id'> => {
-    const lengthInSeconds = formData.length ? convertTimeToSeconds(formData.length) : undefined
-    if (formData.length && lengthInSeconds === null) {
+  const processSongData = (formData: SongFormInput): SongFormData => {
+    const lengthInSeconds = convertTimeToSeconds(formData.length)
+    if (lengthInSeconds === null) {
       throw new Error('Invalid duration format. Use MM:SS (ex: 3:03)')
     }
 
     const { length, ...rest } = formData
     return {
       ...rest,
-      length: lengthInSeconds ?? undefined
+      length: lengthInSeconds
     }
   }
 

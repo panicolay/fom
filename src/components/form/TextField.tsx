@@ -50,7 +50,13 @@ export function TextField({
                 placeholder={placeholder}
                 value={value ?? ''}
                 autoComplete={autocomplete}
-                onChange={(e) => onChange(e.target.value)}
+                onChange={(e) => {
+                    if (type === 'number') {
+                        onChange(e.target.valueAsNumber)
+                    } else {
+                        onChange(e.target.value)
+                    }
+                }}
                 className={`text-lg text-neutral-200
                     ${inputClasses[variant]}
                     focus:text-neutral-100
