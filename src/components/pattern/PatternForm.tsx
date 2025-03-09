@@ -1,38 +1,54 @@
 import { useEffect, useState } from "react";
 import { TextField } from "../form/TextField";
 import { PatternFormData } from "../../types/patternTypes";
+import { usePatternMutation } from "../../hooks/usePatternMutation";
 import { PanelButton } from "../buttons/PanelButton";
-type Props = {
+
+type PatternFormProps = {
+    trackId: string
+    barIndex: number
     isOpen: boolean
     onClose: () => void
 }
 
-export const DEFAULT_PATTERN_FORM_DATA = {
-    start: 0,
+const STATIC_PATTERN_FORM_DATA = {
     length: 1,
     repeat: 1,
     name: undefined,
     comment: undefined
 } as const;
 
-export function PatternForm({ isOpen, onClose }: Props) {
+const getDefaultPatternFormData = (trackId: string, barIndex: number): PatternFormData => ({
+    ...STATIC_PATTERN_FORM_DATA,
+    track_id: trackId,
+    start: barIndex
+});
 
-    const [formData, setFormData] = useState<PatternFormData>(DEFAULT_PATTERN_FORM_DATA)
+export function PatternForm({ trackId, barIndex, isOpen, onClose }: PatternFormProps) {
+    const [formData, setFormData] = useState<PatternFormData>(() => 
+        getDefaultPatternFormData(trackId, barIndex)
+    );
 
     useEffect(() => {
         if (isOpen) {
-            setFormData(DEFAULT_PATTERN_FORM_DATA)
+            setFormData(getDefaultPatternFormData(trackId, barIndex))
         }
-    }, [isOpen])
+    }, [isOpen, trackId, barIndex])
 
     useEffect(() => {
         const titleInput = document.getElementById('start')
         titleInput?.focus()
     }, [])
 
+    const { createPattern } = usePatternMutation()
+
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
-        onClose()
+        createPattern(formData, {
+            onSuccess: () => {
+                onClose()
+            }
+        })
     }
 
     return (

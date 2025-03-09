@@ -21,21 +21,17 @@ import { PatternForm } from '../components/pattern/PatternForm'
 export function SongStructurePage() {
   const { songId } = useParams()
   const { data: song, isLoading: songLoading, error: songError } = useSong(songId)
-  const { data: tracks, isLoading: tracksLoading } = useTracksBySongId(songId)
   const { deleteSong } = useSongMutation()
   const [isSongPanelOpen, setIsSongPanelOpen] = useState(false)
   const [songToEdit, setSongToEdit] = useState<Song | null>(null)
+  const { data: tracks, isLoading: tracksLoading } = useTracksBySongId(songId)
   const [isTrackPanelOpen, setIsTrackPanelOpen] = useState(false)
   const [trackToEdit, setTrackToEdit] = useState<Track | null>(null)
   const [isPatternPanelOpen, setIsPatternPanelOpen] = useState(false)
-  // const [selectedPattern, setSelectedPattern] = useState<{ trackId: string, barIndex: number } | null>(null)
+  const [trackId, setTrackId] = useState<string | null>(null)
+  const [barIndex, setBarIndex] = useState<number>(0)
   const navigate = useNavigate()
   const totalBars = useSongBars(song)
-
-  const handleOpenTrackPanel = (track?: Track) => {
-    setTrackToEdit(track || null)
-    setIsTrackPanelOpen(true)
-  }
 
   const handleOpenSongPanel = (songData?: Song) => {
     setSongToEdit(songData || null)
@@ -57,8 +53,14 @@ export function SongStructurePage() {
     }
   }
 
-  const handlePatternClick = () => {
-    // setSelectedPattern({ trackId, barIndex })
+  const handleOpenTrackPanel = (track?: Track) => {
+    setTrackToEdit(track || null)
+    setIsTrackPanelOpen(true)
+  }
+
+  const handlePatternClick = (trackId: string, barIndex: number) => {
+    setTrackId(trackId)
+    setBarIndex(barIndex)
     setIsPatternPanelOpen(true)
   }
 
@@ -146,8 +148,8 @@ export function SongStructurePage() {
         <PatternForm
           isOpen={isPatternPanelOpen}
           onClose={() => setIsPatternPanelOpen(false)}
-          // trackId={selectedPattern?.trackId}
-          // barIndex={selectedPattern?.barIndex}
+          trackId={trackId || ''}
+          barIndex={barIndex}
         />
       </Panel2>
     </>

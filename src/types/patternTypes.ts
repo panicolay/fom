@@ -15,4 +15,5 @@ export type PatternFormData = {
   start: number
   length: number
   repeat: number
+  track_id: string
 }

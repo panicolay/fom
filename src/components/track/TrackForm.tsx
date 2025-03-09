@@ -3,43 +3,50 @@ import { TextField } from "../form/TextField";
 import { TrackFormData, Track } from "../../types/trackTypes";
 import { useTrackMutation } from "../../hooks/useTrackMutation";    
 import { PanelButton } from "../buttons/PanelButton";
-type Props = {
+
+type TrackFormProps = {
     songId: string
     track?: Track | null
     isOpen: boolean
     onClose: () => void
 }
 
-export function TrackForm({ songId, track, isOpen, onClose }: Props) {
-    // Initialize form data with empty values
-    const [formData, setFormData] = useState<TrackFormData>({
-        name: '',
-        comment: undefined,
-        song_id: songId,
-        position: 0
-    })
+const STATIC_TRACK_FORM_DATA = {
+    name: '',
+    comment: undefined,
+    position: 0
+} as const;
 
-    // Reset form data when the modal is opened
+const getDefaultTrackFormData = (songId: string): TrackFormData => ({
+    ...STATIC_TRACK_FORM_DATA,
+    song_id: songId
+});
+
+export function TrackForm({ songId, track, isOpen, onClose }: TrackFormProps) {
+    const [formData, setFormData] = useState<TrackFormData>(() => 
+        getDefaultTrackFormData(songId)
+    );
+    
     useEffect(() => {
-        if (isOpen) {
+        if (isOpen && track) {
             setFormData({
-                name: track?.name || '',
-                comment: track?.comment || undefined,
-                song_id: songId,
-                position: track?.position || 0
-            })
+                name: track.name,
+                comment: track.comment,
+                position: track.position,
+                song_id: songId
+            });
+        } else {
+            setFormData(getDefaultTrackFormData(songId));
         }
-    }, [isOpen, songId, track])
+    }, [isOpen, songId, track]);
 
     useEffect(() => {
         const titleInput = document.getElementById('track_name')
         titleInput?.focus()
       }, [])
 
-    // Create a new track
     const { createTrack, updateTrack, deleteTrack, isLoading, error } = useTrackMutation()
 
-    // Handle form submission
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
         
