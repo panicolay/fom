@@ -21,9 +21,10 @@ interface TrackListProps {
     tracks: TrackType[];
     onEdit: (track: TrackType) => void;
     totalBars: number;
+    onPatternClick: (trackId: string, barIndex: number) => void;
 }
 
-export function TrackList({ tracks, onEdit, totalBars }: TrackListProps) {
+export function TrackList({ tracks, onEdit, totalBars, onPatternClick }: TrackListProps) {
     const { reorderTracks } = useTrackMutation();
     const sensors = useSensors(
         useSensor(PointerSensor),
@@ -68,6 +69,7 @@ export function TrackList({ tracks, onEdit, totalBars }: TrackListProps) {
                             track={track} 
                             onEdit={onEdit}
                             totalBars={totalBars}
+                            onPatternClick={onPatternClick}
                         />
                     ))}
                 </ul>

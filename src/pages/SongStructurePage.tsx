@@ -15,6 +15,8 @@ import { Song } from '../types/songTypes'
 import { SongForm } from '../components/songs/SongForm'
 import { Pencil, Trash } from 'lucide-react'
 import { useSongBars } from '../hooks/useSongBars'
+import { Panel2 } from '../components/overlays/Panel2'
+import { PatternForm } from '../components/pattern/PatternForm'
 
 export function SongStructurePage() {
   const { songId } = useParams()
@@ -25,6 +27,8 @@ export function SongStructurePage() {
   const [songToEdit, setSongToEdit] = useState<Song | null>(null)
   const [isTrackPanelOpen, setIsTrackPanelOpen] = useState(false)
   const [trackToEdit, setTrackToEdit] = useState<Track | null>(null)
+  const [isPatternPanelOpen, setIsPatternPanelOpen] = useState(false)
+  // const [selectedPattern, setSelectedPattern] = useState<{ trackId: string, barIndex: number } | null>(null)
   const navigate = useNavigate()
   const totalBars = useSongBars(song)
 
@@ -51,6 +55,11 @@ export function SongStructurePage() {
     } catch (error) {
       console.error('Failed to delete song:', error)
     }
+  }
+
+  const handlePatternClick = () => {
+    // setSelectedPattern({ trackId, barIndex })
+    setIsPatternPanelOpen(true)
   }
 
   if (songLoading || tracksLoading) return <div>Loading...</div>
@@ -87,8 +96,9 @@ export function SongStructurePage() {
       {tracks && tracks.length > 0 ? (
         <TrackList 
           tracks={tracks} 
-          onEdit={handleOpenTrackPanel}
           totalBars={totalBars}
+          onPatternClick={handlePatternClick}
+          onEdit={handleOpenTrackPanel}
         />
       ) : (
         <p className="text-neutral-400">No tracks yet</p>
@@ -127,6 +137,19 @@ export function SongStructurePage() {
           song={songToEdit}
         />
       </Panel>
+
+      {/* Panel pour les patterns */}
+      <Panel2
+        isOpen={isPatternPanelOpen}
+        onClose={() => setIsPatternPanelOpen(false)}
+      >
+        <PatternForm
+          isOpen={isPatternPanelOpen}
+          onClose={() => setIsPatternPanelOpen(false)}
+          // trackId={selectedPattern?.trackId}
+          // barIndex={selectedPattern?.barIndex}
+        />
+      </Panel2>
     </>
   )
 }

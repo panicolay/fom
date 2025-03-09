@@ -2,14 +2,14 @@ import { GripVertical } from "lucide-react";
 import { Track as TrackType } from "../../types/trackTypes";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { PatternPopover } from "../pattern/PatternPopover";
 interface TrackProps {
     track: TrackType;
     onEdit: (track: TrackType) => void;
     totalBars: number;
+    onPatternClick: (trackId: string, barIndex: number) => void;
 }
 
-export function Track({ track, onEdit, totalBars }: TrackProps) {
+export function Track({ track, onEdit, totalBars, onPatternClick }: TrackProps) {
     const {
         attributes,
         listeners,
@@ -46,13 +46,14 @@ export function Track({ track, onEdit, totalBars }: TrackProps) {
             >
                 {track.name}
             </button>
-            <PatternPopover />
 
+            {/* Bars and patterns */}
             <div className="flex flex-1 hover:bg-neutral-900">
-                {[...Array(totalBars)].map((_, index) => (
-                    <div 
-                        key={index} 
-                        className="flex-1 h-10 hover:bg-neutral-500" 
+                {Array.from({ length: totalBars }, (_, index) => (
+                    <button key={index}
+                        className="flex-1 h-10 hover:bg-neutral-500 cursor-pointer"
+                        onClick={() => onPatternClick(track.id, index)}
+                        type="button"
                     />
                 ))}
             </div>
