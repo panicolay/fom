@@ -20,9 +20,10 @@ import { useTrackMutation } from "../../hooks/useTrackMutation";
 interface TrackListProps {
     tracks: TrackType[];
     onEdit: (track: TrackType) => void;
+    totalBars: number;
 }
 
-export function TrackList({ tracks, onEdit }: TrackListProps) {
+export function TrackList({ tracks, onEdit, totalBars }: TrackListProps) {
     const { reorderTracks } = useTrackMutation();
     const sensors = useSensors(
         useSensor(PointerSensor),
@@ -62,7 +63,12 @@ export function TrackList({ tracks, onEdit }: TrackListProps) {
             >
                 <ul className="-ml-7">
                     {tracks.map((track) => (
-                        <Track key={track.id} track={track} onEdit={onEdit} />
+                        <Track 
+                            key={track.id} 
+                            track={track} 
+                            onEdit={onEdit}
+                            totalBars={totalBars}
+                        />
                     ))}
                 </ul>
             </SortableContext>

@@ -14,6 +14,7 @@ import { useNavigate } from 'react-router-dom'
 import { Song } from '../types/songTypes'
 import { SongForm } from '../components/songs/SongForm'
 import { Pencil, Trash } from 'lucide-react'
+import { useSongBars } from '../hooks/useSongBars'
 
 export function SongStructurePage() {
   const { songId } = useParams()
@@ -25,27 +26,24 @@ export function SongStructurePage() {
   const [isTrackPanelOpen, setIsTrackPanelOpen] = useState(false)
   const [trackToEdit, setTrackToEdit] = useState<Track | null>(null)
   const navigate = useNavigate()
-
+  const totalBars = useSongBars(song)
 
   const handleOpenTrackPanel = (track?: Track) => {
     setTrackToEdit(track || null)
     setIsTrackPanelOpen(true)
   }
 
-  if (songLoading || tracksLoading) return <div>Loading...</div>
-  if (songError) return <div>Error: {songError.message}</div>
-  if (!song) return <div>Song not found</div>
-  if (!songId) return <div>No song ID provided</div>
-
-  const handleOpenSongPanel = (song?: Song) => {
-    setSongToEdit(song || null)
+  const handleOpenSongPanel = (songData?: Song) => {
+    setSongToEdit(songData || null)
     setIsSongPanelOpen(true)
   }
 
   const handleDeleteSong = async () => {
+    if (!song) return;
+    
     try {
       await deleteSong(
-        song.id, 
+        song.id,
         {
           onSuccess: () => navigate('/')
         }
@@ -54,6 +52,11 @@ export function SongStructurePage() {
       console.error('Failed to delete song:', error)
     }
   }
+
+  if (songLoading || tracksLoading) return <div>Loading...</div>
+  if (songError) return <div>Error: {songError.message}</div>
+  if (!song) return <div>Song not found</div>
+  if (!songId) return <div>No song ID provided</div>
 
   return (
     <>
@@ -82,7 +85,11 @@ export function SongStructurePage() {
 
       {/* Tracks list */}
       {tracks && tracks.length > 0 ? (
-        <TrackList tracks={tracks} onEdit={handleOpenTrackPanel} />
+        <TrackList 
+          tracks={tracks} 
+          onEdit={handleOpenTrackPanel}
+          totalBars={totalBars}
+        />
       ) : (
         <p className="text-neutral-400">No tracks yet</p>
       )}

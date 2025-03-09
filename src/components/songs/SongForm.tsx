@@ -147,6 +147,7 @@ export function SongForm({ song, isOpen, onClose }: Props) {
         <TapTempo onBpmChange={(value) => setFormData({ ...formData, bpm: value })} className={cn("h-22 w-30 border-l border-b border-neutral-500 focus:z-10")} />
       </div>
         
+      {/* TODO: add a dropdown for the time signature with possible values coming from supabase */}
       <TextField
         variant="panel"
         label="Time signature"

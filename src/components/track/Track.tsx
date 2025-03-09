@@ -6,9 +6,10 @@ import { PatternPopover } from "../pattern/PatternPopover";
 interface TrackProps {
     track: TrackType;
     onEdit: (track: TrackType) => void;
+    totalBars: number;
 }
 
-export function Track({ track, onEdit }: TrackProps) {
+export function Track({ track, onEdit, totalBars }: TrackProps) {
     const {
         attributes,
         listeners,
@@ -46,6 +47,16 @@ export function Track({ track, onEdit }: TrackProps) {
                 {track.name}
             </button>
             <PatternPopover />
+
+            <div className="flex flex-1 hover:bg-neutral-900">
+                {[...Array(totalBars)].map((_, index) => (
+                    <div 
+                        key={index} 
+                        className="flex-1 h-10 hover:bg-neutral-500" 
+                    />
+                ))}
+            </div>
+
         </div>
     );
 }
