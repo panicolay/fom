@@ -31,6 +31,11 @@ export function TrackForm({ songId, track, isOpen, onClose }: Props) {
         }
     }, [isOpen, songId, track])
 
+    useEffect(() => {
+        const titleInput = document.getElementById('track_name')
+        titleInput?.focus()
+      }, [])
+
     // Create a new track
     const { createTrack, updateTrack, deleteTrack, isLoading, error } = useTrackMutation()
 
