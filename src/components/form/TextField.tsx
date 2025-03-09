@@ -36,7 +36,6 @@ export function TextField({
     
     return (
         <div className={`group relative flex flex-col ${className}
-            border-b border-neutral-500
             bg-neutral-900 focus-within:bg-neutral-800
             `}>
             <label htmlFor={id}

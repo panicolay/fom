@@ -70,7 +70,7 @@ export function TrackForm({ songId, track, isOpen, onClose }: Props) {
     }
     
     return (
-        <form onSubmit={handleSubmit} className="flex flex-col">
+        <form onSubmit={handleSubmit} className="flex flex-col divide-y divide-neutral-500">
             <TextField 
                 variant="panel"
                 label="track name"

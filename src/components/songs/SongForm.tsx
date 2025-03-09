@@ -91,7 +91,7 @@ export function SongForm({ song, isOpen, onClose }: Props) {
   }
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit} className="divide-y divide-neutral-500">
       <TextField
         variant="panel"
         label="Title"
