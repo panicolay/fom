@@ -13,10 +13,3 @@ export type TrackFormData = {
     song_id: string
     position: number
 }
-
-export type UseTracksReturn = {
-    data: Track[] | undefined
-    isLoading: boolean
-    error: Error | null
-    refetch: () => void
-}

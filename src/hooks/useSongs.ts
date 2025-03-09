@@ -1,10 +1,10 @@
 import { useQuery } from '@tanstack/react-query'
 import { songService } from '../services/songService'
-import { Song, UseSongsReturn } from '../types/songTypes'
+import { Song } from '../types/songTypes'
 import { createErrorWithMessage } from '../utils/errorUtils'
 import { defaultQueryOptions } from '../utils/queryUtils'
 
-export function useSongs(): UseSongsReturn {
+export function useSongs() {
   return useQuery<Song[], Error>({
     queryKey: ['songs'],
     queryFn: async () => {

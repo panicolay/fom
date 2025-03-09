@@ -29,10 +29,3 @@ export type SongFormData = {
   time_signature: string
   key?: string
 }
-
-export type UseSongsReturn = {
-  data: Song[] | undefined
-  isLoading: boolean
-  error: Error | null
-  refetch: () => void
-}

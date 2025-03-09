@@ -16,10 +16,3 @@ export type PatternFormData = {
   length: number
   repeat: number
 }
-
-export type usePatternReturn = {
-    data: Pattern[] | undefined
-    isLoading: boolean
-    error: Error | null
-    refetch: () => void
-}

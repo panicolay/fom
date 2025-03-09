@@ -1,22 +1,25 @@
 import { useQuery } from '@tanstack/react-query'
 import { trackService } from '../services/trackService'
-import { Track, UseTracksReturn } from '../types/trackTypes'
+import { Track } from '../types/trackTypes'
 import { createErrorWithMessage } from '../utils/errorUtils'
 import { defaultQueryOptions } from '../utils/queryUtils'
 
-export function useTracks(): UseTracksReturn {
+export function useTracksBySongId(songId: string | undefined) {
   return useQuery<Track[], Error>({
-    queryKey: ['tracks'],
+    queryKey: ['tracks', 'by-song', songId],
     queryFn: async () => {
+      if (!songId) return []
+      
       try {
-        const tracks = await trackService.getAll()
+        const tracks = await trackService.getTracksBySongId(songId)
         if (!tracks) return []
         return tracks
       } catch (error) {
-        throw createErrorWithMessage(error, 'Failed to fetch tracks')
+        throw createErrorWithMessage(error, 'Failed to fetch tracks for song')
       }
     },
-    ...defaultQueryOptions
+    ...defaultQueryOptions,
+    enabled: !!songId
   })
 }
 
@@ -36,25 +39,5 @@ export function useTrack(trackId: string | undefined) {
     },
     ...defaultQueryOptions,
     enabled: !!trackId
-  })
-}
-
-// Hook spécifique pour récupérer les tracks d'une chanson
-export function useTracksBySong(songId: string | undefined) {
-  return useQuery<Track[], Error>({
-    queryKey: ['tracks', 'by-song', songId],
-    queryFn: async () => {
-      if (!songId) return []
-      
-      try {
-        const tracks = await trackService.getTracksBySongId(songId)
-        if (!tracks) return []
-        return tracks
-      } catch (error) {
-        throw createErrorWithMessage(error, 'Failed to fetch tracks for song')
-      }
-    },
-    ...defaultQueryOptions,
-    enabled: !!songId
   })
 }

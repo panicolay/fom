@@ -1,6 +1,6 @@
 import { useParams } from 'react-router-dom'
 import { useSong } from '../hooks/useSongs'
-import { useTracksBySong } from '../hooks/useTracks'
+import { useTracksBySongId } from '../hooks/useTracks'
 import { Button } from '../components/buttons/Button'
 import { useState } from 'react'
 import { formatSecondsToTime } from '../utils/timeUtils'
@@ -21,7 +21,7 @@ import { PatternForm } from '../components/pattern/PatternForm'
 export function SongStructurePage() {
   const { songId } = useParams()
   const { data: song, isLoading: songLoading, error: songError } = useSong(songId)
-  const { data: tracks, isLoading: tracksLoading } = useTracksBySong(songId)
+  const { data: tracks, isLoading: tracksLoading } = useTracksBySongId(songId)
   const { deleteSong } = useSongMutation()
   const [isSongPanelOpen, setIsSongPanelOpen] = useState(false)
   const [songToEdit, setSongToEdit] = useState<Song | null>(null)
