@@ -28,7 +28,9 @@ export function TrackForm({ songId, track, isOpen, onClose }: TrackFormProps) {
     );
     
     useEffect(() => {
-        if (isOpen && track) {
+        if (!isOpen) return;
+
+        if (track) {
             setFormData({
                 name: track.name,
                 comment: track.comment,
@@ -37,13 +39,12 @@ export function TrackForm({ songId, track, isOpen, onClose }: TrackFormProps) {
             });
         } else {
             setFormData(getDefaultTrackFormData(songId));
+            
+            // focus if !track
+            const titleInput = document.getElementById('track_name')
+            titleInput?.focus()
         }
     }, [isOpen, songId, track]);
-
-    useEffect(() => {
-        const titleInput = document.getElementById('track_name')
-        titleInput?.focus()
-      }, [])
 
     const { createTrack, updateTrack, deleteTrack, isLoading, error } = useTrackMutation()
 
@@ -84,7 +85,7 @@ export function TrackForm({ songId, track, isOpen, onClose }: TrackFormProps) {
     return (
         <form onSubmit={handleSubmit} className="flex flex-col divide-y divide-neutral-500">
             <TextField 
-                variant="panel"
+                variant="popover"
                 label="track name"
                 id="track_name"
                 value={formData.name}
@@ -93,7 +94,7 @@ export function TrackForm({ songId, track, isOpen, onClose }: TrackFormProps) {
                 required={true} 
             />
             <TextField
-                variant="panel"
+                variant="popover"
                 label="comment"
                 id="track_comment"
                 value={formData.comment}
@@ -106,19 +107,20 @@ export function TrackForm({ songId, track, isOpen, onClose }: TrackFormProps) {
                     {error}
                 </div>
             )}
-            <div className="flex divide-x divide-neutral-500 border-b border-neutral-500">
+            <div className="flex divide-x divide-neutral-500">
                 <PanelButton 
                     label={isLoading ? (track ? 'updating...' : 'adding...') : (track ? 'update' : 'confirm')}
                     type="submit"
                     variant="primary"
                     disabled={isLoading}
-                    className="flex-1"
+                    className="flex-1 !h-12"
                 />
                 {track && (
-                    <PanelButton 
+                    <PanelButton
                         label="delete"
+                        type="button"
                         variant="secondary"
-                        className="flex-1"
+                        className="flex-1 !h-12"
                         onClick={handleDelete}
                     />
                 )}

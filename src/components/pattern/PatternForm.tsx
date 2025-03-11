@@ -32,13 +32,12 @@ export function PatternForm({ trackId, barIndex, isOpen, onClose }: PatternFormP
     useEffect(() => {
         if (isOpen) {
             setFormData(getDefaultPatternFormData(trackId, barIndex))
+
+            // focus if !pattern
+            const startInput = document.getElementById('start')
+            startInput?.focus()
         }
     }, [isOpen, trackId, barIndex])
-
-    useEffect(() => {
-        const titleInput = document.getElementById('start')
-        titleInput?.focus()
-    }, [])
 
     const { createPattern } = usePatternMutation()
 

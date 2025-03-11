@@ -113,20 +113,7 @@ export function SongStructurePage() {
         add track
       </Button>
 
-      {/* Panel pour les tracks */}
-      <Panel
-        isOpen={isTrackPanelOpen}
-        onClose={() => setIsTrackPanelOpen(false)}
-        title={trackToEdit ? <>edit<br/>track</> : <>add<br/>track</>}
-      >
-        <TrackForm
-          isOpen={isTrackPanelOpen}
-          onClose={() => setIsTrackPanelOpen(false)}
-          songId={songId}
-          track={trackToEdit}
-        />
-      </Panel>
-
+      {/* TODO: switch to Panel2 */}
       {/* Panel pour l'édition de chanson */}
       <Panel
         isOpen={isSongPanelOpen}
@@ -140,8 +127,20 @@ export function SongStructurePage() {
         />
       </Panel>
 
-      {/* Panel pour les patterns */}
-      <Panel2
+      <Panel2 name="track"
+        isOpen={isTrackPanelOpen}
+        onClose={() => setIsTrackPanelOpen(false)}
+        // title={trackToEdit ? <>edit<br/>track</> : <>add<br/>track</>}
+      >
+        <TrackForm
+          isOpen={isTrackPanelOpen}
+          onClose={() => setIsTrackPanelOpen(false)}
+          songId={songId}
+          track={trackToEdit}
+        />
+      </Panel2>
+
+      <Panel2 name="pattern"
         isOpen={isPatternPanelOpen}
         onClose={() => setIsPatternPanelOpen(false)}
       >

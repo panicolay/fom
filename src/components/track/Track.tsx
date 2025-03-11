@@ -2,6 +2,8 @@ import { GripVertical } from "lucide-react";
 import { Track as TrackType } from "../../types/trackTypes";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import { usePatternsByTrackId } from "../../hooks/usePatterns";
+
 interface TrackProps {
     track: TrackType;
     onEdit: (track: TrackType) => void;
@@ -10,6 +12,7 @@ interface TrackProps {
 }
 
 export function Track({ track, onEdit, totalBars, onPatternClick }: TrackProps) {
+    const { data: patterns, isLoading: patternsLoading, error: patternsError } = usePatternsByTrackId(track.id);
     const {
         attributes,
         listeners,

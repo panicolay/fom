@@ -36,7 +36,7 @@ export function TextField({
     
     return (
         <div className={`group relative flex flex-col ${className}
-            bg-neutral-900 focus-within:bg-neutral-800
+            bg-neutral-900
             `}>
             <label htmlFor={id}
                 className={`absolute text-neutral-400 group-focus-within:text-neutral-300

@@ -47,13 +47,12 @@ export function SongForm({ song, isOpen, onClose }: Props) {
     } else {
       // Si pas de song, on revient aux valeurs par défaut
       setFormData(DEFAULT_FORM_DATA)
+      
+      // focus if !song
+      const titleInput = document.getElementById('title')
+      titleInput?.focus()
     }
   }, [isOpen, song])
-
-  useEffect(() => {
-    const titleInput = document.getElementById('title')
-    titleInput?.focus()
-  }, [])
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -182,6 +181,7 @@ export function SongForm({ song, isOpen, onClose }: Props) {
         />
         {song && (
           <PanelButton 
+            type="button"
             label="delete"
             variant="secondary"
             className="flex-1"
