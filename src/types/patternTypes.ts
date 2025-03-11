@@ -1,4 +1,4 @@
-export type Pattern = {
+export interface Pattern {
   id: string
   created_at: string
   track_id: string
@@ -7,9 +7,10 @@ export type Pattern = {
   start: number
   length: number
   repeat: number
+  total_length: number
 }
 
-export type PatternFormData = {
+export interface PatternFormData {
   name?: string
   comment?: string
   start: number
@@ -17,3 +18,4 @@ export type PatternFormData = {
   repeat: number
   track_id: string
 }
+

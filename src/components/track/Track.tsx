@@ -57,11 +57,15 @@ export function Track({ track, onEdit, totalBars, onPatternClick }: TrackProps) 
 
             {/* Bars and patterns */}
             <div className="flex bg-neutral-900">
-                {timeline.map((patternId, index) => (
+                {timeline.map((pattern, index) => (
                     <button key={index}
-                        className={`w-8 h-10 hover:bg-neutral-500 cursor-pointer ${
-                            patternId ? 'bg-neutral-700' : ''
+                        className={`h-10 hover:bg-neutral-500 cursor-pointer ${
+                            pattern ? 'bg-neutral-700' : ''
                         }`}
+                        style={{ 
+                            width: pattern ? `${pattern.total_length * 2}rem` : '2rem'
+                            // On multiplie par 2 pour une meilleure visibilité
+                        }}
                         onClick={() => onPatternClick(track.id, index)}
                         type="button"
                     />
