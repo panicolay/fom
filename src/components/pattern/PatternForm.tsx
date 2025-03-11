@@ -21,7 +21,7 @@ const STATIC_PATTERN_FORM_DATA = {
 const getDefaultPatternFormData = (trackId: string, barIndex: number): PatternFormData => ({
     ...STATIC_PATTERN_FORM_DATA,
     track_id: trackId,
-    start: barIndex
+    start: barIndex + 1
 });
 
 export function PatternForm({ trackId, barIndex, isOpen, onClose }: PatternFormProps) {

@@ -3,6 +3,7 @@ import { Track as TrackType } from "../../types/trackTypes";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { usePatternsByTrackId } from "../../hooks/usePatterns";
+import { generatePatternTimeline } from "../../utils/patternUtils";
 
 interface TrackProps {
     track: TrackType;
@@ -13,6 +14,10 @@ interface TrackProps {
 
 export function Track({ track, onEdit, totalBars, onPatternClick }: TrackProps) {
     const { data: patterns, isLoading: patternsLoading, error: patternsError } = usePatternsByTrackId(track.id);
+    
+    // On s'assure que patterns est un tableau, sinon on utilise un tableau vide
+    const timeline = patterns ? generatePatternTimeline(patterns, totalBars) : Array(totalBars).fill(null);
+
     const {
         attributes,
         listeners,
@@ -51,10 +56,12 @@ export function Track({ track, onEdit, totalBars, onPatternClick }: TrackProps) 
             </button>
 
             {/* Bars and patterns */}
-            <div className="flex flex-1 hover:bg-neutral-900">
-                {Array.from({ length: totalBars }, (_, index) => (
+            <div className="flex bg-neutral-900">
+                {timeline.map((patternId, index) => (
                     <button key={index}
-                        className="flex-1 h-10 hover:bg-neutral-500 cursor-pointer"
+                        className={`w-8 h-10 hover:bg-neutral-500 cursor-pointer ${
+                            patternId ? 'bg-neutral-700' : ''
+                        }`}
                         onClick={() => onPatternClick(track.id, index)}
                         type="button"
                     />
