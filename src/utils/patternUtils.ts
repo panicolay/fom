@@ -1,11 +1,11 @@
-import { Pattern } from "../types/patternTypes";
+import { Pattern, TimeLineItem } from "../types/patternTypes";
 
-export function generatePatternTimeline(patterns: Pattern[], totalBars: number) {
+export function generatePatternTimeline(patterns: Pattern[], totalBars: number): TimeLineItem[] {
     if (totalBars <= 0) throw new Error("Total bars must be positive");
     if (!Array.isArray(patterns)) throw new Error("Patterns must be an array");
 
     // Initialiser la timeline avec des null pour toutes les mesures
-    let timeline: (Pattern | null)[] = [];
+    let timeline: TimeLineItem[] = [];
   
     // Trier les patterns par position de début
     const sortedPatterns = [...patterns].sort((a, b) => a.start - b.start);
@@ -20,7 +20,7 @@ export function generatePatternTimeline(patterns: Pattern[], totalBars: number) 
             timeline.push(pattern);
             currentPosition += pattern.total_length;
         } else {
-            timeline.push(null);
+            timeline.push({ type: 'empty', start: currentPosition });
             currentPosition++;
         }
     }

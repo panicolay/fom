@@ -4,6 +4,7 @@ import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { usePatternsByTrackId } from "../../hooks/usePatterns";
 import { generatePatternTimeline } from "../../utils/patternUtils";
+import { isPattern, TimeLineItem } from "../../types/patternTypes";
 
 interface TrackProps {
     track: TrackType;
@@ -15,8 +16,10 @@ interface TrackProps {
 export function Track({ track, onEdit, totalBars, onPatternClick }: TrackProps) {
     const { data: patterns, isLoading: patternsLoading, error: patternsError } = usePatternsByTrackId(track.id);
     
-    // On s'assure que patterns est un tableau, sinon on utilise un tableau vide
-    const timeline = patterns ? generatePatternTimeline(patterns, totalBars) : Array(totalBars).fill(null);
+    // Créer la timeline avec des EmptyBar au lieu de null
+    const timeline: TimeLineItem[] = patterns 
+        ? generatePatternTimeline(patterns, totalBars) 
+        : Array(totalBars).fill(null).map((_, index) => ({ type: 'empty', start: index }));
 
     const {
         attributes,
@@ -57,16 +60,18 @@ export function Track({ track, onEdit, totalBars, onPatternClick }: TrackProps) 
 
             {/* Bars and patterns */}
             <div className="flex bg-neutral-900">
-                {timeline.map((pattern, index) => (
-                    <button key={index}
+                {timeline.map((item, index) => (
+                    <button 
+                        key={index}
                         className={`h-10 hover:bg-neutral-500 cursor-pointer ${
-                            pattern ? 'bg-neutral-700' : ''
+                            isPattern(item) ? 'bg-neutral-700' : 'bg-neutral-900'
                         }`}
                         style={{ 
-                            width: pattern ? `${pattern.total_length * 2}rem` : '2rem'
-                            // On multiplie par 2 pour une meilleure visibilité
+                            width: isPattern(item) 
+                                ? `${item.total_length * 2}rem` 
+                                : '2rem'
                         }}
-                        onClick={() => onPatternClick(track.id, index)}
+                        onClick={() => onPatternClick(track.id, item.start)}
                         type="button"
                     />
                 ))}
