@@ -141,17 +141,19 @@ export function SongStructurePage() {
         />
       </Panel2>
 
-      <Panel2 name="pattern"
-        isOpen={isPatternPanelOpen}
-        onClose={() => setIsPatternPanelOpen(false)}
-      >
-        <PatternForm
+      { trackId !== null && (
+        <Panel2 name="pattern"
           isOpen={isPatternPanelOpen}
           onClose={() => setIsPatternPanelOpen(false)}
-          trackId={trackId || ''}
-          barIndex={barIndex}
+        >
+        <PatternForm
+          isOpen={isPatternPanelOpen}
+            onClose={() => setIsPatternPanelOpen(false)}
+            trackId={trackId}
+            barIndex={barIndex}
         />
-      </Panel2>
+        </Panel2>
+      )}
     </>
   )
 }
