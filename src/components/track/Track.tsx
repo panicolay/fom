@@ -10,11 +10,11 @@ interface TrackProps {
     track: TrackType;
     onEdit: (track: TrackType) => void;
     totalBars: number;
-    onPatternClick: (trackId: string, barIndex: number) => void;
+    onPatternClick: (trackId: string, item: TimeLineItem) => void;
 }
 
 export function Track({ track, onEdit, totalBars, onPatternClick }: TrackProps) {
-    const { data: patterns, isLoading: patternsLoading, error: patternsError } = usePatternsByTrackId(track.id);
+    const { data: patterns} = usePatternsByTrackId(track.id);
     
     // Créer la timeline avec des EmptyBar au lieu de null
     const timeline: TimeLineItem[] = patterns 
@@ -71,7 +71,7 @@ export function Track({ track, onEdit, totalBars, onPatternClick }: TrackProps) 
                                 ? `${item.total_length * 2}rem` 
                                 : '2rem'
                         }}
-                        onClick={() => onPatternClick(track.id, item.start)}
+                        onClick={() => onPatternClick(track.id, item)}
                         type="button"
                     />
                 ))}

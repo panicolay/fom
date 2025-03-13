@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
 import { TextField } from "../form/TextField";
-import { PatternFormData } from "../../types/patternTypes";
+import { PatternFormData, TimeLineItem } from "../../types/patternTypes";
 import { usePatternMutation } from "../../hooks/usePatternMutation";
 import { PanelButton } from "../buttons/PanelButton";
 
 type PatternFormProps = {
     trackId: string
-    barIndex: number
+    item: TimeLineItem
     isOpen: boolean
     onClose: () => void
 }
@@ -18,26 +18,26 @@ const STATIC_PATTERN_FORM_DATA = {
     comment: undefined
 } as const;
 
-const getDefaultPatternFormData = (trackId: string, barIndex: number): PatternFormData => ({
+const getDefaultPatternFormData = (trackId: string, start: number): PatternFormData => ({
     ...STATIC_PATTERN_FORM_DATA,
     track_id: trackId,
-    start: barIndex
+    start: start
 });
 
-export function PatternForm({ trackId, barIndex, isOpen, onClose }: PatternFormProps) {
+export function PatternForm({ trackId, item, isOpen, onClose }: PatternFormProps) {
     const [formData, setFormData] = useState<PatternFormData>(() => 
-        getDefaultPatternFormData(trackId, barIndex)
+        getDefaultPatternFormData(trackId, item.start)
     );
 
     useEffect(() => {
         if (isOpen) {
-            setFormData(getDefaultPatternFormData(trackId, barIndex))
+            setFormData(getDefaultPatternFormData(trackId, item.start))
 
             // focus if !pattern
             const startInput = document.getElementById('start')
             startInput?.focus()
         }
-    }, [isOpen, trackId, barIndex])
+    }, [isOpen, trackId, item.start])
 
     const { createPattern } = usePatternMutation()
 

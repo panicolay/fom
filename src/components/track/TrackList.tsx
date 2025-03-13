@@ -16,12 +16,12 @@ import {
     verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { useTrackMutation } from "../../hooks/useTrackMutation";
-
+import { TimeLineItem } from "../../types/patternTypes";
 interface TrackListProps {
     tracks: TrackType[];
     onEdit: (track: TrackType) => void;
     totalBars: number;
-    onPatternClick: (trackId: string, barIndex: number) => void;
+    onPatternClick: (trackId: string, item: TimeLineItem) => void;
 }
 
 export function TrackList({ tracks, onEdit, totalBars, onPatternClick }: TrackListProps) {
