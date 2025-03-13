@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
 import { TextField } from "../form/TextField";
-import { PatternFormData, TimeLineItem } from "../../types/patternTypes";
+import { Pattern, PatternFormData, TimeLineItem, isPattern } from "../../types/patternTypes";
 import { usePatternMutation } from "../../hooks/usePatternMutation";
 import { PanelButton } from "../buttons/PanelButton";
 
 type PatternFormProps = {
+    totalBars: number
     trackId: string
     item: TimeLineItem
     isOpen: boolean
@@ -24,18 +25,30 @@ const getDefaultPatternFormData = (trackId: string, start: number): PatternFormD
     start: start
 });
 
-export function PatternForm({ trackId, item, isOpen, onClose }: PatternFormProps) {
+export function PatternForm({ totalBars, trackId, item, isOpen, onClose }: PatternFormProps) {
+    const patternToFormData = (pattern: Pattern): PatternFormData => ({
+        track_id: trackId,
+        start: pattern.start,
+        length: pattern.length,
+        repeat: pattern.repeat,
+        name: pattern.name,
+        comment: pattern.comment
+    })
+    const isEditMode = isPattern(item)
     const [formData, setFormData] = useState<PatternFormData>(() => 
-        getDefaultPatternFormData(trackId, item.start)
+        isEditMode ? patternToFormData(item as Pattern) : getDefaultPatternFormData(trackId, item.start) // TODO: why give all datas here and in useEffect?
     );
+    const [errors, setErrors] = useState<Record<string, string>>({}) // TODO: understand this line
+
 
     useEffect(() => {
         if (isOpen) {
-            setFormData(getDefaultPatternFormData(trackId, item.start))
+            setFormData(isEditMode ? patternToFormData(item as Pattern) : getDefaultPatternFormData(trackId, item.start))
+            setErrors({})
 
             // focus if !pattern
-            const startInput = document.getElementById('start')
-            startInput?.focus()
+            // const startInput = document.getElementById('start')
+            // startInput?.focus()
         }
     }, [isOpen, trackId, item.start])
 

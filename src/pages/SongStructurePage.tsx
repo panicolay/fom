@@ -150,6 +150,7 @@ export function SongStructurePage() {
         <PatternForm
           isOpen={isPatternPanelOpen}
             onClose={() => setIsPatternPanelOpen(false)}
+            totalBars={totalBars}
             trackId={trackId}
             item={item}
         />
