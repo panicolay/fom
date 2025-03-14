@@ -16,15 +16,16 @@ import {
     verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { useTrackMutation } from "../../hooks/useTrackMutation";
-import { TimeLineItem, Pattern } from "../../types/patternTypes";
+import { TimeLineItem, Pattern, PatternFormData } from "../../types/patternTypes";
 interface TrackListProps {
     tracks: TrackType[];
     onEdit: (track: TrackType) => void;
     totalBars: number;
     onPatternClick: (trackId: string, timelineItem: TimeLineItem, patterns: Pattern[]) => void;
+    currentEditingPattern?: PatternFormData | null;
 }
 
-export function TrackList({ tracks, onEdit, totalBars, onPatternClick }: TrackListProps) {
+export function TrackList({ tracks, onEdit, totalBars, onPatternClick, currentEditingPattern }: TrackListProps) {
     const { reorderTracks } = useTrackMutation();
     const sensors = useSensors(
         useSensor(PointerSensor),
@@ -70,6 +71,7 @@ export function TrackList({ tracks, onEdit, totalBars, onPatternClick }: TrackLi
                             onEdit={onEdit}
                             totalBars={totalBars}
                             onPatternClick={onPatternClick}
+                            currentEditingPattern={currentEditingPattern}
                         />
                     ))}
                 </ul>

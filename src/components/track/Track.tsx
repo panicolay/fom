@@ -4,16 +4,17 @@ import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { usePatternsByTrackId } from "../../hooks/usePatterns";
 import { generatePatternTimeline } from "../../utils/patternUtils";
-import { isPattern, Pattern, TimeLineItem } from "../../types/patternTypes";
+import { isPattern, Pattern, PatternFormData, TimeLineItem } from "../../types/patternTypes";
 
 interface TrackProps {
     track: TrackType;
     onEdit: (track: TrackType) => void;
     totalBars: number;
     onPatternClick: (trackId: string, timelineItem: TimeLineItem, patterns: Pattern[]) => void;
+    currentEditingPattern?: PatternFormData | null;
 }
 
-export function Track({ track, onEdit, totalBars, onPatternClick }: TrackProps) {
+export function Track({ track, onEdit, totalBars, onPatternClick, currentEditingPattern }: TrackProps) {
     const {data: patterns} = usePatternsByTrackId(track.id);
     
     // Créer la timeline avec des EmptyBar au lieu de null
@@ -59,7 +60,7 @@ export function Track({ track, onEdit, totalBars, onPatternClick }: TrackProps) 
             </button>
 
             {/* Bars and patterns */}
-            <div className="flex bg-neutral-900">
+            <div className="flex bg-neutral-900 relative">
                 {timeline.map((item, index) => (
                     <button 
                         key={index}
@@ -75,6 +76,14 @@ export function Track({ track, onEdit, totalBars, onPatternClick }: TrackProps) 
                         type="button"
                     />
                 ))}
+                {currentEditingPattern && currentEditingPattern.track_id === track.id && ( // TODO: recheck condition
+                    <div className="absolute top-0 h-10 bg-blue-500/40 border border-blue-400 pointer-events-none"
+                        style={{
+                            left: `${currentEditingPattern.start * 2}rem`,
+                            width: `${currentEditingPattern.length * currentEditingPattern.repeat * 2}rem`
+                        }}
+                    />
+                )}
             </div>
 
         </div>

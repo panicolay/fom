@@ -11,6 +11,7 @@ type PatternFormProps = {
     patterns: Pattern[]
     isOpen: boolean
     onClose: () => void
+    onFormDataChange: (formData: PatternFormData | null) => void // TODO: why "|null" after PatternFormData?
 }
 
 const STATIC_PATTERN_FORM_DATA = {
@@ -26,7 +27,7 @@ const getDefaultPatternFormData = (trackId: string, start: number): PatternFormD
     start: start
 });
 
-export function PatternForm({ totalBars, trackId, timelineItem, patterns, isOpen, onClose }: PatternFormProps) {
+export function PatternForm({ totalBars, trackId, timelineItem, patterns, isOpen, onClose, onFormDataChange }: PatternFormProps) {
     const patternToFormData = (pattern: Pattern): PatternFormData => ({
         track_id: trackId,
         start: pattern.start,
@@ -44,10 +45,20 @@ export function PatternForm({ totalBars, trackId, timelineItem, patterns, isOpen
     useEffect(() => {
         if (!isOpen) return
         if (isOpen) {
-            setFormData(isEditMode ? patternToFormData(timelineItem as Pattern) : getDefaultPatternFormData(trackId, timelineItem.start))
+            const newFormData = isEditMode ? patternToFormData(timelineItem as Pattern) : getDefaultPatternFormData(trackId, timelineItem.start)
+            setFormData(newFormData)
             setErrors({})
+            onFormDataChange?.(newFormData)
+        } else {
+            onFormDataChange?.(null) // TODO: why ? (!isOpen) is not enough? why null?
         }
-    }, [isOpen, trackId, timelineItem, isEditMode])
+    }, [isOpen, trackId, timelineItem, isEditMode, onFormDataChange])
+
+    useEffect(() => {
+        if (isOpen) {
+            onFormDataChange?.(formData)
+        }
+    }, [formData, isOpen, onFormDataChange]) // TODO: why is this needed? Isn't it already covered by the first useEffect?
 
     const { createPattern, updatePattern } = usePatternMutation()
 
@@ -74,6 +85,7 @@ export function PatternForm({ totalBars, trackId, timelineItem, patterns, isOpen
         })
         if (hasOverlap) newErrors.overlap = "Pattern overlaps with another pattern"
         // TODO: find a way to display error messages
+        // TODO: add also validation for server side? (hook, service, etc)
         setErrors(newErrors)
         return Object.keys(newErrors).length === 0
     }
@@ -89,12 +101,14 @@ export function PatternForm({ totalBars, trackId, timelineItem, patterns, isOpen
                 data: formData
             }, {
                 onSuccess: () => {
+                    onFormDataChange?.(null) // TODO: why is this needed? Isn't it already covered by the first useEffect?
                     onClose()
                 }
             })
         } else {
             createPattern(formData, {
                 onSuccess: () => {
+                    onFormDataChange?.(null) // TODO: why is this needed? Isn't it already covered by the first useEffect?
                     onClose()
                 }
             })
