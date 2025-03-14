@@ -4,17 +4,17 @@ import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { usePatternsByTrackId } from "../../hooks/usePatterns";
 import { generatePatternTimeline } from "../../utils/patternUtils";
-import { isPattern, TimeLineItem } from "../../types/patternTypes";
+import { isPattern, Pattern, TimeLineItem } from "../../types/patternTypes";
 
 interface TrackProps {
     track: TrackType;
     onEdit: (track: TrackType) => void;
     totalBars: number;
-    onPatternClick: (trackId: string, item: TimeLineItem) => void;
+    onPatternClick: (trackId: string, timelineItem: TimeLineItem, patterns: Pattern[]) => void;
 }
 
 export function Track({ track, onEdit, totalBars, onPatternClick }: TrackProps) {
-    const { data: patterns} = usePatternsByTrackId(track.id);
+    const {data: patterns} = usePatternsByTrackId(track.id);
     
     // Créer la timeline avec des EmptyBar au lieu de null
     const timeline: TimeLineItem[] = patterns 
@@ -71,7 +71,7 @@ export function Track({ track, onEdit, totalBars, onPatternClick }: TrackProps) 
                                 ? `${item.total_length * 2}rem` 
                                 : '2rem'
                         }}
-                        onClick={() => onPatternClick(track.id, item)}
+                        onClick={() => onPatternClick(track.id, item, patterns ?? [])} // TODO: recheck this (patterns ?? [])
                         type="button"
                     />
                 ))}

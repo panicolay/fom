@@ -9,6 +9,9 @@ type TextFieldProps = {
   type: 'text' | 'number'
   required: boolean
   className?: string
+  error?: string
+  min?: number
+  max?: number
 }
 
 export function TextField({
@@ -21,7 +24,10 @@ export function TextField({
     type = 'text',
     required,
     className = "",
-    autocomplete = "off"
+    autocomplete = "off",
+    error,
+    min,
+    max
 }: TextFieldProps) {
 
     const labelClasses = {
@@ -56,12 +62,14 @@ export function TextField({
                         onChange(e.target.value)
                     }
                 }}
-                className={`text-lg text-neutral-200
+                className={`text-lg ${error ? "text-red-500" : "text-neutral-200 focus:text-neutral-100"}
                     ${inputClasses[variant]}
-                    focus:text-neutral-100
                     focus:outline-1 focus:outline-offset-0 focus:outline-neutral-200`}
                 required={required}
+                min={min}
+                max={max}
             />
+            {/* {error && <p className="text-red-500 text-sm">{error}</p>} TODO: add error message */}
         </div>
     )
 }

@@ -17,7 +17,7 @@ import { Pencil, Trash } from 'lucide-react'
 import { useSongBars } from '../hooks/useSongBars'
 import { Panel2 } from '../components/overlays/Panel2'
 import { PatternForm } from '../components/pattern/PatternForm'
-import { TimeLineItem } from '../types/patternTypes'
+import { Pattern, TimeLineItem } from '../types/patternTypes'
 
 export function SongStructurePage() {
   const { songId } = useParams()
@@ -30,7 +30,8 @@ export function SongStructurePage() {
   const [trackToEdit, setTrackToEdit] = useState<Track | null>(null)
   const [isPatternPanelOpen, setIsPatternPanelOpen] = useState(false)
   const [trackId, setTrackId] = useState<string | null>(null)
-  const [item, setItem] = useState<TimeLineItem | null>(null)
+  const [timelineItem, setTimelineItem] = useState<TimeLineItem | null>(null)
+  const [patterns, setPatterns] = useState<Pattern[]>([])
   const navigate = useNavigate()
   const totalBars = useSongBars(song)
 
@@ -59,9 +60,10 @@ export function SongStructurePage() {
     setIsTrackPanelOpen(true)
   }
 
-  const handlePatternClick = (trackId: string, item: TimeLineItem) => {
+  const handlePatternClick = (trackId: string, item: TimeLineItem, patterns: Pattern[]) => {
     setTrackId(trackId)
-    setItem(item)
+    setTimelineItem(item)
+    setPatterns(patterns)
     setIsPatternPanelOpen(true)
   }
 
@@ -142,7 +144,7 @@ export function SongStructurePage() {
         />
       </Panel2>
 
-      { trackId !== null && item !== null && (
+      { trackId !== null && timelineItem !== null && (
         <Panel2 name="pattern"
           isOpen={isPatternPanelOpen}
           onClose={() => setIsPatternPanelOpen(false)}
@@ -152,7 +154,8 @@ export function SongStructurePage() {
             onClose={() => setIsPatternPanelOpen(false)}
             totalBars={totalBars}
             trackId={trackId}
-            item={item}
+            timelineItem={timelineItem}
+            patterns={patterns}
         />
         </Panel2>
       )}

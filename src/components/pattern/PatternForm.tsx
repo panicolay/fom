@@ -7,7 +7,8 @@ import { PanelButton } from "../buttons/PanelButton";
 type PatternFormProps = {
     totalBars: number
     trackId: string
-    item: TimeLineItem
+    timelineItem: TimeLineItem
+    patterns: Pattern[]
     isOpen: boolean
     onClose: () => void
 }
@@ -25,7 +26,7 @@ const getDefaultPatternFormData = (trackId: string, start: number): PatternFormD
     start: start
 });
 
-export function PatternForm({ totalBars, trackId, item, isOpen, onClose }: PatternFormProps) {
+export function PatternForm({ totalBars, trackId, timelineItem, patterns, isOpen, onClose }: PatternFormProps) {
     const patternToFormData = (pattern: Pattern): PatternFormData => ({
         track_id: trackId,
         start: pattern.start,
@@ -34,33 +35,70 @@ export function PatternForm({ totalBars, trackId, item, isOpen, onClose }: Patte
         name: pattern.name,
         comment: pattern.comment
     })
-    const isEditMode = isPattern(item)
-    const [formData, setFormData] = useState<PatternFormData>(() => 
-        isEditMode ? patternToFormData(item as Pattern) : getDefaultPatternFormData(trackId, item.start) // TODO: why give all datas here and in useEffect?
+    const isEditMode = isPattern(timelineItem)
+    const [formData, setFormData] = useState<PatternFormData>(getDefaultPatternFormData(trackId, timelineItem.start)
     );
     const [errors, setErrors] = useState<Record<string, string>>({}) // TODO: understand this line
 
 
     useEffect(() => {
+        if (!isOpen) return
         if (isOpen) {
-            setFormData(isEditMode ? patternToFormData(item as Pattern) : getDefaultPatternFormData(trackId, item.start))
+            setFormData(isEditMode ? patternToFormData(timelineItem as Pattern) : getDefaultPatternFormData(trackId, timelineItem.start))
             setErrors({})
-
-            // focus if !pattern
-            // const startInput = document.getElementById('start')
-            // startInput?.focus()
         }
-    }, [isOpen, trackId, item.start])
+    }, [isOpen, trackId, timelineItem, isEditMode])
 
-    const { createPattern } = usePatternMutation()
+    const { createPattern, updatePattern } = usePatternMutation()
 
+    const validateForm = (): boolean => {
+        const newErrors: Record<string, string> = {};
+        const formDataEnd = formData.start + formData.length * formData.repeat;
+
+        if (formData.start < 0) newErrors.start = "Pattern can't start before bar 0"
+        if (formDataEnd > totalBars) newErrors.end = "Pattern can't end after song end"
+        if (formData.length <= 0) newErrors.length = "Pattern length must be greater than 0"
+        if (formData.repeat <= 0) newErrors.repeat = "Pattern repeat must be greater than 0"
+
+        const patternId = isEditMode ? (timelineItem as Pattern).id : undefined; // TODO: recheck this
+        const hasOverlap = patterns.some(pattern => {
+            if (isEditMode && pattern.id === patternId) return false; // TODO: why is EditMode here?
+            const otherPatternStart = pattern.start;
+            const otherPatternEnd = otherPatternStart + pattern.length * pattern.repeat;
+
+            return (
+                (formData.start >= otherPatternStart && formData.start < otherPatternEnd) ||
+                (formDataEnd > otherPatternStart && formDataEnd <= otherPatternEnd) ||
+                (formData.start <= otherPatternStart && formDataEnd >= otherPatternEnd)
+            )
+        })
+        if (hasOverlap) newErrors.overlap = "Pattern overlaps with another pattern"
+        // TODO: find a way to display error messages
+        setErrors(newErrors)
+        return Object.keys(newErrors).length === 0
+    }
+    
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
-        createPattern(formData, {
-            onSuccess: () => {
-                onClose()
-            }
-        })
+
+        if (!validateForm()) return
+
+        if (isEditMode && isPattern(timelineItem)) { // TODO: check why isPattern is needed here
+            updatePattern({
+                id: timelineItem.id,
+                data: formData
+            }, {
+                onSuccess: () => {
+                    onClose()
+                }
+            })
+        } else {
+            createPattern(formData, {
+                onSuccess: () => {
+                    onClose()
+                }
+            })
+        }
     }
 
     return (
@@ -71,18 +109,25 @@ export function PatternForm({ totalBars, trackId, item, isOpen, onClose }: Patte
                     value={formData.start.toString()}
                     onChange={(value) => setFormData({ ...formData, start: Number(value) })}
                     type="number" required
+                    error={errors.start}
+                    min={0}
+                    max={totalBars}
                 />
                 <TextField variant="popover" label="length" id="length"
                     className="flex-1 min-w-0"
                     value={formData.length.toString()}
                     onChange={(value) => setFormData({ ...formData, length: Number(value) })}
                     type="number" required
+                    error={errors.length}
+                    min={1}
                 />
                 <TextField variant="popover" label="reps." id="reps"
                     className="flex-1 min-w-0"
                     value={formData.repeat.toString()}
                     onChange={(value) => setFormData({ ...formData, repeat: Number(value) })}
                     type="number" required
+                    error={errors.repeat}
+                    min={1}
                 />
             </div>
             <TextField variant="popover" label="comment" id="comment"
@@ -92,7 +137,9 @@ export function PatternForm({ totalBars, trackId, item, isOpen, onClose }: Patte
             />
             <PanelButton label="confirm" variant="primary" type="submit"
                 className="!h-12"
-            >Confirm</PanelButton>
+            >
+                {isEditMode ? "update" : "create"}
+            </PanelButton>
         </form>
     )
 }
