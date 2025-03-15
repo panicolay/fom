@@ -75,7 +75,7 @@ export function Track({ track, onEdit, totalBars, onPatternClick, currentEditing
                     />
                 ))}
                 {currentEditingPattern && currentEditingPattern.track_id === track.id && ( // TODO: recheck condition
-                    <div className="absolute top-0 h-10 bg-blue-500/40 border border-blue-400 pointer-events-none"
+                    <div className="absolute top-0 h-10 bg-neutral-200 pointer-events-none animate-pulse"
                         style={{
                             left: `${currentEditingPattern.start * 100 / totalBars}%`,
                             width: `${currentEditingPattern.length * currentEditingPattern.repeat * 100 / totalBars}%`
