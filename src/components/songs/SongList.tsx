@@ -11,18 +11,34 @@ export function SongList() {
   if (!songs?.length) return <div className="text-base-200">No songs found</div>
 
   return (
-    <table className="border-t border-base-700">
+    <table className="">
+      <thead>
+        <tr className="h-14
+          border-b border-base-800
+          text-left text-sm text-base-500 uppercase font-display">
+          <th className="px-4 font-medium">Title</th>
+          <th className="px-4 font-medium">Artist</th>
+          <th className="px-4 font-medium">Album</th>
+          <th colSpan={3}></th> {/* Don't show bpm, time signature and length titles */}
+        </tr>
+      </thead>
       <tbody>
         {songs.map((song) => (
           <tr 
             key={song.id} 
-            className="h-14 border-b border-base-700 cursor-pointer" 
+            className="h-14
+              border-b border-base-800
+              text-base-400
+              cursor-pointer
+              group hover:text-base-300 hover:bg-base-900 transition-colors duration-80"
             onClick={() => navigate(`/songs/${song.id}`)}
           >
-            <td className="text-base-200 font-medium">{song.title}</td>
-            <td className="text-base-400 text-left">{song.artist}</td>
-            <td className="text-base-400 text-right">{song.bpm} bpm</td>
-            <td className="text-base-400 text-right">{formatSecondsToTime(Number(song.length))}</td>
+            <td className="px-4 truncate max-w-50 text-base-200 font-medium group-hover:text-base-100 transition-colors duration-80">{song.title}</td>
+            <td className="px-4 truncate max-w-50">{song.artist || '-'}</td>
+            <td className="px-4 truncate max-w-50">{song.album || '-'}</td>
+            <td className="px-4 text-right whitespace-nowrap">{song.bpm} bpm</td>
+            <td className="px-4 text-right whitespace-nowrap">{song.time_signature}</td>
+            <td className="px-4 text-right whitespace-nowrap">{formatSecondsToTime(Number(song.length))}</td>
           </tr>
         ))}
       </tbody>
