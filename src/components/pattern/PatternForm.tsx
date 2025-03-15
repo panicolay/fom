@@ -116,8 +116,8 @@ export function PatternForm({ totalBars, trackId, timelineItem, patterns, isOpen
     }
 
     return (
-        <form onSubmit={handleSubmit} className="flex flex-col divide-y divide-neutral-500">
-            <div className="flex w-full divide-x divide-neutral-500">
+        <form onSubmit={handleSubmit} className="flex flex-col divide-y divide-base-500">
+            <div className="flex w-full divide-x divide-base-500">
                 <TextField variant="popover" label="start" id="start"
                     className="flex-1 min-w-0"
                     value={formData.start.toString()}

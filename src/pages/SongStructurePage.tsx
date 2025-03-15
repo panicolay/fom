@@ -77,16 +77,16 @@ export function SongStructurePage() {
     <>
       <div className="flex justify-between">
         <div className="flex flex-col gap-4">
-          <h1 className="font-display uppercase text-6xl font-semibold text-neutral-200">
+          <h1 className="font-display uppercase text-6xl font-semibold text-base-200">
             {song.title}
           </h1>
 
           {/* song general info */}
-          <ul className="flex text-neutral-400 gap-6">
-            {song.artist && <li className="flex items-center gap-2"><User size={16} strokeWidth={1.75} className="text-neutral-500" /> {song.artist}</li>}
-            {song.album && <li className="flex items-center gap-2"><Disc3 size={16} strokeWidth={1.75} className="text-neutral-500" /> {song.album}</li>}
-            {song.length && <li className="flex items-center gap-2"><Timer size={16} strokeWidth={1.75} className="text-neutral-500" /> {formatSecondsToTime(Number(song.length))} ({totalBars} bars)</li>}
-            {song.bpm && <li className="flex items-center gap-2"><Activity size={16} strokeWidth={1.75} className="text-neutral-500" /> {song.bpm} bpm</li>}
+          <ul className="flex text-base-400 gap-6">
+            {song.artist && <li className="flex items-center gap-2"><User size={16} strokeWidth={1.75} className="text-base-500" /> {song.artist}</li>}
+            {song.album && <li className="flex items-center gap-2"><Disc3 size={16} strokeWidth={1.75} className="text-base-500" /> {song.album}</li>}
+            {song.length && <li className="flex items-center gap-2"><Timer size={16} strokeWidth={1.75} className="text-base-500" /> {formatSecondsToTime(Number(song.length))} ({totalBars} bars)</li>}
+            {song.bpm && <li className="flex items-center gap-2"><Activity size={16} strokeWidth={1.75} className="text-base-500" /> {song.bpm} bpm</li>}
             {song.time_signature && <li>{song.time_signature}</li>}
             {song.key && <li>{song.key}</li>}
           </ul>
@@ -108,7 +108,7 @@ export function SongStructurePage() {
           currentEditingPattern={currentEditingPattern}
         />
       ) : (
-        <p className="text-neutral-400">No tracks yet</p>
+        <p className="text-base-400">No tracks yet</p>
       )}
 
       <Button 

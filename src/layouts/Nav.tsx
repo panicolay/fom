@@ -8,7 +8,7 @@ export function Nav() {
               <NavLink 
                 to="/" 
                 className={({ isActive }) => 
-                  `text-neutral-200 hover:text-white ${isActive ? 'font-bold' : ''}`
+                  `text-base-200 hover:text-white ${isActive ? 'font-bold' : ''}`
                 }
               >
                 Home
@@ -18,7 +18,7 @@ export function Nav() {
               <NavLink 
                 to="/songs" 
                 className={({ isActive }) => 
-                  `text-neutral-200 hover:text-white ${isActive ? 'font-bold' : ''}`
+                  `text-base-200 hover:text-white ${isActive ? 'font-bold' : ''}`
                 }
               >
                 Songs

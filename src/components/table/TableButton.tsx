@@ -20,9 +20,9 @@ export function TableButton({
   return (
     <button 
       className={`flex items-center justify-center p-2
-        text-neutral-500
-        hover:text-neutral-200
-        focus:outline-1 focus:outline-neutral-200 focus:text-neutral-200
+        text-base-500
+        hover:text-base-200  
+        focus:outline-1 focus:outline-base-200 focus:text-base-200
         cursor-pointer
         ${className}`}
       {...props}

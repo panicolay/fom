@@ -49,10 +49,10 @@ export function Track({ track, onEdit, totalBars, onPatternClick, currentEditing
                 className="p-px opacity-0 group-hover:opacity-100 cursor-grab active:cursor-grabbing"
                 aria-label={`Réorganiser la piste ${track.name}`}
             >
-                <GripVertical size={18} strokeWidth={1.75} className="text-neutral-600" />
+                <GripVertical size={18} strokeWidth={1.75} className="text-base-600" />
             </button>
             <button
-                className="w-30 text-neutral-400 hover:text-neutral-200 cursor-pointer text-left"
+                className="w-30 text-base-400 hover:text-base-200 cursor-pointer text-left"
                 onClick={() => { onEdit(track) }}
                 type="button"
             >
@@ -60,12 +60,12 @@ export function Track({ track, onEdit, totalBars, onPatternClick, currentEditing
             </button>
 
             {/* Bars and patterns */}
-            <div className="flex bg-neutral-900 relative flex-grow"> {/** TODO: why relative? */}
+            <div className="flex bg-base-900 relative flex-grow"> {/** TODO: why relative? */}
                 {timeline.map((item, index) => (
                     <button 
                         key={index}
-                        className={`h-10 hover:bg-neutral-500 cursor-pointer ${
-                            isPattern(item) ? 'bg-neutral-700' : 'bg-neutral-900'
+                        className={`h-10 hover:bg-base-500 cursor-pointer ${
+                            isPattern(item) ? 'bg-base-700' : 'bg-base-900'
                         }`}
                         style={{
                             width: `${(isPattern(item) ? item.total_length : 1) * 100 / totalBars}%`
@@ -75,7 +75,7 @@ export function Track({ track, onEdit, totalBars, onPatternClick, currentEditing
                     />
                 ))}
                 {currentEditingPattern && currentEditingPattern.track_id === track.id && ( // TODO: recheck condition
-                    <div className="absolute top-0 h-10 bg-neutral-200 pointer-events-none animate-pulse"
+                    <div className="absolute top-0 h-10 bg-base-200 pointer-events-none animate-pulse"
                         style={{
                             left: `${currentEditingPattern.start * 100 / totalBars}%`,
                             width: `${currentEditingPattern.length * currentEditingPattern.repeat * 100 / totalBars}%`

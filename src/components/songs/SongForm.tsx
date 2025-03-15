@@ -90,7 +90,7 @@ export function SongForm({ song, isOpen, onClose }: Props) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="divide-y divide-neutral-500">
+    <form onSubmit={handleSubmit} className="divide-y divide-base-500">
       <TextField
         variant="panel"
         label="Title"
@@ -143,7 +143,7 @@ export function SongForm({ song, isOpen, onClose }: Props) {
           required={true}
           className="flex-1"
         />
-        <TapTempo onBpmChange={(value) => setFormData({ ...formData, bpm: value })} className={cn("h-22 w-30 border-l border-b border-neutral-500 focus:z-10")} />
+        <TapTempo onBpmChange={(value) => setFormData({ ...formData, bpm: value })} className={cn("h-22 w-30 border-l border-b border-base-500 focus:z-10")} />
       </div>
         
       {/* TODO: add a dropdown for the time signature with possible values coming from supabase */}
@@ -171,7 +171,7 @@ export function SongForm({ song, isOpen, onClose }: Props) {
         <div className="text-red-600 text-sm">{error}</div>
       )}
 
-      <div className="flex divide-x divide-neutral-500 border-b border-neutral-500">
+      <div className="flex divide-x divide-base-500 border-b border-base-500">
         <PanelButton 
           label={isLoading ? (song ? 'updating...' : 'adding...') : (song ? 'update' : 'confirm')}
           type="submit"

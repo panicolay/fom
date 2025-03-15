@@ -5,11 +5,11 @@ export function RootLayout() {
   const isHomePage = location.pathname === '/';
 
   return (
-    <div className="min-h-screen flex flex-col bg-neutral-950">
+    <div className="min-h-screen flex flex-col bg-base-950">
   
       {!isHomePage && (
         <header className="container mx-auto p-6 pb-0">
-          <Link to="/" className="font-display text-2xl font-semibold text-neutral-400 hover:text-neutral-200">
+          <Link to="/" className="font-display text-2xl font-semibold text-base-400 hover:text-base-200">
             FOM
           </Link>
         </header>

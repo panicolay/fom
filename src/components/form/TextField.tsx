@@ -42,10 +42,10 @@ export function TextField({
     
     return (
         <div className={`group relative flex flex-col ${className}
-            bg-neutral-900
+            bg-base-900
             `}>
             <label htmlFor={id}
-                className={`absolute text-neutral-400 group-focus-within:text-neutral-300
+                className={`absolute text-base-400 group-focus-within:text-base-300
                 ${labelClasses[variant]}`}>
                 {label}
             </label>
@@ -62,9 +62,9 @@ export function TextField({
                         onChange(e.target.value)
                     }
                 }}
-                className={`text-lg ${error ? "text-red-500" : "text-neutral-200 focus:text-neutral-100"}
+                className={`text-lg ${error ? "text-red-500" : "text-base-200 focus:text-base-100"}
                     ${inputClasses[variant]}
-                    focus:outline-1 focus:outline-offset-0 focus:outline-neutral-200`}
+                    focus:outline-1 focus:outline-offset-0 focus:outline-base-200`}
                 required={required}
                 min={min}
                 max={max}

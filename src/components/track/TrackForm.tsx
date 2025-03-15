@@ -83,7 +83,7 @@ export function TrackForm({ songId, track, isOpen, onClose }: TrackFormProps) {
     }
     
     return (
-        <form onSubmit={handleSubmit} className="flex flex-col divide-y divide-neutral-500">
+        <form onSubmit={handleSubmit} className="flex flex-col divide-y divide-base-500">
             <TextField 
                 variant="popover"
                 label="track name"
@@ -107,7 +107,7 @@ export function TrackForm({ songId, track, isOpen, onClose }: TrackFormProps) {
                     {error}
                 </div>
             )}
-            <div className="flex divide-x divide-neutral-500">
+            <div className="flex divide-x divide-base-500">
                 <PanelButton 
                     label={isLoading ? (track ? 'updating...' : 'adding...') : (track ? 'update' : 'confirm')}
                     type="submit"
