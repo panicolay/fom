@@ -60,17 +60,15 @@ export function Track({ track, onEdit, totalBars, onPatternClick, currentEditing
             </button>
 
             {/* Bars and patterns */}
-            <div className="flex bg-neutral-900 relative">
+            <div className="flex bg-neutral-900 relative flex-grow"> {/** TODO: why relative? */}
                 {timeline.map((item, index) => (
                     <button 
                         key={index}
                         className={`h-10 hover:bg-neutral-500 cursor-pointer ${
                             isPattern(item) ? 'bg-neutral-700' : 'bg-neutral-900'
                         }`}
-                        style={{ 
-                            width: isPattern(item) 
-                                ? `${item.total_length * 2}rem` 
-                                : '2rem'
+                        style={{
+                            width: `${(isPattern(item) ? item.total_length : 1) * 100 / totalBars}%`
                         }}
                         onClick={() => onPatternClick(track.id, item, patterns ?? [])} // TODO: recheck this (patterns ?? [])
                         type="button"
@@ -79,8 +77,8 @@ export function Track({ track, onEdit, totalBars, onPatternClick, currentEditing
                 {currentEditingPattern && currentEditingPattern.track_id === track.id && ( // TODO: recheck condition
                     <div className="absolute top-0 h-10 bg-blue-500/40 border border-blue-400 pointer-events-none"
                         style={{
-                            left: `${currentEditingPattern.start * 2}rem`,
-                            width: `${currentEditingPattern.length * currentEditingPattern.repeat * 2}rem`
+                            left: `${currentEditingPattern.start * 100 / totalBars}%`,
+                            width: `${currentEditingPattern.length * currentEditingPattern.repeat * 100 / totalBars}%`
                         }}
                     />
                 )}
