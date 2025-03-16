@@ -1,5 +1,6 @@
 import { Search } from "lucide-react";
 import { Link } from "react-router-dom";
+import { ButtonV2 } from "../components/buttons/ButtonV2";
 
 export function TopBar() {
     return (
@@ -9,7 +10,11 @@ export function TopBar() {
             <Link to="/" 
                 className="flex items-center px-4
                     text-base-200 font-display font-medium uppercase
-                    hover:text-base-100 hover:bg-base-900/50 transition-colors duration-80">
+                    [&:hover,&:focus]:text-base-100
+                    [&:hover,&:focus]:bg-base-900
+                    [&:hover:active,&:focus:active]:bg-base-800
+                    [&:focus-visible]:outline-1 [&:focus-visible]:outline-offset-0 [&:focus-visible]:outline-base-400
+                    transition-colors duration-80">
                 FOM
             </Link>
         
@@ -18,7 +23,7 @@ export function TopBar() {
                 <Search size={16} strokeWidth={1.75}/>Search...
             </div>
         
-            <div className="flex items-center px-4 gap-2
+            {/* <div className="flex items-center px-4 gap-2
                 text-base-400 font-display uppercase">
                 New structure
                 <div className="flex w-4 h-4 text-xs items-center justify-center
@@ -26,7 +31,16 @@ export function TopBar() {
                     text-base-500">
                     N
                 </div>
-            </div>
+            </div> */}
+
+            <ButtonV2 variant="topBar" className="px-4 gap-2">
+                New Structure
+                <div className="flex w-4 h-4 text-xs items-center justify-center
+                    border border-base-600
+                    text-base-500">
+                    N
+                </div>
+            </ButtonV2>
         
             <div className="flex w-14 items-center justify-center
                 text-base-400 font-display uppercase">

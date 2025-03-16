@@ -1,5 +1,5 @@
 type ButtonProps = {
-    variant?: 'panelDefault'
+    variant?: 'panelDefault' | 'topBar'
     children?: React.ReactNode
     className?: string
 } & React.ButtonHTMLAttributes<HTMLButtonElement>
@@ -11,6 +11,11 @@ export function ButtonV2({
     ...props }: ButtonProps) {
     
     const variantClasses = {
+        topBar: `
+            text-base-400
+            [&:hover,&:focus]:text-base-300
+            [&:hover,&:focus]:bg-base-900
+            [&:hover:active,&:focus:active]:bg-base-800`,
         panelDefault: `
             text-base-200
             bg-base-800
