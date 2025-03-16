@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Button } from '../buttons/Button'
+import { ButtonV2 } from '../buttons/ButtonV2'
 
 type Props = {
   onBpmChange: (bpm: number) => void
@@ -42,14 +42,13 @@ export function TapTempo({ onBpmChange, className }: Props) {
   }
 
   return (
-    <Button 
-      size="small" 
-      variant="secondary" 
+    <ButtonV2 
+      variant="panelDefault" 
       onClick={handleTap}
       type="button"
       className={className}
     >
       tap
-    </Button>
+    </ButtonV2>
   )
 } 

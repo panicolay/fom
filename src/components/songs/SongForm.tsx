@@ -5,7 +5,7 @@ import { useSongMutation } from '../../hooks/useSongMutation'
 import { Song, SongFormInput } from '../../types/songTypes'
 import { formatSecondsToTime } from '../../utils/timeUtils'
 import { cn } from '../../utils/cn'
-import { PanelButton } from '../buttons/PanelButton'
+import { ButtonV2 } from '../buttons/ButtonV2'
 import { useNavigate } from 'react-router-dom'
 
 type Props = {
@@ -26,7 +26,7 @@ const DEFAULT_FORM_DATA: SongFormInput = {
 }
 
 export function SongForm({ song, isOpen, onClose }: Props) {
-  const { createSong, updateSong, deleteSong, isLoading, error } = useSongMutation()
+  const { createSong, updateSong, isLoading, error } = useSongMutation()
   const navigate = useNavigate()
   
   // Utiliser la constante dans le useState
@@ -78,19 +78,8 @@ export function SongForm({ song, isOpen, onClose }: Props) {
     }
   }
 
-  const handleDelete = () => {
-    if (!song?.id) return;
-    
-    deleteSong(
-      song.id, 
-      {
-        onSuccess: () => onClose()
-      }
-    )
-  }
-
   return (
-    <form onSubmit={handleSubmit} className="divide-y divide-base-500">
+    <form onSubmit={handleSubmit}>
       <TextField
         variant="panel"
         label="Title"
@@ -132,7 +121,7 @@ export function SongForm({ song, isOpen, onClose }: Props) {
         required={true}
       />
         
-      <div className="flex">
+      <div className="flex divide-x divide-base-700">
         <TextField
           variant="panel"
           label="BPM"
@@ -143,7 +132,10 @@ export function SongForm({ song, isOpen, onClose }: Props) {
           required={true}
           className="flex-1"
         />
-        <TapTempo onBpmChange={(value) => setFormData({ ...formData, bpm: value })} className={cn("h-22 w-30 border-l border-b border-base-500 focus:z-10")} />
+        <TapTempo 
+          onBpmChange={(value) => setFormData({ ...formData, bpm: value })} 
+          className={"w-30 border-b border-base-700"} 
+        />
       </div>
         
       {/* TODO: add a dropdown for the time signature with possible values coming from supabase */}
@@ -157,7 +149,7 @@ export function SongForm({ song, isOpen, onClose }: Props) {
         required={true}
       />
 
-      <TextField
+      {/* <TextField
         variant="panel"
         label="Key"
         id="key"
@@ -165,30 +157,20 @@ export function SongForm({ song, isOpen, onClose }: Props) {
         onChange={(value) => setFormData({ ...formData, key: value as string })}
         type="text"
         required={false}
-      />
+      /> */}
 
       {error && (
         <div className="text-red-600 text-sm">{error}</div>
       )}
 
-      <div className="flex divide-x divide-base-500 border-b border-base-500">
-        <PanelButton 
-          label={isLoading ? (song ? 'updating...' : 'adding...') : (song ? 'update' : 'confirm')}
+        <ButtonV2 
+          className="h-21 w-full
+            border-b border-base-700"
           type="submit"
-          variant="primary"
           disabled={isLoading}
-          className="flex-1"
-        />
-        {song && (
-          <PanelButton 
-            type="button"
-            label="delete"
-            variant="secondary"
-            className="flex-1"
-            onClick={handleDelete}
-          />
-        )}
-      </div>
+        >
+          {isLoading ? (song ? 'updating...' : 'adding...') : (song ? 'update' : 'confirm')}
+        </ButtonV2>
     </form>
   )
-} 
+}

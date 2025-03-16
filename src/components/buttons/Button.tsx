@@ -25,7 +25,7 @@ export function Button({
   
   const variantClasses = {
     primary: 'bg-base-200 text-base-900',
-    secondary: 'bg-base-700 text-base-300',
+    secondary: 'bg-base-800 text-base-200',
     inverted: 'bg-base-950 text-base-400 hover:text-base-200 border-1 border-base-700 hover:border-base-400 transition-colors duration-160',
     ghost: 'text-base-400 hover:text-base-200 transition-colors duration-160'
   }
@@ -61,7 +61,7 @@ export function Button({
   return (
     <button 
       className={`flex items-center justify-center gap-2
-        font-display lowercase
+        font-display text-sm uppercase
         cursor-pointer
         focus-visible:outline-1 focus-visible:outline-base-200 focus-visible:outline-offset-1
         ${buttonSizeClasses} ${variantClasses[variant]} ${className}`}

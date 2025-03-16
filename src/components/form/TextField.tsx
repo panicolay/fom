@@ -1,3 +1,5 @@
+import { useRef } from 'react'
+
 type TextFieldProps = {
   variant: 'panel' | 'popover'  
   label: string
@@ -29,27 +31,45 @@ export function TextField({
     min,
     max
 }: TextFieldProps) {
+    const inputRef = useRef<HTMLInputElement>(null)
 
     const labelClasses = {
-        panel: "left-6 top-4",
+        // panel: "left-6 top-4.5",
+        panel: "",
         popover: "left-3 top-2"
     }
 
     const inputClasses = {
-        panel: "px-6 pt-11 pb-[calc(theme(spacing.4)_-_1px)]",
+        // panel: "px-6 pt-10.5 pb-[calc(theme(spacing.4)_+_1px)]",
+        panel:"",
         popover: "px-3 pt-9 pb-[calc(theme(spacing.2)_-_1px)]"
     }
     
     return (
-        <div className={`group relative flex flex-col ${className}
-            bg-base-900
-            `}>
+        <div
+            className={`
+                flex flex-col justify-center
+                h-21 px-6
+                border-b border-base-700
+                bg-base-900
+                group
+                outline-base-700
+                focus-within:outline-1 focus-within:outline-base-400 focus-within:z-10
+                transition-colors duration-160
+                ${className}`}
+            onClick={() => inputRef.current?.focus()}
+        >
+            
             <label htmlFor={id}
-                className={`absolute text-base-400 group-focus-within:text-base-300
-                ${labelClasses[variant]}`}>
+                className={`
+                    text-sm text-base-400 font-display uppercase
+                    group-focus-within:text-base-300 transition-colors duration-160
+                    ${labelClasses[variant]}`}>
                 {label}
             </label>
+            
             <input
+                ref={inputRef}
                 type={type}
                 id={id}
                 placeholder={placeholder}
@@ -62,9 +82,11 @@ export function TextField({
                         onChange(e.target.value)
                     }
                 }}
-                className={`text-lg ${error ? "text-red-500" : "text-base-200 focus:text-base-100"}
+                className={`
+                    outline-none
+                    ${error ? "text-red-500" : "text-base-200 focus:text-base-100"}
                     ${inputClasses[variant]}
-                    focus:outline-1 focus:outline-offset-0 focus:outline-base-200`}
+                    `}
                 required={required}
                 min={min}
                 max={max}

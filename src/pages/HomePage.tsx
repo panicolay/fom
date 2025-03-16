@@ -36,7 +36,7 @@ export function HomePage() {
             <Panel
                 isOpen={isSongPanelOpen}
                 onClose={() => setIsSongPanelOpen(false)}
-                title={songToEdit ? <>edit<br/>song</> : <>add <br/>song</>}
+                title={songToEdit ? <>edit<br/>structure</> : <>new <br/>structure</>}
             >
 
             <SongForm 
@@ -52,7 +52,7 @@ export function HomePage() {
                 variant="inverted"
                 className="w-fit"
                 onClick={() => handleOpenSongPanel()}>
-                add song
+                add structure
             </Button>
         </>
     )
