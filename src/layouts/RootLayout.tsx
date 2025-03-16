@@ -1,22 +1,15 @@
-import { Outlet, Link, useLocation } from 'react-router-dom'
+import { Outlet } from 'react-router-dom'
+import { TopBar } from './TopBar'
 
 export function RootLayout() {
-  const location = useLocation();
-  const isHomePage = location.pathname === '/';
 
   return (
     <div className="min-h-screen flex flex-col">
   
-      {!isHomePage && (
-        <header className="container mx-auto p-6 pb-0">
-          <Link to="/" className="font-display text-2xl font-semibold text-base-400 hover:text-base-200">
-            FOM
-          </Link>
-        </header>
-      )}
+      <TopBar />
 
       <main className="">
-        <div className="container mx-auto p-6 flex flex-col gap-6">
+        <div className="container mx-auto flex flex-col my-14 gap-14">
           <Outlet />
         </div>
       </main>

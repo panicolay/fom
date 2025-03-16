@@ -16,9 +16,9 @@ export function SongList() {
         <tr className="h-14
           border-b border-base-800
           text-left text-sm text-base-500 uppercase font-display">
-          <th className="px-4 font-medium">Title</th>
-          <th className="px-4 font-medium">Artist</th>
-          <th className="px-4 font-medium">Album</th>
+          <th className="px-4 font-normal">Title</th>
+          <th className="px-4 font-normal">Artist</th>
+          <th className="px-4 font-normal">Album</th>
           <th colSpan={3}></th> {/* Don't show bpm, time signature and length titles */}
         </tr>
       </thead>
@@ -30,7 +30,7 @@ export function SongList() {
               border-b border-base-800
               text-base-400
               cursor-pointer
-              group hover:text-base-300 hover:bg-base-900 transition-colors duration-80"
+              group hover:text-base-300 hover:bg-base-900/50 transition-colors duration-80"
             onClick={() => navigate(`/songs/${song.id}`)}
           >
             <td className="px-4 truncate max-w-50 text-base-200 font-medium group-hover:text-base-100 transition-colors duration-80">{song.title}</td>
