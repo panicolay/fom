@@ -89,9 +89,24 @@ export function StructurePage() {
           </ul>
         </div>
 
-        <div className="flex gap-2">
-          <Button variant="inverted" size="medium" icon={Pencil} ariaLabel="edit structure" onClick={() => handleStructureFormOpen(structure)} />
-          <Button variant="inverted" size="medium" icon={Trash} ariaLabel="delete structure" onClick={handleDeleteStructure} />
+        <div className="flex gap-4">
+          <Button
+            className="h-14 w-14 border border-base-800"
+            title="edit structure"
+            aria-label="edit structure"
+            onClick={() => handleStructureFormOpen(structure)}
+          >
+            <Pencil size={18} strokeWidth={1.5} />
+          </Button>
+          
+          <Button
+            className="h-14 w-14 border border-base-800"
+            title="delete structure"
+            aria-label="delete structure"
+            onClick={handleDeleteStructure}
+          >
+            <Trash size={18} strokeWidth={1.5} />
+          </Button>
         </div>
       </div>
 
@@ -109,9 +124,9 @@ export function StructurePage() {
       )}
 
       <Button 
-        variant="inverted"
-        className="w-fit"
-        onClick={() => handleOpenTrackPanel()}>
+        className="h-14 w-fit px-4 border border-base-800"
+        onClick={() => handleOpenTrackPanel()}
+      >
         add track
       </Button>
 

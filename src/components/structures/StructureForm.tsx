@@ -4,7 +4,7 @@ import { TapTempo } from '../form/TapTempo'
 import { useStructureMutation } from '../../hooks/useStructureMutation'
 import { Structure, StructureFormInput } from '../../types/structureTypes'
 import { formatSecondsToTime } from '../../utils/timeUtils'
-import { ButtonV2 } from '../buttons/ButtonV2'
+import { Button } from '../buttons/Button'
 import { useNavigate } from 'react-router-dom'
 
 type Props = {
@@ -162,14 +162,15 @@ export function StructureForm({ structure, isOpen, onClose }: Props) {
         <div className="text-red-600 text-sm">{error}</div>
       )}
 
-        <ButtonV2 
+        <Button 
+          variant="panelDefault"
           className="h-21 w-full
             border-b border-base-700"
           type="submit"
           disabled={isLoading}
         >
           {isLoading ? (structure ? 'updating...' : 'adding...') : (structure ? 'update' : 'confirm')}
-        </ButtonV2>
+        </Button>
     </form>
   )
 }

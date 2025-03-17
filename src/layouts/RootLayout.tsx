@@ -36,7 +36,7 @@ export function RootLayout() {
       <TopBar onNewStructureClick={() => handleStructureFormOpen()} />
 
       <main className="">
-        <div className="container mx-auto flex flex-col my-14 gap-14">
+        <div className="flex flex-col m-14 gap-14">
           <Outlet context={{ handleStructureFormOpen }} />
         </div>
       </main>
