@@ -7,8 +7,6 @@ import { TrackList } from '../components/track/TrackList'
 import { TrackForm } from '../components/track/TrackForm'
 import { Track } from '../types/trackTypes'
 import { User, Disc3, Timer, Activity } from 'lucide-react'
-import { useStructureMutation } from '../hooks/useStructureMutation'
-import { useNavigate } from 'react-router-dom'
 import { Structure } from '../types/structureTypes'
 import { Pencil, Trash } from 'lucide-react'
 import { useSongBars } from '../hooks/useSongBars'
@@ -20,13 +18,14 @@ import { useOutletContext } from 'react-router-dom'
 
 type ContextType = {
   handleStructureFormOpen: (structure?: Structure) => void
+  handleDeleteStructure: (structure: Structure, text: string) => void
+  handleDeleteTrack: (track: Track, text: string) => void
 }
 
 export function StructurePage() {
-  const { handleStructureFormOpen } = useOutletContext<ContextType>()
+  const { handleStructureFormOpen, handleDeleteStructure, handleDeleteTrack } = useOutletContext<ContextType>()
   const { structureId } = useParams()
   const { data: structure, isLoading: structureLoading, error: structureError } = useStructure(structureId)
-  const { deleteStructure } = useStructureMutation()
   const { data: tracks, isLoading: tracksLoading } = useTracksByStructureId(structureId)
   const [isTrackPanelOpen, setIsTrackPanelOpen] = useState(false)
   const [trackToEdit, setTrackToEdit] = useState<Track | null>(null)
@@ -34,24 +33,23 @@ export function StructurePage() {
   const [trackId, setTrackId] = useState<string | null>(null)
   const [timelineItem, setTimelineItem] = useState<TimeLineItem | null>(null)
   const [patterns, setPatterns] = useState<Pattern[]>([])
-  const navigate = useNavigate()
   const totalBars = useSongBars(structure)
   const [currentEditingPattern, setCurrentEditingPattern] = useState<PatternFormData | null>(null)
 
-  const handleDeleteStructure = async () => {
-    if (!structure) return;
+  // const handleDeleteStructure = async () => {
+  //   if (!structure) return;
     
-    try {
-      await deleteStructure(
-        structure.id,
-        {
-          onSuccess: () => navigate('/')
-        }
-      )
-    } catch (error) {
-      console.error('Failed to delete structure:', error)
-    }
-  }
+  //   try {
+  //     await deleteStructure(
+  //       structure.id,
+  //       {
+  //         onSuccess: () => navigate('/')
+  //       }
+  //     )
+  //   } catch (error) {
+  //     console.error('Failed to delete structure:', error)
+  //   }
+  // }
 
   const handleOpenTrackPanel = (track?: Track) => {
     setTrackToEdit(track || null)
@@ -103,7 +101,7 @@ export function StructurePage() {
             className="h-14 w-14 border border-base-800"
             title="delete structure"
             aria-label="delete structure"
-            onClick={handleDeleteStructure}
+            onClick={() => handleDeleteStructure(structure, `You are about to delete ${structure.title}, with all its tracks and patterns.`)}
           >
             <Trash size={18} strokeWidth={1.5} />
           </Button>
