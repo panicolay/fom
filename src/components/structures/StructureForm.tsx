@@ -1,21 +1,20 @@
 import { useState, useEffect } from 'react'
 import { TextField } from '../form/TextField'
 import { TapTempo } from '../form/TapTempo'
-import { useSongMutation } from '../../hooks/useSongMutation'
-import { Song, SongFormInput } from '../../types/songTypes'
+import { useStructureMutation } from '../../hooks/useStructureMutation'
+import { Structure, StructureFormInput } from '../../types/structureTypes'
 import { formatSecondsToTime } from '../../utils/timeUtils'
-import { cn } from '../../utils/cn'
 import { ButtonV2 } from '../buttons/ButtonV2'
 import { useNavigate } from 'react-router-dom'
 
 type Props = {
-  song?: Song | null
+  structure?: Structure | null
   isOpen: boolean
   onClose: () => void
 }
 
 // Définir les valeurs par défaut une seule fois
-const DEFAULT_FORM_DATA: SongFormInput = {
+const DEFAULT_FORM_DATA: StructureFormInput = {
   title: '',
   artist: undefined,
   album: undefined,
@@ -25,24 +24,24 @@ const DEFAULT_FORM_DATA: SongFormInput = {
   key: undefined
 }
 
-export function SongForm({ song, isOpen, onClose }: Props) {
-  const { createSong, updateSong, isLoading, error } = useSongMutation()
+export function StructureForm({ structure, isOpen, onClose }: Props) {
+  const { createStructure, updateStructure, isLoading, error } = useStructureMutation()
   const navigate = useNavigate()
   
   // Utiliser la constante dans le useState
-  const [formData, setFormData] = useState<SongFormInput>(DEFAULT_FORM_DATA)
+  const [formData, setFormData] = useState<StructureFormInput>(DEFAULT_FORM_DATA)
 
   // Dans le useEffect, ne gérer que les valeurs du song existant
   useEffect(() => {
-    if (isOpen && song) {
+    if (isOpen && structure) {
       setFormData({
-        title: song.title,
-        artist: song.artist,
-        album: song.album,
-        bpm: song.bpm,
-        length: formatSecondsToTime(song.length),
-        time_signature: song.time_signature,
-        key: song.key
+        title: structure.title,
+        artist: structure.artist,
+        album: structure.album,
+        bpm: structure.bpm,
+        length: formatSecondsToTime(structure.length),
+        time_signature: structure.time_signature,
+        key: structure.key
       })
     } else {
       // Si pas de song, on revient aux valeurs par défaut
@@ -52,14 +51,14 @@ export function SongForm({ song, isOpen, onClose }: Props) {
       const titleInput = document.getElementById('title')
       titleInput?.focus()
     }
-  }, [isOpen, song])
+  }, [isOpen, structure])
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     
-    if (song) {
-      updateSong(
-        { id: song.id, data: formData },
+    if (structure) {
+      updateStructure(
+        { id: structure.id, data: formData },
         {
           onSuccess: () => {
             onClose()
@@ -67,11 +66,11 @@ export function SongForm({ song, isOpen, onClose }: Props) {
         }
       )
     } else {
-      createSong(
+      createStructure(
         formData,
         {
-          onSuccess: (newSong) => {
-            navigate(`/songs/${newSong.id}`)
+          onSuccess: (newStructure) => {
+            navigate(`/structures/${newStructure.id}`)
           }
         }
       )
@@ -169,7 +168,7 @@ export function SongForm({ song, isOpen, onClose }: Props) {
           type="submit"
           disabled={isLoading}
         >
-          {isLoading ? (song ? 'updating...' : 'adding...') : (song ? 'update' : 'confirm')}
+          {isLoading ? (structure ? 'updating...' : 'adding...') : (structure ? 'update' : 'confirm')}
         </ButtonV2>
     </form>
   )

@@ -2,7 +2,12 @@ import { Search } from "lucide-react";
 import { Link } from "react-router-dom";
 import { ButtonV2 } from "../components/buttons/ButtonV2";
 
-export function TopBar() {
+interface TopBarProps {
+    onNewStructureClick: () => void
+}
+
+export function TopBar({ onNewStructureClick }: TopBarProps) {
+    
     return (
         <header className="sticky top-0 z-10 bg-base-950
           h-14 flex border-b border-base-800 divide-x divide-base-800">
@@ -22,18 +27,12 @@ export function TopBar() {
                 font-display text-base-500 uppercase">
                 <Search size={16} strokeWidth={1.75}/>Search...
             </div>
-        
-            {/* <div className="flex items-center px-4 gap-2
-                text-base-400 font-display uppercase">
-                New structure
-                <div className="flex w-4 h-4 text-xs items-center justify-center
-                    border border-base-600
-                    text-base-500">
-                    N
-                </div>
-            </div> */}
 
-            <ButtonV2 variant="topBar" className="px-4 gap-2">
+            <ButtonV2
+                variant="topBar" 
+                className="px-4 gap-2"
+                onClick={onNewStructureClick}
+            >
                 New Structure
                 <div className="flex w-4 h-4 text-xs items-center justify-center
                     border border-base-600

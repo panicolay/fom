@@ -5,7 +5,7 @@ import { useTrackMutation } from "../../hooks/useTrackMutation";
 import { PanelButton } from "../buttons/PanelButton";
 
 type TrackFormProps = {
-    songId: string
+    structureId: string
     track?: Track | null
     isOpen: boolean
     onClose: () => void
@@ -17,14 +17,14 @@ const STATIC_TRACK_FORM_DATA = {
     position: 0
 } as const;
 
-const getDefaultTrackFormData = (songId: string): TrackFormData => ({
+const getDefaultTrackFormData = (structureId: string): TrackFormData => ({
     ...STATIC_TRACK_FORM_DATA,
-    song_id: songId
+    structure_id: structureId
 });
 
-export function TrackForm({ songId, track, isOpen, onClose }: TrackFormProps) {
+export function TrackForm({ structureId, track, isOpen, onClose }: TrackFormProps) {
     const [formData, setFormData] = useState<TrackFormData>(() => 
-        getDefaultTrackFormData(songId)
+        getDefaultTrackFormData(structureId)
     );
     
     useEffect(() => {
@@ -35,16 +35,16 @@ export function TrackForm({ songId, track, isOpen, onClose }: TrackFormProps) {
                 name: track.name,
                 comment: track.comment,
                 position: track.position,
-                song_id: songId
+                structure_id: structureId
             });
         } else {
-            setFormData(getDefaultTrackFormData(songId));
+            setFormData(getDefaultTrackFormData(structureId));
             
             // focus if !track
             const titleInput = document.getElementById('track_name')
             titleInput?.focus()
         }
-    }, [isOpen, songId, track]);
+    }, [isOpen, structureId, track]);
 
     const { createTrack, updateTrack, deleteTrack, isLoading, error } = useTrackMutation()
 

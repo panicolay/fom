@@ -1,7 +1,7 @@
 import { Routes, Route } from 'react-router-dom'
 import { RootLayout } from './layouts/RootLayout'
 import { HomePage } from './pages/HomePage'
-import { SongStructurePage } from './pages/SongStructurePage'
+import { StructurePage } from './pages/StructurePage'
 import { NotFoundPage } from './pages/NotFoundPage'
 
 export function Router() {
@@ -9,7 +9,7 @@ export function Router() {
     <Routes>
       <Route path="/" element={<RootLayout />}>
         <Route index element={<HomePage />} />
-        <Route path="songs/:songId" element={<SongStructurePage />} />
+        <Route path="structures/:structureId" element={<StructurePage />} />
         <Route path="*" element={<NotFoundPage />} />
       </Route>
     </Routes>

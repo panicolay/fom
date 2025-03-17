@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { calculateTotalBars } from '../utils/songUtils';
-import { Song } from '../types/songTypes';
+import { Song } from '../types/structureTypes';
 
 export function useSongBars(song: Song | undefined) {
   const bars = useMemo(() => {

@@ -1,4 +1,4 @@
-export type Song = {
+export type Structure = {
   id: string
   title: string
   created_at: string
@@ -10,7 +10,7 @@ export type Song = {
   key?: string
 }
 
-export type SongFormInput = {
+export type StructureFormInput = {
   title: string
   artist?: string
   album?: string
@@ -20,7 +20,7 @@ export type SongFormInput = {
   key?: string
 }
 
-export type SongFormData = {
+export type StructureFormData = {
   title: string
   artist?: string
   album?: string

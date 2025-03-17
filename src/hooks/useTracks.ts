@@ -4,22 +4,22 @@ import { Track } from '../types/trackTypes'
 import { createErrorWithMessage } from '../utils/errorUtils'
 import { defaultQueryOptions } from '../utils/queryUtils'
 
-export function useTracksBySongId(songId: string | undefined) {
+export function useTracksByStructureId(structureId: string | undefined) {
   return useQuery<Track[], Error>({
-    queryKey: ['tracks', 'by-song', songId],
+    queryKey: ['tracks', 'by-structure', structureId],
     queryFn: async () => {
-      if (!songId) return []
+      if (!structureId) return []
       
       try {
-        const tracks = await trackService.getTracksBySongId(songId)
+        const tracks = await trackService.getTracksByStructureId(structureId)
         if (!tracks) return []
         return tracks
       } catch (error) {
-        throw createErrorWithMessage(error, 'Failed to fetch tracks for song')
+        throw createErrorWithMessage(error, 'Failed to fetch tracks for structure')
       }
     },
     ...defaultQueryOptions,
-    enabled: !!songId
+    enabled: !!structureId
   })
 }
 

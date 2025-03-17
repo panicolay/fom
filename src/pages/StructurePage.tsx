@@ -1,31 +1,33 @@
 import { useParams } from 'react-router-dom'
-import { useSong } from '../hooks/useSongs'
-import { useTracksBySongId } from '../hooks/useTracks'
+import { useTracksByStructureId } from '../hooks/useTracks'
 import { Button } from '../components/buttons/Button'
 import { useState } from 'react'
 import { formatSecondsToTime } from '../utils/timeUtils'
 import { TrackList } from '../components/track/TrackList'
-import { Panel } from '../components/overlays/Panel'
 import { TrackForm } from '../components/track/TrackForm'
 import { Track } from '../types/trackTypes'
 import { User, Disc3, Timer, Activity } from 'lucide-react'
-import { useSongMutation } from '../hooks/useSongMutation'
+import { useStructureMutation } from '../hooks/useStructureMutation'
 import { useNavigate } from 'react-router-dom'
-import { Song } from '../types/songTypes'
-import { SongForm } from '../components/songs/SongForm'
+import { Structure } from '../types/structureTypes'
 import { Pencil, Trash } from 'lucide-react'
 import { useSongBars } from '../hooks/useSongBars'
 import { Panel2 } from '../components/overlays/Panel2'
 import { PatternForm } from '../components/pattern/PatternForm'
 import { Pattern, PatternFormData, TimeLineItem } from '../types/patternTypes'
+import { useStructure } from '../hooks/useStructures'
+import { useOutletContext } from 'react-router-dom'
 
-export function SongStructurePage() {
-  const { songId } = useParams()
-  const { data: song, isLoading: songLoading, error: songError } = useSong(songId)
-  const { deleteSong } = useSongMutation()
-  const [isSongPanelOpen, setIsSongPanelOpen] = useState(false)
-  const [songToEdit, setSongToEdit] = useState<Song | null>(null)
-  const { data: tracks, isLoading: tracksLoading } = useTracksBySongId(songId)
+type ContextType = {
+  handleStructureFormOpen: (structure?: Structure) => void
+}
+
+export function StructurePage() {
+  const { handleStructureFormOpen } = useOutletContext<ContextType>()
+  const { structureId } = useParams()
+  const { data: structure, isLoading: structureLoading, error: structureError } = useStructure(structureId)
+  const { deleteStructure } = useStructureMutation()
+  const { data: tracks, isLoading: tracksLoading } = useTracksByStructureId(structureId)
   const [isTrackPanelOpen, setIsTrackPanelOpen] = useState(false)
   const [trackToEdit, setTrackToEdit] = useState<Track | null>(null)
   const [isPatternPanelOpen, setIsPatternPanelOpen] = useState(false)
@@ -33,26 +35,21 @@ export function SongStructurePage() {
   const [timelineItem, setTimelineItem] = useState<TimeLineItem | null>(null)
   const [patterns, setPatterns] = useState<Pattern[]>([])
   const navigate = useNavigate()
-  const totalBars = useSongBars(song)
+  const totalBars = useSongBars(structure)
   const [currentEditingPattern, setCurrentEditingPattern] = useState<PatternFormData | null>(null)
 
-  const handleOpenSongPanel = (songData?: Song) => {
-    setSongToEdit(songData || null)
-    setIsSongPanelOpen(true)
-  }
-
-  const handleDeleteSong = async () => {
-    if (!song) return;
+  const handleDeleteStructure = async () => {
+    if (!structure) return;
     
     try {
-      await deleteSong(
-        song.id,
+      await deleteStructure(
+        structure.id,
         {
           onSuccess: () => navigate('/')
         }
       )
     } catch (error) {
-      console.error('Failed to delete song:', error)
+      console.error('Failed to delete structure:', error)
     }
   }
 
@@ -68,33 +65,33 @@ export function SongStructurePage() {
     setIsPatternPanelOpen(true)
   }
 
-  if (songLoading || tracksLoading) return <div>Loading...</div>
-  if (songError) return <div>Error: {songError.message}</div>
-  if (!song) return <div>Song not found</div>
-  if (!songId) return <div>No song ID provided</div>
+  if (structureLoading || tracksLoading) return <div>Loading...</div>
+  if (structureError) return <div>Error: {structureError.message}</div>
+  if (!structure) return <div>Structure not found</div>
+  if (!structureId) return <div>No structure ID provided</div>
 
   return (
     <>
       <div className="flex justify-between">
         <div className="flex flex-col gap-4">
           <h1 className="font-display uppercase text-6xl font-semibold text-base-200">
-            {song.title}
+            {structure.title}
           </h1>
 
           {/* song general info */}
           <ul className="flex text-base-400 gap-6">
-            {song.artist && <li className="flex items-center gap-2"><User size={16} strokeWidth={1.75} className="text-base-500" /> {song.artist}</li>}
-            {song.album && <li className="flex items-center gap-2"><Disc3 size={16} strokeWidth={1.75} className="text-base-500" /> {song.album}</li>}
-            {song.length && <li className="flex items-center gap-2"><Timer size={16} strokeWidth={1.75} className="text-base-500" /> {formatSecondsToTime(Number(song.length))} ({totalBars} bars)</li>}
-            {song.bpm && <li className="flex items-center gap-2"><Activity size={16} strokeWidth={1.75} className="text-base-500" /> {song.bpm} bpm</li>}
-            {song.time_signature && <li>{song.time_signature}</li>}
-            {song.key && <li>{song.key}</li>}
+            {structure.artist && <li className="flex items-center gap-2"><User size={16} strokeWidth={1.75} className="text-base-500" /> {structure.artist}</li>}
+            {structure.album && <li className="flex items-center gap-2"><Disc3 size={16} strokeWidth={1.75} className="text-base-500" /> {structure.album}</li>}
+            {structure.length && <li className="flex items-center gap-2"><Timer size={16} strokeWidth={1.75} className="text-base-500" /> {formatSecondsToTime(Number(structure.length))} ({totalBars} bars)</li>}
+            {structure.bpm && <li className="flex items-center gap-2"><Activity size={16} strokeWidth={1.75} className="text-base-500" /> {structure.bpm} bpm</li>}
+            {structure.time_signature && <li>{structure.time_signature}</li>}
+            {structure.key && <li>{structure.key}</li>}
           </ul>
         </div>
 
         <div className="flex gap-2">
-          <Button variant="inverted" size="medium" icon={Pencil} ariaLabel="edit song" onClick={() => handleOpenSongPanel(song)} />
-          <Button variant="inverted" size="medium" icon={Trash} ariaLabel="delete song" onClick={handleDeleteSong} />
+          <Button variant="inverted" size="medium" icon={Pencil} ariaLabel="edit structure" onClick={() => handleStructureFormOpen(structure)} />
+          <Button variant="inverted" size="medium" icon={Trash} ariaLabel="delete structure" onClick={handleDeleteStructure} />
         </div>
       </div>
 
@@ -118,20 +115,6 @@ export function SongStructurePage() {
         add track
       </Button>
 
-      {/* TODO: switch to Panel2 */}
-      {/* Panel pour l'édition de chanson */}
-      <Panel
-        isOpen={isSongPanelOpen}
-        onClose={() => setIsSongPanelOpen(false)}
-        title={<>edit<br/>song</>}
-      >
-        <SongForm
-          isOpen={isSongPanelOpen}
-          onClose={() => setIsSongPanelOpen(false)}
-          song={songToEdit}
-        />
-      </Panel>
-
       <Panel2 name="track"
         isOpen={isTrackPanelOpen}
         onClose={() => setIsTrackPanelOpen(false)}
@@ -140,7 +123,7 @@ export function SongStructurePage() {
         <TrackForm
           isOpen={isTrackPanelOpen}
           onClose={() => setIsTrackPanelOpen(false)}
-          songId={songId}
+          structureId={structureId}
           track={trackToEdit}
         />
       </Panel2>

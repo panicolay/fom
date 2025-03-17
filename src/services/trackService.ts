@@ -3,10 +3,10 @@ import { Track, TrackFormData } from '../types/trackTypes'
 
 export const trackService = {
     /**
-     * Crée une nouvelle piste dans la base de données
-     * @param trackData Les données de la piste à créer
-     * @returns La piste créée
-     * @throws Error si la création échoue ou si aucune donnée n'est retournée
+     * Create a new track in the database
+     * @param trackData The data of the track to create
+     * @returns The created track
+     * @throws Error if the creation fails or if no data is returned
     */
     async create(trackData: TrackFormData): Promise<Track> {
         const { data, error } = await supabase
@@ -21,16 +21,16 @@ export const trackService = {
     },
 
     /**
-     * Récupère toutes les pistes d'une chanson
-     * @param songId Identifiant de la chanson
-     * @returns Liste des pistes de la chanson
-     * @throws Error si la récupération échoue
+     * Get all tracks of a structure
+     * @param structureId The id of the structure
+     * @returns List of tracks of the structure
+     * @throws Error if the retrieval fails
     */
-    async getTracksBySongId(songId: string): Promise<Track[]> {
+    async getTracksByStructureId(structureId: string): Promise<Track[]> {
         const { data, error } = await supabase
             .from('tracks')
             .select('*')
-            .eq('song_id', songId)
+            .eq('structure_id', structureId)
             .order('position', { ascending: true })
         
         if (error) throw error
@@ -38,9 +38,9 @@ export const trackService = {
     },
 
     /**
-     * Récupère une piste par son identifiant
-     * @param id Identifiant de la piste
-     * @returns La piste trouvée ou null
+     * Get a track by its id
+     * @param id The id of the track
+     * @returns The found track or null
     */
     async getById(id: string): Promise<Track | null> {
         const { data, error } = await supabase
@@ -54,11 +54,11 @@ export const trackService = {
     },
 
     /**
-     * Met à jour une piste existante
-     * @param id Identifiant de la piste à mettre à jour
-     * @param trackData Nouvelles données de la piste
-     * @returns La piste mise à jour
-     * @throws Error si la mise à jour échoue ou si aucune donnée n'est retournée
+     * Update an existing track
+     * @param id The id of the track to update
+     * @param trackData New data of the track
+     * @returns The updated track
+     * @throws Error if the update fails or if no data is returned
     */
     async update(id: string, trackData: TrackFormData): Promise<Track> {
         const { data, error } = await supabase
@@ -74,8 +74,8 @@ export const trackService = {
     },
 
     /**
-     * Supprime une piste
-     * @param id Identifiant de la piste à supprimer
+     * Delete a track
+     * @param id The id of the track to delete
     */
     async delete(id: string): Promise<void> {
         const { error } = await supabase
@@ -87,15 +87,15 @@ export const trackService = {
     },
 
     /**
-     * Obtient la position maximale actuelle pour une chanson donnée
-     * @param songId Identifiant de la chanson
-     * @returns La position maximale ou 0 si aucune track n'existe
+     * Get the maximum position for a structure
+     * @param structureId The id of the structure
+     * @returns The maximum position or 0 if no track exists
      */
-    async getMaxPosition(songId: string): Promise<number> {
+    async getMaxPosition(structureId: string): Promise<number> {
         const { data, error } = await supabase
             .from('tracks')
             .select('position')
-            .eq('song_id', songId)
+            .eq('structure_id', structureId)
             .order('position', { ascending: false })
             .limit(1)
             
@@ -104,8 +104,8 @@ export const trackService = {
     },
 
     /**
-     * Met à jour les positions des pistes
-     * @param tracks Liste des pistes à mettre à jour
+     * Update the positions of the tracks
+     * @param tracks List of tracks to update
      */
     async updatePositions(tracks: Track[]): Promise<void> {
         if (tracks.length === 0) return;
@@ -114,7 +114,7 @@ export const trackService = {
             id: track.id,
             position: track.position,
             name: track.name,
-            song_id: track.song_id
+            structure_id: track.structure_id
         }));
         
         const { error } = await supabase

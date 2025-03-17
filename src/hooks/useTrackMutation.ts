@@ -13,7 +13,7 @@ export function useTrackMutation() {
 
     const createMutation = useMutation<Track, Error, TrackFormData>({
         mutationFn: (data: TrackFormData) => 
-            trackService.getMaxPosition(data.song_id)
+            trackService.getMaxPosition(data.structure_id)
                 .then(maxPosition => trackService.create({
                     ...data,
                     position: maxPosition + 1
@@ -55,15 +55,15 @@ export function useTrackMutation() {
             }
             
             await queryClient.cancelQueries({ 
-                queryKey: ['tracks', 'by-song', newTracks[0].song_id] 
+                queryKey: ['tracks', 'by-structure', newTracks[0].structure_id] 
             })
 
             const previousTracks = queryClient.getQueryData<Track[]>(
-                ['tracks', 'by-song', newTracks[0].song_id]
+                ['tracks', 'by-structure', newTracks[0].structure_id]
             ) || []
 
             queryClient.setQueryData(
-                ['tracks', 'by-song', newTracks[0].song_id], 
+                ['tracks', 'by-structure', newTracks[0].structure_id], 
                 newTracks
             )
 
@@ -73,7 +73,7 @@ export function useTrackMutation() {
             if (newTracks.length === 0) return
             
             queryClient.setQueryData(
-                ['tracks', 'by-song', newTracks[0].song_id], 
+                ['tracks', 'by-structure', newTracks[0].structure_id], 
                 context?.previousTracks
             )
             console.error('Failed to reorder tracks:', error)
@@ -82,7 +82,7 @@ export function useTrackMutation() {
             if (newTracks.length === 0) return
             
             queryClient.invalidateQueries({ 
-                queryKey: ['tracks', 'by-song', newTracks[0].song_id] 
+                queryKey: ['tracks', 'by-structure', newTracks[0].structure_id] 
             })
         }
     })
