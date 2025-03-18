@@ -1,7 +1,7 @@
 import { useParams } from 'react-router-dom'
 import { useTracksByStructureId } from '../hooks/useTracks'
 import { Button } from '../components/buttons/Button'
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { formatSecondsToTime } from '../utils/timeUtils'
 import { TrackList } from '../components/track/TrackList'
 import { TrackForm } from '../components/track/TrackForm'
@@ -27,6 +27,7 @@ export function StructurePage() {
   const { structureId } = useParams()
   const { data: structure, isLoading: structureLoading, error: structureError } = useStructure(structureId)
   const { data: tracks, isLoading: tracksLoading } = useTracksByStructureId(structureId)
+  const addTrackButtonRef = useRef<HTMLButtonElement>(null);
   const [isTrackPanelOpen, setIsTrackPanelOpen] = useState(false)
   const [trackToEdit, setTrackToEdit] = useState<Track | null>(null)
   const [isPatternPanelOpen, setIsPatternPanelOpen] = useState(false)
@@ -95,28 +96,24 @@ export function StructurePage() {
 
       {/* Tracks list */}
       {tracks && tracks.length > 0 ? (
-        <TrackList 
-          tracks={tracks} 
+        <TrackList
+          tracks={tracks}
           totalBars={totalBars}
           onPatternClick={handlePatternClick}
           onEdit={handleOpenTrackPanel}
           currentEditingPattern={currentEditingPattern}
+          onAddTrack={handleOpenTrackPanel}
+          buttonRef={(el) => addTrackButtonRef.current = el}
         />
       ) : (
         <p className="text-base-400">No tracks yet</p>
       )}
 
-      <Button 
-        className="h-14 w-fit px-4 border border-base-800"
-        onClick={() => handleOpenTrackPanel()}
-      >
-        add track
-      </Button>
-
-      <Popover name="track"
+      <Popover 
+        name="track"
         isOpen={isTrackPanelOpen}
         onClose={() => setIsTrackPanelOpen(false)}
-        // title={trackToEdit ? <>edit<br/>track</> : <>add<br/>track</>}
+        anchorElement={addTrackButtonRef.current}
       >
         <TrackForm
           isOpen={isTrackPanelOpen}

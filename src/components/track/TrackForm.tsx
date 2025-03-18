@@ -107,7 +107,7 @@ export function TrackForm({ structureId, track, isOpen, onClose }: TrackFormProp
                     {error}
                 </div>
             )}
-            <div className="flex divide-x divide-base-500">
+            <div className="flex divide-x divide-base-700">
                 <Button 
                     type="submit"
                     variant="panelGhost"
