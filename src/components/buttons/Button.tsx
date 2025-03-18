@@ -1,5 +1,5 @@
 type ButtonProps = {
-    variant?: 'default' | 'panelDefault' | 'topBar'
+    variant?: 'default' | 'panelDefault' | 'topBar' | 'panelGhost' | 'panelGhostDanger'
     children?: React.ReactNode
     className?: string
 } & React.ButtonHTMLAttributes<HTMLButtonElement>
@@ -26,7 +26,17 @@ export function Button({
             bg-base-800
             [&:hover,&:focus]:text-base-100
             [&:hover,&:focus]:bg-base-700/50
-            [&:hover:active,&:focus:active]:bg-base-700/75`,
+            [&:hover:active,&:focus:active]:bg-base-700`,
+        panelGhost: `
+            text-base-400
+            [&:hover,&:focus]:text-base-300
+            [&:hover,&:focus]:bg-base-800/50
+            [&:hover:active,&:focus:active]:bg-base-800`,
+        panelGhostDanger: `
+            text-rose-700
+            [&:hover,&:focus]:text-rose-600
+            [&:hover,&:focus]:bg-base-800/50
+            [&:hover:active,&:focus:active]:bg-base-800`,
     }
     
     return (

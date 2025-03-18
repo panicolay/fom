@@ -9,7 +9,7 @@ import { Structure } from '../types/structureTypes'
 import { Track } from '../types/trackTypes'
 import { useStructureMutation } from '../hooks/useStructureMutation'
 import { useTrackMutation } from '../hooks/useTrackMutation'
-
+import { useNavigate } from 'react-router-dom'
 type DeletableItem =
   | { type: 'structure', data: Structure }
   | { type: 'track', data: Track }
@@ -20,9 +20,11 @@ export function RootLayout() {
   const [isStructureFormOpen, setIsStructureFormOpen] = useState(false)
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
   const [deleteDialogText, setDeleteDialogText] = useState('')
+  const [deleteDialogTitle, setDeleteDialogTitle] = useState('')
   const [itemToDelete, setItemToDelete] = useState<DeletableItem | null>(null)
   const { deleteStructure } = useStructureMutation()
   const { deleteTrack } = useTrackMutation()
+  const navigate = useNavigate()
 
   useEffect(() => {
     if (!isStructureFormOpen) {
@@ -45,12 +47,14 @@ export function RootLayout() {
 
   const handleDeleteStructure = (structure: Structure, text: string) => {
     setItemToDelete({ type: 'structure', data: structure })
+    setDeleteDialogTitle('delete structure')
     setDeleteDialogText(text)
     setIsDeleteDialogOpen(true)
   }
 
   const handleDeleteTrack = (track: Track, text: string) => {
     setItemToDelete({ type: 'track', data: track })
+    setDeleteDialogTitle('delete track')
     setDeleteDialogText(text)
     setIsDeleteDialogOpen(true)
   }
@@ -58,7 +62,6 @@ export function RootLayout() {
   const handleDeleteDialogClose = () => {
     setIsDeleteDialogOpen(false)
     setItemToDelete(null)
-    setDeleteDialogText('')
   }
 
   const handleDeleteConfirm = async () => {
@@ -74,6 +77,7 @@ export function RootLayout() {
       console.error('Failed to delete item:', error)
     } finally {
       handleDeleteDialogClose()
+      navigate('/')
     }
   }
   
@@ -112,6 +116,7 @@ export function RootLayout() {
         isOpen={isDeleteDialogOpen}
         onClose={handleDeleteDialogClose}
         onConfirm={handleDeleteConfirm}
+        title={deleteDialogTitle}
         text={deleteDialogText}
       />
 

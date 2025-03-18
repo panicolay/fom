@@ -1,10 +1,11 @@
-import { Dialog, DialogBackdrop, DialogPanel} from '@headlessui/react'
+import { Dialog, DialogBackdrop, DialogPanel, DialogTitle} from '@headlessui/react'
 import { Button } from '../buttons/Button'
 
 type Props = {
     isOpen: boolean
     onClose: () => void
     onConfirm: () => void
+    title: string
     text: string
 }
 
@@ -12,6 +13,7 @@ export function DeleteDialog({
     isOpen,
     onClose,
     onConfirm,
+    title,
     text
 }: Props) {
     return (
@@ -22,22 +24,32 @@ export function DeleteDialog({
 
             <div className="fixed inset-0 flex justify-center pt-28">
                 <DialogPanel
+                    transition
                     className="
-                        w-80 self-start
+                        w-100 self-start
                         bg-base-900 border border-base-700
-                        text-base-200"
+                        text-base-200
+                        data-[closed]:opacity-0 data-[closed]:scale-98 duration-160"
                 >
-                    <div className="p-4">{text}</div>
+                    <div className="p-6">
+                        <DialogTitle
+                            className="
+                                mb-4
+                                text-sm text-base-400 font-display uppercase">
+                            {title}
+                        </DialogTitle>
+                        <div className="">{text}</div>
+                    </div>
                     <div className="flex">
                         <Button
-                            variant="panelDefault"
+                            variant="panelGhost"
                             className="w-full h-14 border-t border-r border-base-700"
                             onClick={onClose}
                         >
                             Cancel
                         </Button>
                         <Button
-                            variant="panelDefault"
+                            variant="panelGhostDanger"
                             className="w-full h-14 border-t border-base-700"
                             onClick={onConfirm}
                         >

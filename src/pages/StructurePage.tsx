@@ -36,21 +36,6 @@ export function StructurePage() {
   const totalBars = useSongBars(structure)
   const [currentEditingPattern, setCurrentEditingPattern] = useState<PatternFormData | null>(null)
 
-  // const handleDeleteStructure = async () => {
-  //   if (!structure) return;
-    
-  //   try {
-  //     await deleteStructure(
-  //       structure.id,
-  //       {
-  //         onSuccess: () => navigate('/')
-  //       }
-  //     )
-  //   } catch (error) {
-  //     console.error('Failed to delete structure:', error)
-  //   }
-  // }
-
   const handleOpenTrackPanel = (track?: Track) => {
     setTrackToEdit(track || null)
     setIsTrackPanelOpen(true)
