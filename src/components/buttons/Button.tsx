@@ -36,7 +36,8 @@ export function Button({
             text-rose-700
             [&:hover,&:focus]:text-rose-600
             [&:hover,&:focus]:bg-base-800/50
-            [&:hover:active,&:focus:active]:bg-base-800`,
+            [&:hover:active,&:focus:active]:bg-base-800
+            [&:focus-visible]:outline-rose-600`,
     }
     
     return (

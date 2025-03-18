@@ -29,7 +29,8 @@ export function DeleteDialog({
                         w-100 self-start
                         bg-base-900 border border-base-700
                         text-base-200
-                        data-[closed]:opacity-0 data-[closed]:scale-98 duration-160"
+                        data-[closed]:opacity-0 data-[closed]:-translate-y-4
+                        duration-160"
                 >
                     <div className="p-6">
                         <DialogTitle
