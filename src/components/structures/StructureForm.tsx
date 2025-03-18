@@ -43,11 +43,8 @@ export function StructureForm({ structure, isOpen, onClose }: Props) {
         time_signature: structure.time_signature,
         key: structure.key
       })
-    } else {
-      // Si pas de song, on revient aux valeurs par défaut
+    } else if (isOpen && !structure) {
       setFormData(DEFAULT_FORM_DATA)
-      
-      // focus if !song
       const titleInput = document.getElementById('title')
       titleInput?.focus()
     }
@@ -70,6 +67,7 @@ export function StructureForm({ structure, isOpen, onClose }: Props) {
         formData,
         {
           onSuccess: (newStructure) => {
+            onClose()
             navigate(`/structures/${newStructure.id}`)
           }
         }

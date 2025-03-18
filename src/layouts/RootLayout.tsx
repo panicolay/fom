@@ -42,7 +42,6 @@ export function RootLayout() {
 
   const handleStructureFormClose = () => {
     setIsStructureFormOpen(false)
-    setStructureToEdit(null)
   }
 
   const handleDeleteStructure = (structure: Structure, text: string) => {
