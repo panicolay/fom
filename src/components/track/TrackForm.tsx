@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { TextField } from "../form/TextField";
 import { TrackFormData, Track } from "../../types/trackTypes";
 import { useTrackMutation } from "../../hooks/useTrackMutation";    
-import { PanelButton } from "../buttons/PanelButton";
+import { Button } from "../buttons/Button";
 
 type TrackFormProps = {
     structureId: string
@@ -85,7 +85,7 @@ export function TrackForm({ structureId, track, isOpen, onClose }: TrackFormProp
     return (
         <form onSubmit={handleSubmit} className="flex flex-col divide-y divide-base-500">
             <TextField 
-                variant="popover"
+                variant="panel"
                 label="track name"
                 id="track_name"
                 value={formData.name}
@@ -94,7 +94,7 @@ export function TrackForm({ structureId, track, isOpen, onClose }: TrackFormProp
                 required={true} 
             />
             <TextField
-                variant="popover"
+                variant="panel"
                 label="comment"
                 id="track_comment"
                 value={formData.comment}
@@ -108,21 +108,23 @@ export function TrackForm({ structureId, track, isOpen, onClose }: TrackFormProp
                 </div>
             )}
             <div className="flex divide-x divide-base-500">
-                <PanelButton 
-                    label={isLoading ? (track ? 'updating...' : 'adding...') : (track ? 'update' : 'confirm')}
+                <Button 
                     type="submit"
-                    variant="primary"
+                    variant="panelGhost"
                     disabled={isLoading}
-                    className="flex-1 !h-12"
-                />
+                    className="h-14 w-full"
+                >
+                    {isLoading ? (track ? 'updating...' : 'adding...') : (track ? 'update' : 'confirm')}
+                </Button>
                 {track && (
-                    <PanelButton
-                        label="delete"
+                    <Button
                         type="button"
-                        variant="secondary"
-                        className="flex-1 !h-12"
+                        variant="panelGhostDanger"
+                        className="h-14 w-full"
                         onClick={handleDelete}
-                    />
+                    >
+                        delete
+                    </Button>
                 )}
             </div>
         </form>

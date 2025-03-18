@@ -10,7 +10,7 @@ import { User, Disc3, Timer, Activity } from 'lucide-react'
 import { Structure } from '../types/structureTypes'
 import { Pencil, Trash } from 'lucide-react'
 import { useSongBars } from '../hooks/useSongBars'
-import { Panel2 } from '../components/overlays/Panel2'
+import { Popover } from '../components/overlays/Popover'
 import { PatternForm } from '../components/pattern/PatternForm'
 import { Pattern, PatternFormData, TimeLineItem } from '../types/patternTypes'
 import { useStructure } from '../hooks/useStructures'
@@ -74,7 +74,7 @@ export function StructurePage() {
 
         <div className="flex gap-4">
           <Button
-            className="h-14 w-14 border border-base-800"
+            className="h-12 w-12 border border-base-800"
             title="edit structure"
             aria-label="edit structure"
             onClick={() => handleStructureFormOpen(structure)}
@@ -83,7 +83,7 @@ export function StructurePage() {
           </Button>
           
           <Button
-            className="h-14 w-14 border border-base-800"
+            className="h-12 w-12 border border-base-800"
             title="delete structure"
             aria-label="delete structure"
             onClick={() => handleDeleteStructure(structure, `You are about to delete ${structure.title}, with all its tracks and patterns.`)}
@@ -113,7 +113,7 @@ export function StructurePage() {
         add track
       </Button>
 
-      <Panel2 name="track"
+      <Popover name="track"
         isOpen={isTrackPanelOpen}
         onClose={() => setIsTrackPanelOpen(false)}
         // title={trackToEdit ? <>edit<br/>track</> : <>add<br/>track</>}
@@ -124,10 +124,10 @@ export function StructurePage() {
           structureId={structureId}
           track={trackToEdit}
         />
-      </Panel2>
+      </Popover>
 
       { trackId !== null && timelineItem !== null && (
-        <Panel2 name="pattern"
+        <Popover name="pattern"
           isOpen={isPatternPanelOpen}
           onClose={() => setIsPatternPanelOpen(false)}
         >
@@ -140,7 +140,7 @@ export function StructurePage() {
             patterns={patterns}
             onFormDataChange={setCurrentEditingPattern}
         />
-        </Panel2>
+        </Popover>
       )}
     </>
   )
