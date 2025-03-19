@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { TextField } from "../form/TextField";
 import { TrackFormData, Track } from "../../types/trackTypes";
 import { useTrackMutation } from "../../hooks/useTrackMutation";    
@@ -27,8 +27,17 @@ export function TrackForm({ structureId, track, isOpen, onClose }: TrackFormProp
         getDefaultTrackFormData(structureId)
     );
     
+    const formRef = useRef<HTMLFormElement>(null);
+    
     useEffect(() => {
         if (!isOpen) return;
+
+        const preventShortcuts = (keyboardEvent: KeyboardEvent) => {
+            keyboardEvent.stopPropagation();
+        }
+
+        const formElement = formRef.current;
+        formElement?.addEventListener('keydown', preventShortcuts);
 
         if (track) {
             setFormData({
@@ -43,6 +52,10 @@ export function TrackForm({ structureId, track, isOpen, onClose }: TrackFormProp
             // focus if !track
             const titleInput = document.getElementById('track_name')
             titleInput?.focus()
+        }
+
+        return () => {
+            formElement?.removeEventListener('keydown', preventShortcuts);
         }
     }, [isOpen, structureId, track]);
 
@@ -83,7 +96,11 @@ export function TrackForm({ structureId, track, isOpen, onClose }: TrackFormProp
     }
     
     return (
-        <form onSubmit={handleSubmit} className="flex flex-col divide-y divide-base-500">
+        <form 
+            ref={formRef}
+            onSubmit={handleSubmit} 
+            className="flex flex-col divide-y divide-base-500"
+        >
             <TextField 
                 variant="panel"
                 label="track name"

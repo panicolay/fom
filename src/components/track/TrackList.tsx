@@ -5,18 +5,22 @@ import { arrayMove, SortableContext, sortableKeyboardCoordinates, verticalListSo
 import { useTrackMutation } from "../../hooks/useTrackMutation";
 import { TimeLineItem, Pattern, PatternFormData } from "../../types/patternTypes";
 import { Button } from "../buttons/Button";
+import { Popover } from "../overlays/Popover";
+import { TrackForm } from "./TrackForm";
+import { useState, useRef } from "react";
 
 interface TrackListProps {
     tracks: TrackType[];
-    onEdit: (track: TrackType) => void;
     totalBars: number;
+    structureId: string;
     onPatternClick: (trackId: string, timelineItem: TimeLineItem, patterns: Pattern[]) => void;
     currentEditingPattern?: PatternFormData | null;
-    onAddTrack: () => void;
-    buttonRef: (ref: HTMLButtonElement | null) => void;
 }
 
-export function TrackList({ tracks, onEdit, totalBars, onPatternClick, currentEditingPattern, onAddTrack, buttonRef }: TrackListProps) {
+export function TrackList({ tracks, totalBars, structureId, onPatternClick, currentEditingPattern }: TrackListProps) {
+    const [isTrackPanelOpen, setIsTrackPanelOpen] = useState(false);
+    const addTrackButtonRef = useRef<HTMLButtonElement>(null);
+    const [trackToEdit, setTrackToEdit] = useState<TrackType | null>(null);
     const { reorderTracks } = useTrackMutation();
     const sensors = useSensors(
         useSensor(PointerSensor),
@@ -24,6 +28,11 @@ export function TrackList({ tracks, onEdit, totalBars, onPatternClick, currentEd
             coordinateGetter: sortableKeyboardCoordinates,
         })
     );
+
+    const handleOpenTrackPanel = (track?: TrackType) => {
+        setTrackToEdit(track || null)
+        setIsTrackPanelOpen(true)
+    }
 
     const handleDragEnd = (event: DragEndEvent) => {
         const { active, over } = event;
@@ -46,37 +55,55 @@ export function TrackList({ tracks, onEdit, totalBars, onPatternClick, currentEd
 
     return (
         <div>
-            <DndContext
-                sensors={sensors}
-                collisionDetection={closestCenter}
-                onDragEnd={handleDragEnd}
-            >
-                <SortableContext
-                    items={tracks}
-                    strategy={verticalListSortingStrategy}
+            {tracks.length > 0 ? (
+                <DndContext
+                    sensors={sensors}
+                    collisionDetection={closestCenter}
+                    onDragEnd={handleDragEnd}
                 >
-                    <ul className="-ml-7">
-                        {tracks.map((track) => (
-                            <Track 
-                                key={track.id} 
-                                track={track} 
-                                onEdit={onEdit}
-                                totalBars={totalBars}
-                                onPatternClick={onPatternClick}
-                                currentEditingPattern={currentEditingPattern}
-                            />
-                        ))}
-                    </ul>
-                </SortableContext>
-            </DndContext>
+                    <SortableContext
+                        items={tracks}
+                        strategy={verticalListSortingStrategy}
+                    >
+                        <ul className="-ml-7">
+                            {tracks.map((track) => (
+                                <Track 
+                                    key={track.id} 
+                                    track={track} 
+                                    onEdit={handleOpenTrackPanel}
+                                    totalBars={totalBars}
+                                    onPatternClick={onPatternClick}
+                                    currentEditingPattern={currentEditingPattern}
+                                />
+                            ))}
+                        </ul>
+                    </SortableContext>
+                </DndContext>
+            ) : (
+                <p className="text-base-400">No tracks yet</p>
+            )}
 
             <Button
-                ref={buttonRef}
+                ref={addTrackButtonRef}
                 className="h-14 w-fit px-4 border border-base-800"
-                onClick={onAddTrack}
+                onClick={() => handleOpenTrackPanel()}
             >
                 add track
             </Button>
+
+            <Popover 
+                name="track"
+                isOpen={isTrackPanelOpen}
+                onClose={() => setIsTrackPanelOpen(false)}
+                anchorElement={addTrackButtonRef.current}
+            >
+                <TrackForm
+                    isOpen={isTrackPanelOpen}
+                    onClose={() => setIsTrackPanelOpen(false)}
+                    structureId={structureId}
+                    track={trackToEdit}
+                />
+            </Popover>
         </div>
     );
 }

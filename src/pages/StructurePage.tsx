@@ -1,10 +1,9 @@
 import { useParams } from 'react-router-dom'
 import { useTracksByStructureId } from '../hooks/useTracks'
 import { Button } from '../components/buttons/Button'
-import { useState, useRef } from 'react'
+import { useState } from 'react'
 import { formatSecondsToTime } from '../utils/timeUtils'
 import { TrackList } from '../components/track/TrackList'
-import { TrackForm } from '../components/track/TrackForm'
 import { Track } from '../types/trackTypes'
 import { User, Disc3, Timer, Activity } from 'lucide-react'
 import { Structure } from '../types/structureTypes'
@@ -27,20 +26,12 @@ export function StructurePage() {
   const { structureId } = useParams()
   const { data: structure, isLoading: structureLoading, error: structureError } = useStructure(structureId)
   const { data: tracks, isLoading: tracksLoading } = useTracksByStructureId(structureId)
-  const addTrackButtonRef = useRef<HTMLButtonElement>(null);
-  const [isTrackPanelOpen, setIsTrackPanelOpen] = useState(false)
-  const [trackToEdit, setTrackToEdit] = useState<Track | null>(null)
   const [isPatternPanelOpen, setIsPatternPanelOpen] = useState(false)
   const [trackId, setTrackId] = useState<string | null>(null)
   const [timelineItem, setTimelineItem] = useState<TimeLineItem | null>(null)
   const [patterns, setPatterns] = useState<Pattern[]>([])
   const totalBars = useSongBars(structure)
   const [currentEditingPattern, setCurrentEditingPattern] = useState<PatternFormData | null>(null)
-
-  const handleOpenTrackPanel = (track?: Track) => {
-    setTrackToEdit(track || null)
-    setIsTrackPanelOpen(true)
-  }
 
   const handlePatternClick = (trackId: string, item: TimeLineItem, patterns: Pattern[]) => {
     setTrackId(trackId)
@@ -95,33 +86,13 @@ export function StructurePage() {
       </div>
 
       {/* Tracks list */}
-      {tracks && tracks.length > 0 ? (
-        <TrackList
-          tracks={tracks}
-          totalBars={totalBars}
-          onPatternClick={handlePatternClick}
-          onEdit={handleOpenTrackPanel}
-          currentEditingPattern={currentEditingPattern}
-          onAddTrack={handleOpenTrackPanel}
-          buttonRef={(el) => addTrackButtonRef.current = el}
-        />
-      ) : (
-        <p className="text-base-400">No tracks yet</p>
-      )}
-
-      <Popover 
-        name="track"
-        isOpen={isTrackPanelOpen}
-        onClose={() => setIsTrackPanelOpen(false)}
-        anchorElement={addTrackButtonRef.current}
-      >
-        <TrackForm
-          isOpen={isTrackPanelOpen}
-          onClose={() => setIsTrackPanelOpen(false)}
-          structureId={structureId}
-          track={trackToEdit}
-        />
-      </Popover>
+      <TrackList
+        tracks={tracks || []}
+        totalBars={totalBars}
+        structureId={structureId}
+        onPatternClick={handlePatternClick}
+        currentEditingPattern={currentEditingPattern}
+      />
 
       { trackId !== null && timelineItem !== null && (
         <Popover name="pattern"
