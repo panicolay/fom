@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { TextField } from '../form/TextField'
 import { TapTempo } from '../form/TapTempo'
 import { useStructureMutation } from '../../hooks/useStructureMutation'
@@ -6,6 +6,7 @@ import { Structure, StructureFormInput } from '../../types/structureTypes'
 import { formatSecondsToTime } from '../../utils/timeUtils'
 import { Button } from '../buttons/Button'
 import { useNavigate } from 'react-router-dom'
+import { registerFormShortcutBlocker } from '../../utils/shortcuts'
 
 type Props = {
   structure?: Structure | null
@@ -27,11 +28,12 @@ const DEFAULT_FORM_DATA: StructureFormInput = {
 export function StructureForm({ structure, isOpen, onClose }: Props) {
   const { createStructure, updateStructure, isLoading, error } = useStructureMutation()
   const navigate = useNavigate()
+  const formRef = useRef<HTMLFormElement>(null)
   
-  // Utiliser la constante dans le useState
+  // use the constant in the useState
   const [formData, setFormData] = useState<StructureFormInput>(DEFAULT_FORM_DATA)
 
-  // Dans le useEffect, ne gérer que les valeurs du song existant
+  // useEffect, only handle existing song values
   useEffect(() => {
     if (isOpen && structure) {
       setFormData({
@@ -49,6 +51,13 @@ export function StructureForm({ structure, isOpen, onClose }: Props) {
       titleInput?.focus()
     }
   }, [isOpen, structure])
+
+  // shortcut blocker
+  useEffect(() => {
+    if (!isOpen) return
+    const cleanup = registerFormShortcutBlocker(formRef.current)
+    return cleanup
+  }, [isOpen])
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -76,7 +85,10 @@ export function StructureForm({ structure, isOpen, onClose }: Props) {
   }
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form 
+      ref={formRef}
+      onSubmit={handleSubmit}
+    >
       <TextField
         variant="panel"
         label="Title"

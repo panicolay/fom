@@ -3,6 +3,7 @@ import { TextField } from "../form/TextField";
 import { TrackFormData, Track } from "../../types/trackTypes";
 import { useTrackMutation } from "../../hooks/useTrackMutation";    
 import { Button } from "../buttons/Button";
+import { registerFormShortcutBlocker } from '../../utils/shortcuts';
 
 type TrackFormProps = {
     structureId: string
@@ -32,13 +33,6 @@ export function TrackForm({ structureId, track, isOpen, onClose }: TrackFormProp
     useEffect(() => {
         if (!isOpen) return;
 
-        const preventShortcuts = (keyboardEvent: KeyboardEvent) => {
-            keyboardEvent.stopPropagation();
-        }
-
-        const formElement = formRef.current;
-        formElement?.addEventListener('keydown', preventShortcuts);
-
         if (track) {
             setFormData({
                 name: track.name,
@@ -53,11 +47,14 @@ export function TrackForm({ structureId, track, isOpen, onClose }: TrackFormProp
             const titleInput = document.getElementById('track_name')
             titleInput?.focus()
         }
-
-        return () => {
-            formElement?.removeEventListener('keydown', preventShortcuts);
-        }
     }, [isOpen, structureId, track]);
+
+    // shortcut blocker
+    useEffect(() => {
+        if (!isOpen) return;
+        const cleanup = registerFormShortcutBlocker(formRef.current);
+        return cleanup;
+    }, [isOpen]);
 
     const { createTrack, updateTrack, deleteTrack, isLoading, error } = useTrackMutation()
 

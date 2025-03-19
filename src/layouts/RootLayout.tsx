@@ -10,6 +10,8 @@ import { Track } from '../types/trackTypes'
 import { useStructureMutation } from '../hooks/useStructureMutation'
 import { useTrackMutation } from '../hooks/useTrackMutation'
 import { useNavigate } from 'react-router-dom'
+import { KEYBOARD_SHORTCUTS } from '../utils/shortcuts'
+
 type DeletableItem =
   | { type: 'structure', data: Structure }
   | { type: 'track', data: Track }
@@ -27,13 +29,11 @@ export function RootLayout() {
   const navigate = useNavigate()
 
   useEffect(() => {
-    if (!isStructureFormOpen) {
-      registerShortcut('openStructureForm', { key: 'n' }, () => {
-        handleStructureFormOpen()
-      })
-      return () => unregisterShortcut('openStructureForm')
-    }
-  }, [registerShortcut, unregisterShortcut, isStructureFormOpen])
+    registerShortcut('openStructureForm', { key: KEYBOARD_SHORTCUTS.NEW_STRUCTURE }, () => {
+      handleStructureFormOpen()
+    })
+    return () => unregisterShortcut('openStructureForm')
+  }, [registerShortcut, unregisterShortcut])
 
   const handleStructureFormOpen = (structure?: Structure) => {
     setStructureToEdit(structure || null)
