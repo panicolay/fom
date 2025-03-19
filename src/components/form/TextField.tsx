@@ -33,29 +33,22 @@ export function TextField({
 }: TextFieldProps) {
     const inputRef = useRef<HTMLInputElement>(null)
 
-    const labelClasses = {
-        // panel: "left-6 top-4.5",
-        panel: "",
-        popover: "left-3 top-2"
-    }
-
-    const inputClasses = {
-        // panel: "px-6 pt-10.5 pb-[calc(theme(spacing.4)_+_1px)]",
-        panel:"",
-        popover: "px-3 pt-9 pb-[calc(theme(spacing.2)_-_1px)]"
+    const variantClasses = {
+        panel: "h-21 px-6 gap-1",
+        popover: "h-16 px-3"
     }
     
     return (
         <div
             className={`
                 flex flex-col justify-center
-                h-21 px-6
                 border-b border-base-700
                 bg-base-900
                 group
                 outline-base-700
                 focus-within:outline-1 focus-within:outline-base-400 focus-within:z-10
                 transition-colors duration-160
+                ${variantClasses[variant]}
                 ${className}`}
             onClick={() => inputRef.current?.focus()}
         >
@@ -64,7 +57,7 @@ export function TextField({
                 className={`
                     text-sm text-base-400 font-display uppercase
                     group-focus-within:text-base-300 transition-colors duration-160
-                    ${labelClasses[variant]}`}>
+                `}>
                 {label}
             </label>
             
@@ -85,7 +78,6 @@ export function TextField({
                 className={`
                     outline-none
                     ${error ? "text-red-500" : "text-base-200 focus:text-base-100"}
-                    ${inputClasses[variant]}
                     `}
                 required={required}
                 min={min}

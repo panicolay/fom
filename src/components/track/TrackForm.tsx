@@ -99,7 +99,7 @@ export function TrackForm({ structureId, track, isOpen, onClose }: TrackFormProp
             className="flex flex-col divide-y divide-base-500"
         >
             <TextField 
-                variant="panel"
+                variant="popover"
                 label="track name"
                 id="track_name"
                 value={formData.name}
@@ -108,7 +108,7 @@ export function TrackForm({ structureId, track, isOpen, onClose }: TrackFormProp
                 required={true} 
             />
             <TextField
-                variant="panel"
+                variant="popover"
                 label="comment"
                 id="track_comment"
                 value={formData.comment}
@@ -126,7 +126,7 @@ export function TrackForm({ structureId, track, isOpen, onClose }: TrackFormProp
                     type="submit"
                     variant="panelGhost"
                     disabled={isLoading}
-                    className="h-14 w-full"
+                    className="h-12 w-full"
                 >
                     {isLoading ? (track ? 'updating...' : 'adding...') : (track ? 'update' : 'confirm')}
                 </Button>
@@ -134,7 +134,7 @@ export function TrackForm({ structureId, track, isOpen, onClose }: TrackFormProp
                     <Button
                         type="button"
                         variant="panelGhostDanger"
-                        className="h-14 w-full"
+                        className="h-12 w-full"
                         onClick={handleDelete}
                     >
                         delete

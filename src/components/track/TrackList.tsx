@@ -8,6 +8,7 @@ import { Button } from "../buttons/Button";
 import { Popover } from "../overlays/Popover";
 import { TrackForm } from "./TrackForm";
 import { useState, useRef } from "react";
+import { Plus } from "lucide-react";
 
 interface TrackListProps {
     tracks: TrackType[];
@@ -54,7 +55,7 @@ export function TrackList({ tracks, totalBars, structureId, onPatternClick, curr
     };
 
     return (
-        <div>
+        <div className="flex flex-col gap-4">
             {tracks.length > 0 ? (
                 <DndContext
                     sensors={sensors}
@@ -85,10 +86,10 @@ export function TrackList({ tracks, totalBars, structureId, onPatternClick, curr
 
             <Button
                 ref={addTrackButtonRef}
-                className="h-14 w-fit px-4 border border-base-800"
+                className="h-12 w-12 border border-base-800"
                 onClick={() => handleOpenTrackPanel()}
             >
-                add track
+                <Plus size={16} strokeWidth={1.75} />
             </Button>
 
             <Popover 
@@ -96,6 +97,7 @@ export function TrackList({ tracks, totalBars, structureId, onPatternClick, curr
                 isOpen={isTrackPanelOpen}
                 onClose={() => setIsTrackPanelOpen(false)}
                 anchorElement={addTrackButtonRef.current}
+                className="w-60"
             >
                 <TrackForm
                     isOpen={isTrackPanelOpen}

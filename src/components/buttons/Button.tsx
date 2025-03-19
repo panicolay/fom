@@ -7,7 +7,7 @@ type ButtonProps = {
 } & ButtonHTMLAttributes<HTMLButtonElement>
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
-    ({ children, className, variant, ...props }, ref) => {
+    ({ children, className, variant="default", ...props }, ref) => {
         const variantClasses = {
             default: `
                 text-base-400
@@ -48,7 +48,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
                     outline-0 outline-base-700
                     focus-visible:outline-1 focus-visible:outline-base-400 focus-visible:outline-offset-0 focus-visible:z-10
                     transition-colors duration-80
-                    ${variantClasses[variant || 'default']}
+                    ${variantClasses[variant]}
                     ${className}`}
                 {...props}>
                 {children}

@@ -71,7 +71,7 @@ export function StructurePage() {
             aria-label="edit structure"
             onClick={() => handleStructureFormOpen(structure)}
           >
-            <Pencil size={18} strokeWidth={1.5} />
+            <Pencil size={16} strokeWidth={1.75} />
           </Button>
           
           <Button
@@ -80,7 +80,7 @@ export function StructurePage() {
             aria-label="delete structure"
             onClick={() => handleDeleteStructure(structure, `You are about to delete ${structure.title}, with all its tracks and patterns.`)}
           >
-            <Trash size={18} strokeWidth={1.5} />
+            <Trash size={16} strokeWidth={1.75} />
           </Button>
         </div>
       </div>
