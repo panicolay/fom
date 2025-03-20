@@ -21,6 +21,7 @@ interface TrackListProps {
 export function TrackList({ tracks, totalBars, structureId, onPatternClick, currentEditingPattern }: TrackListProps) {
     const [isTrackPanelOpen, setIsTrackPanelOpen] = useState(false);
     const addTrackButtonRef = useRef<HTMLButtonElement>(null);
+    const [activeButtonElement, setActiveButtonElement] = useState<HTMLButtonElement | null>(null);
     const [trackToEdit, setTrackToEdit] = useState<TrackType | null>(null);
     const { reorderTracks } = useTrackMutation();
     const sensors = useSensors(
@@ -30,8 +31,9 @@ export function TrackList({ tracks, totalBars, structureId, onPatternClick, curr
         })
     );
 
-    const handleOpenTrackPanel = (track?: TrackType) => {
+    const handleOpenTrackPanel = (track?: TrackType, buttonElement?: HTMLButtonElement | null) => {
         setTrackToEdit(track || null)
+        setActiveButtonElement(buttonElement || null)
         setIsTrackPanelOpen(true)
     }
 
@@ -87,7 +89,7 @@ export function TrackList({ tracks, totalBars, structureId, onPatternClick, curr
             <Button
                 ref={addTrackButtonRef}
                 className="h-12 w-12 border border-base-800"
-                onClick={() => handleOpenTrackPanel()}
+                onClick={() => handleOpenTrackPanel(undefined, addTrackButtonRef.current)}
             >
                 <Plus size={16} strokeWidth={1.75} />
             </Button>
@@ -96,7 +98,7 @@ export function TrackList({ tracks, totalBars, structureId, onPatternClick, curr
                 name="track"
                 isOpen={isTrackPanelOpen}
                 onClose={() => setIsTrackPanelOpen(false)}
-                anchorElement={addTrackButtonRef.current}
+                anchorElement={activeButtonElement}
                 className="w-60"
             >
                 <TrackForm

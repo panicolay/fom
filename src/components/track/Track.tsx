@@ -5,10 +5,10 @@ import { CSS } from "@dnd-kit/utilities";
 import { usePatternsByTrackId } from "../../hooks/usePatterns";
 import { generatePatternTimeline } from "../../utils/patternUtils";
 import { isPattern, Pattern, PatternFormData, TimeLineItem } from "../../types/patternTypes";
-
+import { useRef } from "react";
 interface TrackProps {
     track: TrackType;
-    onEdit: (track: TrackType) => void;
+    onEdit: (track: TrackType, buttonElement: HTMLButtonElement | null) => void;
     totalBars: number;
     onPatternClick: (trackId: string, timelineItem: TimeLineItem, patterns: Pattern[]) => void;
     currentEditingPattern?: PatternFormData | null;
@@ -16,6 +16,7 @@ interface TrackProps {
 
 export function Track({ track, onEdit, totalBars, onPatternClick, currentEditingPattern }: TrackProps) {
     const {data: patterns} = usePatternsByTrackId(track.id);
+    const editTrackButtonRef = useRef<HTMLButtonElement>(null);
     
     // Créer la timeline avec des EmptyBar au lieu de null
     const timeline: TimeLineItem[] = patterns 
@@ -53,7 +54,8 @@ export function Track({ track, onEdit, totalBars, onPatternClick, currentEditing
             </button>
             <button
                 className="w-30 text-base-400 hover:text-base-200 cursor-pointer text-left"
-                onClick={() => { onEdit(track) }}
+                ref={editTrackButtonRef}
+                onClick={() => { onEdit(track, editTrackButtonRef.current) }}
                 type="button"
             >
                 {track.name}
