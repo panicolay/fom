@@ -97,7 +97,7 @@ export function TrackForm({ structureId, track, isOpen, onClose }: TrackFormProp
         <form 
             ref={formRef}
             onSubmit={handleSubmit} 
-            className="flex flex-col divide-y divide-base-500"
+            className="flex flex-col"
         >
             <TextField 
                 variant="popover"

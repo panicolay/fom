@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { TextField } from "../form/TextField";
 import { Pattern, PatternFormData, TimeLineItem, isPattern } from "../../types/patternTypes";
 import { usePatternMutation } from "../../hooks/usePatternMutation";
-import { PanelButton } from "../buttons/PanelButton";
+import { Button } from "../buttons/Button";
 
 type PatternFormProps = {
     totalBars: number
@@ -116,9 +116,12 @@ export function PatternForm({ totalBars, trackId, timelineItem, patterns, isOpen
     }
 
     return (
-        <form onSubmit={handleSubmit} className="flex flex-col divide-y divide-base-500">
-            <div className="flex w-full divide-x divide-base-500">
-                <TextField variant="popover" label="start" id="start"
+        <form onSubmit={handleSubmit} className="flex flex-col">
+            <div className="flex w-full divide-x">
+                <TextField
+                    variant="popover"
+                    label="start" 
+                    id="start"
                     className="flex-1 min-w-0"
                     value={formData.start.toString()}
                     onChange={(value) => setFormData({ ...formData, start: Number(value) })}
@@ -127,7 +130,10 @@ export function PatternForm({ totalBars, trackId, timelineItem, patterns, isOpen
                     min={0}
                     max={totalBars}
                 />
-                <TextField variant="popover" label="length" id="length"
+                <TextField
+                    variant="popover"
+                    label="length" 
+                    id="length"
                     className="flex-1 min-w-0"
                     value={formData.length.toString()}
                     onChange={(value) => setFormData({ ...formData, length: Number(value) })}
@@ -135,7 +141,10 @@ export function PatternForm({ totalBars, trackId, timelineItem, patterns, isOpen
                     error={errors.length}
                     min={1}
                 />
-                <TextField variant="popover" label="reps." id="reps"
+                <TextField
+                    variant="popover"
+                    label="reps." 
+                    id="reps"
                     className="flex-1 min-w-0"
                     value={formData.repeat.toString()}
                     onChange={(value) => setFormData({ ...formData, repeat: Number(value) })}
@@ -149,11 +158,13 @@ export function PatternForm({ totalBars, trackId, timelineItem, patterns, isOpen
                 onChange={(value) => setFormData({ ...formData, comment: value as string })}
                 type="text" required={false}
             />
-            <PanelButton label="confirm" variant="primary" type="submit"
-                className="!h-12"
+            <Button
+                type="submit"
+                variant="panelGhost"
+                className="h-12"
             >
                 {isEditMode ? "update" : "create"}
-            </PanelButton>
+            </Button>
         </form>
     )
 }

@@ -93,7 +93,9 @@ export function StructurePage() {
       />
 
       { trackId !== null && timelineItem !== null && (
-        <Popover name="pattern"
+        <Popover
+          name="pattern"
+          className="w-90"
           isOpen={isPatternPanelOpen}
           onClose={() => setIsPatternPanelOpen(false)}
         >
