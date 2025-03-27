@@ -76,7 +76,9 @@ export function RootLayout() {
       console.error('Failed to delete item:', error)
     } finally {
       handleDeleteDialogClose()
-      navigate('/')
+      if (itemToDelete.type === 'structure') {
+        navigate('/')
+      }
     }
   }
   

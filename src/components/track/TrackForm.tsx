@@ -4,6 +4,11 @@ import { TrackFormData, Track } from "../../types/trackTypes";
 import { useTrackMutation } from "../../hooks/useTrackMutation";    
 import { Button } from "../buttons/Button";
 import { registerFormShortcutBlocker } from '../../utils/shortcuts';
+import { useOutletContext } from 'react-router-dom';
+
+type ContextType = {
+    handleDeleteTrack: (track: Track, text: string) => void
+  }
 
 type TrackFormProps = {
     structureId: string
@@ -24,6 +29,7 @@ const getDefaultTrackFormData = (structureId: string): TrackFormData => ({
 });
 
 export function TrackForm({ structureId, track, isOpen, onClose }: TrackFormProps) {
+    const { handleDeleteTrack } = useOutletContext<ContextType>()
     const [formData, setFormData] = useState<TrackFormData>(() => 
         getDefaultTrackFormData(structureId)
     );
@@ -56,7 +62,12 @@ export function TrackForm({ structureId, track, isOpen, onClose }: TrackFormProp
         return cleanup;
     }, [isOpen]);
 
-    const { createTrack, updateTrack, deleteTrack, isLoading, error } = useTrackMutation()
+    const { createTrack, updateTrack, isLoading, error } = useTrackMutation()
+
+    const handleDeleteAndClose = (track: Track, text: string) => {
+        handleDeleteTrack(track, text)
+        onClose()
+    }
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
@@ -80,16 +91,6 @@ export function TrackForm({ structureId, track, isOpen, onClose }: TrackFormProp
                 }
             )
         }
-    }
-
-    const handleDelete = () => {
-        if (!track?.id) return;
-        
-        deleteTrack(track.id, {
-            onSuccess: () => {
-                onClose()
-            }
-        })
     }
     
     return (
@@ -135,7 +136,7 @@ export function TrackForm({ structureId, track, isOpen, onClose }: TrackFormProp
                         type="button"
                         variant="panelGhostDanger"
                         className="h-12 w-full"
-                        onClick={handleDelete}
+                        onClick={() => handleDeleteAndClose(track, `You are about to delete ${track.name}, with all its patterns.`)}
                     >
                         delete
                     </Button>

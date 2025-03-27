@@ -4,7 +4,6 @@ import { Button } from '../components/buttons/Button'
 import { useState } from 'react'
 import { formatSecondsToTime } from '../utils/timeUtils'
 import { TrackList } from '../components/track/TrackList'
-import { Track } from '../types/trackTypes'
 import { User, Disc3, Timer, Activity } from 'lucide-react'
 import { Structure } from '../types/structureTypes'
 import { Pencil, Trash } from 'lucide-react'
@@ -18,11 +17,10 @@ import { useOutletContext } from 'react-router-dom'
 type ContextType = {
   handleStructureFormOpen: (structure?: Structure) => void
   handleDeleteStructure: (structure: Structure, text: string) => void
-  handleDeleteTrack: (track: Track, text: string) => void
 }
 
 export function StructurePage() {
-  const { handleStructureFormOpen, handleDeleteStructure, handleDeleteTrack } = useOutletContext<ContextType>()
+  const { handleStructureFormOpen, handleDeleteStructure } = useOutletContext<ContextType>()
   const { structureId } = useParams()
   const { data: structure, isLoading: structureLoading, error: structureError } = useStructure(structureId)
   const { data: tracks, isLoading: tracksLoading } = useTracksByStructureId(structureId)
