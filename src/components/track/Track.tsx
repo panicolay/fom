@@ -10,13 +10,14 @@ interface TrackProps {
     track: TrackType;
     onEdit: (track: TrackType, buttonElement: HTMLButtonElement | null) => void;
     totalBars: number;
-    onPatternClick: (trackId: string, timelineItem: TimeLineItem, patterns: Pattern[]) => void;
+    onPatternClick: (trackId: string, timelineItem: TimeLineItem, patterns: Pattern[], buttonElement: HTMLButtonElement | null) => void;
     currentEditingPattern?: PatternFormData | null;
 }
 
 export function Track({ track, onEdit, totalBars, onPatternClick, currentEditingPattern }: TrackProps) {
     const {data: patterns} = usePatternsByTrackId(track.id);
     const editTrackButtonRef = useRef<HTMLButtonElement>(null);
+    const patternButtonRefs = useRef<(HTMLButtonElement | null)[]>([]);
     
     // Créer la timeline avec des EmptyBar au lieu de null
     const timeline: TimeLineItem[] = patterns 
@@ -36,6 +37,11 @@ export function Track({ track, onEdit, totalBars, onPatternClick, currentEditing
         transform: CSS.Transform.toString(transform),
         transition,
         opacity: isDragging ? 0.5 : 1,
+    };
+
+    // Fonction de callback pour la ref qui satisfait le type attendu
+    const setPatternButtonRef = (index: number) => (element: HTMLButtonElement | null) => {
+        patternButtonRefs.current[index] = element;
     };
 
     return (
@@ -66,13 +72,19 @@ export function Track({ track, onEdit, totalBars, onPatternClick, currentEditing
                 {timeline.map((item, index) => (
                     <button 
                         key={index}
+                        ref={setPatternButtonRef(index)}
                         className={`h-10 hover:bg-base-500 cursor-pointer ${
                             isPattern(item) ? 'bg-base-700' : 'bg-base-900'
                         }`}
                         style={{
                             width: `${(isPattern(item) ? item.total_length : 1) * 100 / totalBars}%`
                         }}
-                        onClick={() => onPatternClick(track.id, item, patterns ?? [])} // TODO: recheck this (patterns ?? [])
+                        onClick={() => onPatternClick(
+                            track.id, 
+                            item, 
+                            patterns ?? [], 
+                            patternButtonRefs.current[index]
+                        )}
                         type="button"
                     />
                 ))}

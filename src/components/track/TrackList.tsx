@@ -6,6 +6,7 @@ import { useTrackMutation } from "../../hooks/useTrackMutation";
 import { TimeLineItem, Pattern, PatternFormData } from "../../types/patternTypes";
 import { Button } from "../buttons/Button";
 import { Popover } from "../overlays/Popover";
+import { PatternForm } from "../pattern/PatternForm";
 import { TrackForm } from "./TrackForm";
 import { useState, useRef } from "react";
 import { Plus } from "lucide-react";
@@ -14,15 +15,19 @@ interface TrackListProps {
     tracks: TrackType[];
     totalBars: number;
     structureId: string;
-    onPatternClick: (trackId: string, timelineItem: TimeLineItem, patterns: Pattern[]) => void;
-    currentEditingPattern?: PatternFormData | null;
 }
 
-export function TrackList({ tracks, totalBars, structureId, onPatternClick, currentEditingPattern }: TrackListProps) {
+export function TrackList({ tracks, totalBars, structureId }: TrackListProps) {
     const [isTrackPanelOpen, setIsTrackPanelOpen] = useState(false);
+    const [isPatternPanelOpen, setIsPatternPanelOpen] = useState(false);
     const addTrackButtonRef = useRef<HTMLButtonElement>(null);
     const [activeButtonElement, setActiveButtonElement] = useState<HTMLButtonElement | null>(null);
     const [trackToEdit, setTrackToEdit] = useState<TrackType | null>(null);
+    const [trackId, setTrackId] = useState<string | null>(null) //TODO: can it be replaced by trackToEdit?
+    const [timelineItem, setTimelineItem] = useState<TimeLineItem | null>(null)
+    const [patterns, setPatterns] = useState<Pattern[]>([])
+    const [currentEditingPattern, setCurrentEditingPattern] = useState<PatternFormData | null>(null)
+    const [activePatternButtonElement, setActivePatternButtonElement] = useState<HTMLButtonElement | null>(null);
     const { reorderTracks } = useTrackMutation();
     const sensors = useSensors(
         useSensor(PointerSensor),
@@ -35,6 +40,19 @@ export function TrackList({ tracks, totalBars, structureId, onPatternClick, curr
         setTrackToEdit(track || null)
         setActiveButtonElement(buttonElement || null)
         setIsTrackPanelOpen(true)
+    }
+
+    const handlePatternClick = (
+        trackId: string, 
+        item: TimeLineItem, 
+        patterns: Pattern[], 
+        buttonElement: HTMLButtonElement | null
+    ) => {
+        setTrackId(trackId)
+        setTimelineItem(item)
+        setPatterns(patterns)
+        setActivePatternButtonElement(buttonElement)
+        setIsPatternPanelOpen(true)
     }
 
     const handleDragEnd = (event: DragEndEvent) => {
@@ -75,7 +93,7 @@ export function TrackList({ tracks, totalBars, structureId, onPatternClick, curr
                                     track={track} 
                                     onEdit={handleOpenTrackPanel}
                                     totalBars={totalBars}
-                                    onPatternClick={onPatternClick}
+                                    onPatternClick={handlePatternClick}
                                     currentEditingPattern={currentEditingPattern}
                                 />
                             ))}
@@ -108,6 +126,26 @@ export function TrackList({ tracks, totalBars, structureId, onPatternClick, curr
                     track={trackToEdit}
                 />
             </Popover>
+
+            {trackId !== null && timelineItem !== null && (
+                <Popover
+                    name="pattern"
+                    className="w-90"
+                    isOpen={isPatternPanelOpen}
+                    anchorElement={activePatternButtonElement}
+                    onClose={() => setIsPatternPanelOpen(false)}
+                >
+                    <PatternForm
+                        isOpen={isPatternPanelOpen}
+                        onClose={() => setIsPatternPanelOpen(false)}
+                        totalBars={totalBars}
+                        trackId={trackId}
+                        timelineItem={timelineItem}
+                        patterns={patterns}
+                        onFormDataChange={setCurrentEditingPattern}
+                    />
+                </Popover>
+            )}
         </div>
     );
 }

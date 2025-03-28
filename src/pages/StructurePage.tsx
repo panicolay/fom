@@ -1,16 +1,12 @@
 import { useParams } from 'react-router-dom'
 import { useTracksByStructureId } from '../hooks/useTracks'
 import { Button } from '../components/buttons/Button'
-import { useState } from 'react'
 import { formatSecondsToTime } from '../utils/timeUtils'
 import { TrackList } from '../components/track/TrackList'
 import { User, Disc3, Timer, Activity } from 'lucide-react'
 import { Structure } from '../types/structureTypes'
 import { Pencil, Trash } from 'lucide-react'
 import { useSongBars } from '../hooks/useSongBars'
-import { Popover } from '../components/overlays/Popover'
-import { PatternForm } from '../components/pattern/PatternForm'
-import { Pattern, PatternFormData, TimeLineItem } from '../types/patternTypes'
 import { useStructure } from '../hooks/useStructures'
 import { useOutletContext } from 'react-router-dom'
 
@@ -24,19 +20,7 @@ export function StructurePage() {
   const { structureId } = useParams()
   const { data: structure, isLoading: structureLoading, error: structureError } = useStructure(structureId)
   const { data: tracks, isLoading: tracksLoading } = useTracksByStructureId(structureId)
-  const [isPatternPanelOpen, setIsPatternPanelOpen] = useState(false)
-  const [trackId, setTrackId] = useState<string | null>(null)
-  const [timelineItem, setTimelineItem] = useState<TimeLineItem | null>(null)
-  const [patterns, setPatterns] = useState<Pattern[]>([])
   const totalBars = useSongBars(structure)
-  const [currentEditingPattern, setCurrentEditingPattern] = useState<PatternFormData | null>(null)
-
-  const handlePatternClick = (trackId: string, item: TimeLineItem, patterns: Pattern[]) => {
-    setTrackId(trackId)
-    setTimelineItem(item)
-    setPatterns(patterns)
-    setIsPatternPanelOpen(true)
-  }
 
   if (structureLoading || tracksLoading) return <div>Loading...</div>
   if (structureError) return <div>Error: {structureError.message}</div>
@@ -88,28 +72,7 @@ export function StructurePage() {
         tracks={tracks || []}
         totalBars={totalBars}
         structureId={structureId}
-        onPatternClick={handlePatternClick}
-        currentEditingPattern={currentEditingPattern}
       />
-
-      { trackId !== null && timelineItem !== null && (
-        <Popover
-          name="pattern"
-          className="w-90"
-          isOpen={isPatternPanelOpen}
-          onClose={() => setIsPatternPanelOpen(false)}
-        >
-        <PatternForm  
-          isOpen={isPatternPanelOpen}
-            onClose={() => setIsPatternPanelOpen(false)}
-            totalBars={totalBars}
-            trackId={trackId}
-            timelineItem={timelineItem}
-            patterns={patterns}
-            onFormDataChange={setCurrentEditingPattern}
-        />
-        </Popover>
-      )}
     </>
   )
 }
