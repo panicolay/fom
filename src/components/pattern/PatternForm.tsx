@@ -43,15 +43,15 @@ export function PatternForm({ totalBars, trackId, timelineItem, patterns, isOpen
 
 
     useEffect(() => {
-        if (!isOpen) return
-        if (isOpen) {
-            const newFormData = isEditMode ? patternToFormData(timelineItem as Pattern) : getDefaultPatternFormData(trackId, timelineItem.start)
-            setFormData(newFormData)
-            setErrors({})
-            onFormDataChange?.(newFormData)
-        } else {
-            onFormDataChange?.(null) // TODO: why ? (!isOpen) is not enough? why null?
+        if (!isOpen) {
+            onFormDataChange(null)
+            return
         }
+        
+        const newFormData = isEditMode ? patternToFormData(timelineItem as Pattern) : getDefaultPatternFormData(trackId, timelineItem.start)
+        setFormData(newFormData)
+        setErrors({})
+        onFormDataChange(newFormData)
     }, [isOpen, trackId, timelineItem, isEditMode, onFormDataChange])
 
     useEffect(() => {
@@ -60,7 +60,7 @@ export function PatternForm({ totalBars, trackId, timelineItem, patterns, isOpen
         }
     }, [formData, isOpen, onFormDataChange]) // TODO: why is this needed? Isn't it already covered by the first useEffect?
 
-    const { createPattern, updatePattern } = usePatternMutation()
+    const { createPattern, updatePattern, deletePattern, isLoading } = usePatternMutation()
 
     const validateForm = (): boolean => {
         const newErrors: Record<string, string> = {};
@@ -115,6 +115,13 @@ export function PatternForm({ totalBars, trackId, timelineItem, patterns, isOpen
         }
     }
 
+    const handleDelete = () => {
+        if (isPattern(timelineItem)) {
+            deletePattern(timelineItem.id)
+            onClose()
+        }
+    }
+
     return (
         <form onSubmit={handleSubmit} className="flex flex-col">
             <div className="flex w-full divide-x">
@@ -158,13 +165,26 @@ export function PatternForm({ totalBars, trackId, timelineItem, patterns, isOpen
                 onChange={(value) => setFormData({ ...formData, comment: value as string })}
                 type="text" required={false}
             />
-            <Button
-                type="submit"
-                variant="panelGhost"
-                className="h-12"
-            >
-                {isEditMode ? "update" : "create"}
-            </Button>
+            <div className="flex divide-x divide-base-700">
+                <Button
+                    type="submit"
+                    variant="panelGhost"
+                    disabled={isLoading}
+                    className="h-12 w-full"
+                >
+                    {isLoading ? (isEditMode ? "updating..." : "adding...") : (isEditMode ? "update" : "confirm")}
+                </Button>
+                {isEditMode && (
+                    <Button
+                        type="button"
+                        variant="panelGhostDanger"
+                        className="h-12 w-full"
+                        onClick={handleDelete}
+                    >
+                        delete
+                    </Button>
+                )}
+            </div>
         </form>
     )
 }
