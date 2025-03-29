@@ -70,15 +70,12 @@ export function Track({ track, onEdit, totalBars, onPatternClick, currentEditing
             {/* Bars and patterns */}
             <div className="flex bg-base-900 relative flex-grow"> {/** TODO: why relative? */}
                 {timeline.map((item, index) => (
-                    <button 
+                    <button
                         key={index}
                         ref={setPatternButtonRef(index)}
-                        className={`h-10 hover:bg-base-500 cursor-pointer ${
+                        className={`h-10 group/button hover:bg-base-500 cursor-pointer transition-colors duration-160 ${
                             isPattern(item) ? 'bg-base-700' : 'bg-base-900'
                         }`}
-                        style={{
-                            width: `${(isPattern(item) ? item.total_length : 1) * 100 / totalBars}%`
-                        }}
                         onClick={() => onPatternClick(
                             track.id, 
                             item, 
@@ -86,15 +83,47 @@ export function Track({ track, onEdit, totalBars, onPatternClick, currentEditing
                             patternButtonRefs.current[index]
                         )}
                         type="button"
-                    />
+                        style={{
+                            width: `${(isPattern(item) ? item.total_length : 1) * 100 / totalBars}%`
+                        }}
+                    >
+                        {isPattern(item) ? (
+                            <div className="w-full h-full flex">
+                                {Array.from({ length: item.repeat }).map((_, i) => (
+                                    <div 
+                                        key={i}
+                                        className="
+                                            border-r border-transparent border-dashed
+                                            last:border-none
+                                            group-hover/button:border-base-600/75
+                                            transition-colors duration-160"
+                                        style={{ 
+                                            width: `${100 / item.repeat}%`
+                                        }}
+                                    />
+                                ))}
+                            </div>
+                        ) : ''}
+                    </button>
                 ))}
-                {currentEditingPattern && currentEditingPattern.track_id === track.id && ( // TODO: recheck condition
+                {currentEditingPattern && currentEditingPattern.track_id === track.id && (
                     <div className="absolute top-0 h-10 bg-base-200 pointer-events-none animate-pulse"
                         style={{
                             left: `${currentEditingPattern.start * 100 / totalBars}%`,
                             width: `${currentEditingPattern.length * currentEditingPattern.repeat * 100 / totalBars}%`
                         }}
-                    />
+                    >
+                        <div className="w-full h-full flex divide-x divide-base-400/50 divide-dashed">
+                            {Array.from({ length: currentEditingPattern.repeat }).map((_, i) => (
+                                <div 
+                                    key={i}
+                                    style={{ 
+                                        width: `${100 / currentEditingPattern.repeat}%`
+                                    }}
+                                />
+                            ))}
+                        </div>
+                    </div>
                 )}
             </div>
 
