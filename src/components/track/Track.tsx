@@ -68,13 +68,13 @@ export function Track({ track, onEdit, totalBars, onPatternClick, currentEditing
             </button>
 
             {/* Bars and patterns */}
-            <div className="flex bg-base-900 relative flex-grow"> {/** TODO: why relative? */}
+            <div className="flex relative flex-grow hover:bg-base-900"> {/** TODO: why relative? */}
                 {timeline.map((item, index) => (
                     <button
                         key={index}
                         ref={setPatternButtonRef(index)}
                         className={`h-10 group/button hover:bg-base-500 cursor-pointer transition-colors duration-160 ${
-                            isPattern(item) ? 'bg-base-700' : 'bg-base-900'
+                            isPattern(item) ? 'bg-base-700' : ''
                         }`}
                         onClick={() => onPatternClick(
                             track.id, 

@@ -118,6 +118,7 @@ export function TrackList({ tracks, totalBars, structureId }: TrackListProps) {
                 onClose={() => setIsTrackPanelOpen(false)}
                 anchorElement={activeButtonElement}
                 className="w-60"
+                width={240}
             >
                 <TrackForm
                     isOpen={isTrackPanelOpen}
@@ -131,6 +132,7 @@ export function TrackList({ tracks, totalBars, structureId }: TrackListProps) {
                 <Popover
                     name="pattern"
                     className="w-90"
+                    width={360}
                     isOpen={isPatternPanelOpen}
                     anchorElement={activePatternButtonElement}
                     onClose={() => setIsPatternPanelOpen(false)}
