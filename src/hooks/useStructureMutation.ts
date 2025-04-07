@@ -14,7 +14,7 @@ export function useStructureMutation() {
       throw new Error('Invalid duration format. Use MM:SS (ex: 3:03)')
     }
 
-    const { length, ...rest } = formData
+    const { ...rest } = formData
     return {
       ...rest,
       length: lengthInSeconds,

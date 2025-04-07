@@ -25,7 +25,7 @@ export function KeyboardShortcutsProvider({ children }: { children: React.ReactN
 
   useEffect(() => {
     const handleKeyPress = (e: KeyboardEvent) => {
-      Object.entries(shortcuts).forEach(([_, { shortcut, handler }]) => {
+      Object.entries(shortcuts).forEach(([, { shortcut, handler }]) => {
         const modifiersMatch =
           (!shortcut.modifiers?.ctrl || e.ctrlKey) &&
           (!shortcut.modifiers?.meta || e.metaKey) &&

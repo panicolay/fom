@@ -62,6 +62,7 @@ export function PatternForm({
     setFormData(newFormData)
     setErrors({})
     onFormDataChange(newFormData)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen, trackId, timelineItem, isEditMode, onFormDataChange])
 
   useEffect(() => {

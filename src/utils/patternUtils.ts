@@ -5,7 +5,7 @@ export function generatePatternTimeline(patterns: Pattern[], totalBars: number):
   if (!Array.isArray(patterns)) throw new Error('Patterns must be an array')
 
   // Initialiser la timeline avec des null pour toutes les mesures
-  let timeline: TimeLineItem[] = []
+  const timeline: TimeLineItem[] = []
 
   // Trier les patterns par position de début
   const sortedPatterns = [...patterns].sort((a, b) => a.start - b.start)
