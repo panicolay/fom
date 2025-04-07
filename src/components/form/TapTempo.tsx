@@ -19,13 +19,13 @@ export function TapTempo({ onBpmChange, className }: Props) {
   const handleTap = () => {
     const currentTime = Date.now()
     const newTapTimes = [...tapTimes, currentTime]
-    
+
     if (tapTimeout) clearTimeout(tapTimeout)
-    
+
     const timeout = setTimeout(() => {
       setTapTimes([])
     }, 2000)
-    
+
     setTapTimeout(timeout)
     setTapTimes(newTapTimes)
 
@@ -34,7 +34,7 @@ export function TapTempo({ onBpmChange, className }: Props) {
       for (let i = 1; i < newTapTimes.length; i++) {
         intervals.push(newTapTimes[i] - newTapTimes[i - 1])
       }
-      
+
       const averageInterval = intervals.reduce((a, b) => a + b, 0) / intervals.length
       const bpmValue = Math.round(60000 / averageInterval)
       onBpmChange(bpmValue)
@@ -42,13 +42,8 @@ export function TapTempo({ onBpmChange, className }: Props) {
   }
 
   return (
-    <Button 
-      variant="panelDefault" 
-      onClick={handleTap}
-      type="button"
-      className={className}
-    >
+    <Button variant="panelDefault" onClick={handleTap} type="button" className={className}>
       tap
     </Button>
   )
-} 
+}

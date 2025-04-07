@@ -5,96 +5,104 @@ import { getErrorMessage } from '../utils/errorUtils'
 
 // Type pour le contexte de la mutation de réordonnancement
 type ReorderContext = {
-    previousTracks: Track[]
+  previousTracks: Track[]
 }
 
 export function useTrackMutation() {
-    const queryClient = useQueryClient()
+  const queryClient = useQueryClient()
 
-    const createMutation = useMutation<Track, Error, TrackFormData>({
-        mutationFn: (data: TrackFormData) => 
-            trackService.getMaxPosition(data.structure_id)
-                .then(maxPosition => trackService.create({
-                    ...data,
-                    position: maxPosition + 1
-                })),
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['tracks'] })
-        },
-        onError: (error) => {
-            console.error('Failed to create track:', error)
-        }
-    })
+  const createMutation = useMutation<Track, Error, TrackFormData>({
+    mutationFn: (data: TrackFormData) =>
+      trackService.getMaxPosition(data.structure_id).then((maxPosition) =>
+        trackService.create({
+          ...data,
+          position: maxPosition + 1,
+        }),
+      ),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['tracks'] })
+    },
+    onError: (error) => {
+      console.error('Failed to create track:', error)
+    },
+  })
 
-    const updateMutation = useMutation<Track, Error, { id: string; data: TrackFormData }>({
-        mutationFn: ({ id, data }: { id: string; data: TrackFormData }) => 
-            trackService.update(id, data),
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['tracks'] })
-        },
-        onError: (error) => {
-            console.error('Failed to update track:', error)
-        }
-    })
+  const updateMutation = useMutation<Track, Error, { id: string; data: TrackFormData }>({
+    mutationFn: ({ id, data }: { id: string; data: TrackFormData }) =>
+      trackService.update(id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['tracks'] })
+    },
+    onError: (error) => {
+      console.error('Failed to update track:', error)
+    },
+  })
 
-    const deleteMutation = useMutation<void, Error, string>({
-        mutationFn: (id: string) => trackService.delete(id),
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['tracks'] })
-        },
-        onError: (error) => {
-            console.error('Failed to delete track:', error)
-        }
-    })
+  const deleteMutation = useMutation<void, Error, string>({
+    mutationFn: (id: string) => trackService.delete(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['tracks'] })
+    },
+    onError: (error) => {
+      console.error('Failed to delete track:', error)
+    },
+  })
 
-    const reorderMutation = useMutation<void, Error, Track[], ReorderContext>({
-        mutationFn: (tracks: Track[]) => trackService.updatePositions(tracks),
-        onMutate: async (newTracks) => {
-            if (newTracks.length === 0) {
-                return { previousTracks: [] }
-            }
-            
-            await queryClient.cancelQueries({ 
-                queryKey: ['tracks', 'by-structure', newTracks[0].structure_id] 
-            })
+  const reorderMutation = useMutation<void, Error, Track[], ReorderContext>({
+    mutationFn: (tracks: Track[]) => trackService.updatePositions(tracks),
+    onMutate: async (newTracks) => {
+      if (newTracks.length === 0) {
+        return { previousTracks: [] }
+      }
 
-            const previousTracks = queryClient.getQueryData<Track[]>(
-                ['tracks', 'by-structure', newTracks[0].structure_id]
-            ) || []
+      await queryClient.cancelQueries({
+        queryKey: ['tracks', 'by-structure', newTracks[0].structure_id],
+      })
 
-            queryClient.setQueryData(
-                ['tracks', 'by-structure', newTracks[0].structure_id], 
-                newTracks
-            )
+      const previousTracks =
+        queryClient.getQueryData<Track[]>(['tracks', 'by-structure', newTracks[0].structure_id]) ||
+        []
 
-            return { previousTracks }
-        },
-        onError: (error, newTracks, context) => {
-            if (newTracks.length === 0) return
-            
-            queryClient.setQueryData(
-                ['tracks', 'by-structure', newTracks[0].structure_id], 
-                context?.previousTracks
-            )
-            console.error('Failed to reorder tracks:', error)
-        },
-        onSettled: (_, __, newTracks) => {
-            if (newTracks.length === 0) return
-            
-            queryClient.invalidateQueries({ 
-                queryKey: ['tracks', 'by-structure', newTracks[0].structure_id] 
-            })
-        }
-    })
+      queryClient.setQueryData(['tracks', 'by-structure', newTracks[0].structure_id], newTracks)
 
-    return {
-        createTrack: createMutation.mutateAsync,
-        updateTrack: updateMutation.mutateAsync,
-        deleteTrack: deleteMutation.mutateAsync,
-        reorderTracks: reorderMutation.mutateAsync,
-        isLoading: createMutation.isPending || updateMutation.isPending || deleteMutation.isPending || reorderMutation.isPending,
-        error: createMutation.error || updateMutation.error || deleteMutation.error || reorderMutation.error 
-            ? getErrorMessage(createMutation.error || updateMutation.error || deleteMutation.error || reorderMutation.error)
-            : null
-    }
+      return { previousTracks }
+    },
+    onError: (error, newTracks, context) => {
+      if (newTracks.length === 0) return
+
+      queryClient.setQueryData(
+        ['tracks', 'by-structure', newTracks[0].structure_id],
+        context?.previousTracks,
+      )
+      console.error('Failed to reorder tracks:', error)
+    },
+    onSettled: (_, __, newTracks) => {
+      if (newTracks.length === 0) return
+
+      queryClient.invalidateQueries({
+        queryKey: ['tracks', 'by-structure', newTracks[0].structure_id],
+      })
+    },
+  })
+
+  return {
+    createTrack: createMutation.mutateAsync,
+    updateTrack: updateMutation.mutateAsync,
+    deleteTrack: deleteMutation.mutateAsync,
+    reorderTracks: reorderMutation.mutateAsync,
+    isLoading:
+      createMutation.isPending ||
+      updateMutation.isPending ||
+      deleteMutation.isPending ||
+      reorderMutation.isPending,
+    error:
+      createMutation.error || updateMutation.error || deleteMutation.error || reorderMutation.error
+        ? getErrorMessage(
+            createMutation.error ||
+              updateMutation.error ||
+              deleteMutation.error ||
+              reorderMutation.error,
+          )
+        : null,
+  }
 }

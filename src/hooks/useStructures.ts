@@ -16,7 +16,7 @@ export function useStructures() {
         throw createErrorWithMessage(error, 'Failed to fetch structures')
       }
     },
-    ...defaultQueryOptions
+    ...defaultQueryOptions,
   })
 }
 
@@ -25,7 +25,7 @@ export function useStructure(structureId: string | undefined) {
     queryKey: ['structures', structureId],
     queryFn: async () => {
       if (!structureId) return undefined
-      
+
       try {
         const structure = await structureService.getById(structureId)
         if (!structure) throw new Error('Structure not found')
@@ -35,6 +35,6 @@ export function useStructure(structureId: string | undefined) {
       }
     },
     ...defaultQueryOptions,
-    enabled: !!structureId
+    enabled: !!structureId,
   })
 }

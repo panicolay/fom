@@ -9,7 +9,7 @@ export function useTracksByStructureId(structureId: string | undefined) {
     queryKey: ['tracks', 'by-structure', structureId],
     queryFn: async () => {
       if (!structureId) return []
-      
+
       try {
         const tracks = await trackService.getTracksByStructureId(structureId)
         if (!tracks) return []
@@ -19,7 +19,7 @@ export function useTracksByStructureId(structureId: string | undefined) {
       }
     },
     ...defaultQueryOptions,
-    enabled: !!structureId
+    enabled: !!structureId,
   })
 }
 
@@ -28,7 +28,7 @@ export function useTrack(trackId: string | undefined) {
     queryKey: ['tracks', trackId],
     queryFn: async () => {
       if (!trackId) return undefined
-      
+
       try {
         const track = await trackService.getById(trackId)
         if (!track) throw new Error('Track not found')
@@ -38,6 +38,6 @@ export function useTrack(trackId: string | undefined) {
       }
     },
     ...defaultQueryOptions,
-    enabled: !!trackId
+    enabled: !!trackId,
   })
 }

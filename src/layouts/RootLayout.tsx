@@ -12,9 +12,7 @@ import { useTrackMutation } from '../hooks/useTrackMutation'
 import { useNavigate } from 'react-router-dom'
 import { KEYBOARD_SHORTCUTS } from '../utils/shortcuts'
 
-type DeletableItem =
-  | { type: 'structure', data: Structure }
-  | { type: 'track', data: Track }
+type DeletableItem = { type: 'structure'; data: Structure } | { type: 'track'; data: Track }
 
 export function RootLayout() {
   const { registerShortcut, unregisterShortcut } = useKeyboardShortcuts()
@@ -65,7 +63,7 @@ export function RootLayout() {
 
   const handleDeleteConfirm = async () => {
     if (!itemToDelete) return
-    
+
     try {
       if (itemToDelete.type === 'structure') {
         await deleteStructure(itemToDelete.data.id)
@@ -81,19 +79,18 @@ export function RootLayout() {
       }
     }
   }
-  
+
   return (
     <div className="min-h-screen flex flex-col">
-  
       <TopBar onNewStructureClick={() => handleStructureFormOpen()} />
 
       <main className="">
         <div className="flex flex-col m-14 gap-14">
           <Outlet
-            context={{ 
-              handleStructureFormOpen, 
+            context={{
+              handleStructureFormOpen,
               handleDeleteStructure,
-              handleDeleteTrack
+              handleDeleteTrack,
             }}
           />
         </div>
@@ -101,15 +98,28 @@ export function RootLayout() {
 
       <footer className=""></footer>
 
-      <SidePanel 
+      <SidePanel
         isOpen={isStructureFormOpen}
         onClose={handleStructureFormClose}
-        title={structureToEdit ? <>edit<br/>structure</> : <>new <br/>structure</>}
+        title={
+          structureToEdit ? (
+            <>
+              edit
+              <br />
+              structure
+            </>
+          ) : (
+            <>
+              new <br />
+              structure
+            </>
+          )
+        }
       >
-        <StructureForm 
-            isOpen={isStructureFormOpen}
-            onClose={handleStructureFormClose}
-            structure={structureToEdit}
+        <StructureForm
+          isOpen={isStructureFormOpen}
+          onClose={handleStructureFormClose}
+          structure={structureToEdit}
         />
       </SidePanel>
 
@@ -120,7 +130,6 @@ export function RootLayout() {
         title={deleteDialogTitle}
         text={deleteDialogText}
       />
-
     </div>
   )
 }

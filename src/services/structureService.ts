@@ -13,7 +13,7 @@ export const structureService = {
       .insert([structureData])
       .select()
       .single()
-    
+
     if (error) throw error
     if (!data) throw new Error('No data returned from create operation')
     return data
@@ -28,7 +28,7 @@ export const structureService = {
       .from('structures')
       .select('*')
       .order('created_at', { ascending: false })
-    
+
     if (error) throw error
     return data || []
   },
@@ -39,12 +39,8 @@ export const structureService = {
    * @returns The found structure or null
    */
   async getById(id: string): Promise<Structure | null> {
-    const { data, error } = await supabase
-      .from('structures')
-      .select('*')
-      .eq('id', id)
-      .single()
-      
+    const { data, error } = await supabase.from('structures').select('*').eq('id', id).single()
+
     if (error) throw error
     return data
   },
@@ -62,7 +58,7 @@ export const structureService = {
       .eq('id', id)
       .select()
       .single()
-    
+
     if (error) throw error
     if (!data) throw new Error('No data returned from update operation')
     return data
@@ -73,11 +69,8 @@ export const structureService = {
    * @param id The id of the structure to delete
    */
   async delete(id: string): Promise<void> {
-    const { error } = await supabase
-      .from('structures')
-      .delete()
-      .eq('id', id)
-    
+    const { error } = await supabase.from('structures').delete().eq('id', id)
+
     if (error) throw error
-  }
+  },
 }

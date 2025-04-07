@@ -4,7 +4,10 @@
  * @param defaultMessage Message par défaut si l'erreur n'est pas une instance d'Error
  * @returns Un message d'erreur lisible
  */
-export const getErrorMessage = (error: unknown, defaultMessage = 'Une erreur inattendue est survenue'): string => {
+export const getErrorMessage = (
+  error: unknown,
+  defaultMessage = 'Une erreur inattendue est survenue',
+): string => {
   if (error instanceof Error) return error.message
   return defaultMessage
 }
@@ -18,4 +21,4 @@ export const getErrorMessage = (error: unknown, defaultMessage = 'Une erreur ina
 export const createErrorWithMessage = (error: unknown, customMessage: string): Error => {
   const message = error instanceof Error ? `${customMessage}: ${error.message}` : customMessage
   return new Error(message)
-} 
+}

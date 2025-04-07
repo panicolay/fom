@@ -17,7 +17,7 @@ export function useStructureMutation() {
     const { length, ...rest } = formData
     return {
       ...rest,
-      length: lengthInSeconds
+      length: lengthInSeconds,
     }
   }
 
@@ -28,18 +28,18 @@ export function useStructureMutation() {
     },
     onError: (error) => {
       console.error('Failed to create structure:', error)
-    }
+    },
   })
 
   const updateMutation = useMutation<Structure, Error, { id: string; data: StructureFormInput }>({
-    mutationFn: ({ id, data }: { id: string; data: StructureFormInput }) => 
+    mutationFn: ({ id, data }: { id: string; data: StructureFormInput }) =>
       structureService.update(id, processStructureData(data)),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['structures'] })
     },
     onError: (error) => {
       console.error('Failed to update structure:', error)
-    }
+    },
   })
 
   // Note: Structure deletion is followed by a redirection.
@@ -52,7 +52,7 @@ export function useStructureMutation() {
     },
     onError: (error) => {
       console.error('Failed to delete structure:', error)
-    }
+    },
   })
 
   return {
@@ -60,8 +60,9 @@ export function useStructureMutation() {
     updateStructure: updateMutation.mutateAsync,
     deleteStructure: deleteMutation.mutateAsync,
     isLoading: createMutation.isPending || updateMutation.isPending || deleteMutation.isPending,
-    error: createMutation.error || updateMutation.error || deleteMutation.error 
-      ? getErrorMessage(createMutation.error || updateMutation.error || deleteMutation.error)
-      : null
+    error:
+      createMutation.error || updateMutation.error || deleteMutation.error
+        ? getErrorMessage(createMutation.error || updateMutation.error || deleteMutation.error)
+        : null,
   }
-} 
+}
