@@ -18,7 +18,11 @@ type ContextType = {
 export function StructurePage() {
   const { handleStructureFormOpen, handleDeleteStructure } = useOutletContext<ContextType>()
   const { structureId } = useParams()
-  const { data: structure, isLoading: structureLoading, error: structureError } = useStructure(structureId)
+  const {
+    data: structure,
+    isLoading: structureLoading,
+    error: structureError,
+  } = useStructure(structureId)
   const { data: tracks, isLoading: tracksLoading } = useTracksByStructureId(structureId)
   const totalBars = useSongBars(structure)
 
@@ -37,10 +41,28 @@ export function StructurePage() {
 
           {/* song general info */}
           <ul className="flex text-base-400 gap-6">
-            {structure.artist && <li className="flex items-center gap-2"><User size={16} strokeWidth={1.75} className="text-base-500" /> {structure.artist}</li>}
-            {structure.album && <li className="flex items-center gap-2"><Disc3 size={16} strokeWidth={1.75} className="text-base-500" /> {structure.album}</li>}
-            {structure.length && <li className="flex items-center gap-2"><Timer size={16} strokeWidth={1.75} className="text-base-500" /> {formatSecondsToTime(Number(structure.length))} ({totalBars} bars)</li>}
-            {structure.bpm && <li className="flex items-center gap-2"><Activity size={16} strokeWidth={1.75} className="text-base-500" /> {structure.bpm} bpm</li>}
+            {structure.artist && (
+              <li className="flex items-center gap-2">
+                <User size={16} strokeWidth={1.75} className="text-base-500" /> {structure.artist}
+              </li>
+            )}
+            {structure.album && (
+              <li className="flex items-center gap-2">
+                <Disc3 size={16} strokeWidth={1.75} className="text-base-500" /> {structure.album}
+              </li>
+            )}
+            {structure.length && (
+              <li className="flex items-center gap-2">
+                <Timer size={16} strokeWidth={1.75} className="text-base-500" />{' '}
+                {formatSecondsToTime(Number(structure.length))} ({totalBars} bars)
+              </li>
+            )}
+            {structure.bpm && (
+              <li className="flex items-center gap-2">
+                <Activity size={16} strokeWidth={1.75} className="text-base-500" /> {structure.bpm}{' '}
+                bpm
+              </li>
+            )}
             {structure.time_signature && <li>{structure.time_signature}</li>}
             {structure.key && <li>{structure.key}</li>}
           </ul>
@@ -55,12 +77,17 @@ export function StructurePage() {
           >
             <Pencil size={16} strokeWidth={1.75} />
           </Button>
-          
+
           <Button
             className="h-12 w-12 border border-base-800"
             title="delete structure"
             aria-label="delete structure"
-            onClick={() => handleDeleteStructure(structure, `You are about to delete ${structure.title}, with all its tracks and patterns.`)}
+            onClick={() =>
+              handleDeleteStructure(
+                structure,
+                `You are about to delete ${structure.title}, with all its tracks and patterns.`,
+              )
+            }
           >
             <Trash size={16} strokeWidth={1.75} />
           </Button>
@@ -68,11 +95,7 @@ export function StructurePage() {
       </div>
 
       {/* Tracks list */}
-      <TrackList
-        tracks={tracks || []}
-        totalBars={totalBars}
-        structureId={structureId}
-      />
+      <TrackList tracks={tracks || []} totalBars={totalBars} structureId={structureId} />
     </>
   )
 }

@@ -22,14 +22,14 @@ const DEFAULT_FORM_DATA: StructureFormInput = {
   bpm: 120,
   length: '',
   time_signature: '4/4',
-  key: undefined
+  key: undefined,
 }
 
 export function StructureForm({ structure, isOpen, onClose }: Props) {
   const { createStructure, updateStructure, isLoading, error } = useStructureMutation()
   const navigate = useNavigate()
   const formRef = useRef<HTMLFormElement>(null)
-  
+
   // use the constant in the useState
   const [formData, setFormData] = useState<StructureFormInput>(DEFAULT_FORM_DATA)
 
@@ -43,7 +43,7 @@ export function StructureForm({ structure, isOpen, onClose }: Props) {
         bpm: structure.bpm,
         length: formatSecondsToTime(structure.length),
         time_signature: structure.time_signature,
-        key: structure.key
+        key: structure.key,
       })
     } else if (isOpen && !structure) {
       setFormData(DEFAULT_FORM_DATA)
@@ -61,34 +61,28 @@ export function StructureForm({ structure, isOpen, onClose }: Props) {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    
+
     if (structure) {
       updateStructure(
         { id: structure.id, data: formData },
         {
           onSuccess: () => {
             onClose()
-          }
-        }
+          },
+        },
       )
     } else {
-      createStructure(
-        formData,
-        {
-          onSuccess: (newStructure) => {
-            onClose()
-            navigate(`/structures/${newStructure.id}`)
-          }
-        }
-      )
+      createStructure(formData, {
+        onSuccess: (newStructure) => {
+          onClose()
+          navigate(`/structures/${newStructure.id}`)
+        },
+      })
     }
   }
 
   return (
-    <form 
-      ref={formRef}
-      onSubmit={handleSubmit}
-    >
+    <form ref={formRef} onSubmit={handleSubmit}>
       <TextField
         variant="panel"
         label="Title"
@@ -108,7 +102,7 @@ export function StructureForm({ structure, isOpen, onClose }: Props) {
         type="text"
         required={false}
       />
-        
+
       <TextField
         variant="panel"
         label="Album"
@@ -129,7 +123,7 @@ export function StructureForm({ structure, isOpen, onClose }: Props) {
         type="text"
         required={true}
       />
-        
+
       <div className="flex divide-x divide-base-700">
         <TextField
           variant="panel"
@@ -141,12 +135,12 @@ export function StructureForm({ structure, isOpen, onClose }: Props) {
           required={true}
           className="flex-1"
         />
-        <TapTempo 
-          onBpmChange={(value) => setFormData({ ...formData, bpm: value })} 
-          className={"w-30 border-b border-base-700"} 
+        <TapTempo
+          onBpmChange={(value) => setFormData({ ...formData, bpm: value })}
+          className={'w-30 border-b border-base-700'}
         />
       </div>
-        
+
       {/* TODO: add a dropdown for the time signature with possible values coming from supabase */}
       <TextField
         variant="panel"
@@ -168,19 +162,17 @@ export function StructureForm({ structure, isOpen, onClose }: Props) {
         required={false}
       /> */}
 
-      {error && (
-        <div className="text-red-600 text-sm">{error}</div>
-      )}
+      {error && <div className="text-red-600 text-sm">{error}</div>}
 
-        <Button 
-          variant="panelDefault"
-          className="h-21 w-full
+      <Button
+        variant="panelDefault"
+        className="h-21 w-full
             border-b border-base-700"
-          type="submit"
-          disabled={isLoading}
-        >
-          {isLoading ? (structure ? 'updating...' : 'adding...') : (structure ? 'update' : 'confirm')}
-        </Button>
+        type="submit"
+        disabled={isLoading}
+      >
+        {isLoading ? (structure ? 'updating...' : 'adding...') : structure ? 'update' : 'confirm'}
+      </Button>
     </form>
   )
 }

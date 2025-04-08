@@ -23,17 +23,21 @@ export function StructureList() {
       </thead>
       <tbody>
         {structures.map((structure: Structure) => (
-          <tr 
-            key={structure.id} 
+          <tr
+            key={structure.id}
             className="h-14 border-b border-base-800 text-base-400 cursor-pointer group hover:text-base-300 hover:bg-base-900/50 transition-colors duration-80"
             onClick={() => navigate(`/structures/${structure.id}`)}
           >
-            <td className="px-4 truncate max-w-50 text-base-200 font-medium group-hover:text-base-100 transition-colors duration-80">{structure.title}</td>
+            <td className="px-4 truncate max-w-50 text-base-200 font-medium group-hover:text-base-100 transition-colors duration-80">
+              {structure.title}
+            </td>
             <td className="px-4 truncate max-w-50">{structure.artist || '-'}</td>
             <td className="px-4 truncate max-w-50">{structure.album || '-'}</td>
             <td className="px-4 text-right whitespace-nowrap">{structure.bpm} bpm</td>
             <td className="px-4 text-right whitespace-nowrap">{structure.time_signature}</td>
-            <td className="px-4 text-right whitespace-nowrap">{formatSecondsToTime(Number(structure.length))}</td>
+            <td className="px-4 text-right whitespace-nowrap">
+              {formatSecondsToTime(Number(structure.length))}
+            </td>
           </tr>
         ))}
       </tbody>

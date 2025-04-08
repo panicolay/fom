@@ -28,9 +28,9 @@ export type TimeLineItem = Pattern | EmptyBar
 
 // Fonctions de garde de type
 export function isPattern(item: TimeLineItem): item is Pattern {
-  return !('type' in item);
+  return !('type' in item)
 }
 
 export function isEmptyBar(item: TimeLineItem): item is EmptyBar {
-  return 'type' in item && item.type === 'empty';
+  return 'type' in item && item.type === 'empty'
 }
