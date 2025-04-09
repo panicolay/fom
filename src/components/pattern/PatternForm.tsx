@@ -137,6 +137,27 @@ export function PatternForm({
     }
   }
 
+  const handleLengthChange = (value: number) => {
+    const lengthGoesOverSongLength = formData.start + value * formData.repeat > totalBars
+    if (lengthGoesOverSongLength) {
+      setFormData({ ...formData, length: totalBars - formData.start })
+    } else {
+      setFormData({ ...formData, length: value })
+    }
+  }
+
+  const handleRepeatChange = (value: number) => {
+    const repeatGoesOverSongLength = (repeat: number) =>
+      formData.start + formData.length * repeat > totalBars
+
+    let repeat = value
+    while (repeatGoesOverSongLength(repeat) && repeat > 0) {
+      repeat--
+    }
+
+    setFormData({ ...formData, repeat })
+  }
+
   return (
     <form onSubmit={handleSubmit} className="flex flex-col">
       <div className="flex w-full divide-x">
@@ -158,8 +179,8 @@ export function PatternForm({
           label="length"
           id="length"
           className="flex-1 min-w-0"
-          value={formData.length.toString()}
-          onChange={(value) => setFormData({ ...formData, length: Number(value) })}
+          value={formData.length}
+          onChange={(value) => handleLengthChange(value as number)}
           type="number"
           required
           error={errors.length}
@@ -170,8 +191,8 @@ export function PatternForm({
           label="reps."
           id="reps"
           className="flex-1 min-w-0"
-          value={formData.repeat.toString()}
-          onChange={(value) => setFormData({ ...formData, repeat: Number(value) })}
+          value={formData.repeat}
+          onChange={(value) => handleRepeatChange(value as number)}
           type="number"
           required
           error={errors.repeat}
