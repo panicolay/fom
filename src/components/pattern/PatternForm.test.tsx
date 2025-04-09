@@ -12,7 +12,6 @@ vi.mock('../../hooks/usePatternMutation', () => ({
 }))
 import { PatternForm } from './PatternForm'
 import userEvent from '@testing-library/user-event'
-import { Response } from '@dnd-kit/core/dist/sensors/types'
 
 describe('Pattern form', () => {
   it("When I'm setting a pattern length, the app prevents me from setting it longer than the song", async () => {
