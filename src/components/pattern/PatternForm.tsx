@@ -137,21 +137,32 @@ export function PatternForm({
     }
   }
 
+  const handleStartChange = (value: number) => {
+    const patternGoesOverSongLength = value + formData.length * formData.repeat > totalBars
+    if (patternGoesOverSongLength) {
+      setFormData({ ...formData, start: totalBars - formData.length * formData.repeat })
+    } else {
+      setFormData({ ...formData, start: value })
+    }
+  }
+
   const handleLengthChange = (value: number) => {
-    const lengthGoesOverSongLength = formData.start + value * formData.repeat > totalBars
-    if (lengthGoesOverSongLength) {
-      setFormData({ ...formData, length: totalBars - formData.start })
+    const patternGoesOverSongLength = formData.start + value * formData.repeat > totalBars
+    // Determine the maximum allowed length of a pattern given its start position and number of repetitions.
+    const maxLength = Math.floor((totalBars - formData.start) / formData.repeat)
+    if (patternGoesOverSongLength) {
+      setFormData({ ...formData, length: maxLength })
     } else {
       setFormData({ ...formData, length: value })
     }
   }
 
   const handleRepeatChange = (value: number) => {
-    const repeatGoesOverSongLength = (repeat: number) =>
+    const patternGoesOverSongLength = (repeat: number) =>
       formData.start + formData.length * repeat > totalBars
 
     let repeat = value
-    while (repeatGoesOverSongLength(repeat) && repeat > 0) {
+    while (patternGoesOverSongLength(repeat) && repeat > 0) {
       repeat--
     }
 
@@ -167,7 +178,7 @@ export function PatternForm({
           id="start"
           className="flex-1 min-w-0"
           value={formData.start.toString()}
-          onChange={(value) => setFormData({ ...formData, start: Number(value) })}
+          onChange={(value) => handleStartChange(value as number)}
           type="number"
           required
           error={errors.start}
