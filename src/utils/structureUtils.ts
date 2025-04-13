@@ -18,3 +18,5 @@ export function calculateTotalBars(
 
   return totalBars
 }
+
+//TODO: TOTAL BARS

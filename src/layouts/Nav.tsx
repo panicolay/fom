@@ -16,12 +16,12 @@ export function Nav() {
         </li>
         <li>
           <NavLink
-            to="/songs"
+            to="/structures"
             className={({ isActive }) =>
               `text-base-200 hover:text-white ${isActive ? 'font-bold' : ''}`
             }
           >
-            Songs
+            Structures
           </NavLink>
         </li>
       </ul>

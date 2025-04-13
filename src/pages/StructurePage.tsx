@@ -6,7 +6,7 @@ import { TrackList } from '../components/track/TrackList'
 import { User, Disc3, Timer, Activity } from 'lucide-react'
 import { Structure } from '../types/structureTypes'
 import { Pencil, Trash } from 'lucide-react'
-import { useSongBars } from '../hooks/useSongBars'
+import { useTotalBars } from '../hooks/useTotalBars'
 import { useStructure } from '../hooks/useStructures'
 import { useOutletContext } from 'react-router-dom'
 
@@ -24,7 +24,7 @@ export function StructurePage() {
     error: structureError,
   } = useStructure(structureId)
   const { data: tracks, isLoading: tracksLoading } = useTracksByStructureId(structureId)
-  const totalBars = useSongBars(structure)
+  const totalBars = useTotalBars(structure)
 
   if (structureLoading || tracksLoading) return <div>Loading...</div>
   if (structureError) return <div>Error: {structureError.message}</div>
