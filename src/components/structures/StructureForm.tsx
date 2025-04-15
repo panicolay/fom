@@ -8,6 +8,7 @@ import { Button } from '../buttons/Button'
 import { useNavigate } from 'react-router-dom'
 import { registerFormShortcutBlocker } from '../../utils/shortcuts'
 import { Select } from '../form/Select'
+import { useEnum } from '../../hooks/useEnum'
 
 type Props = {
   structure?: Structure | null
@@ -28,6 +29,7 @@ const DEFAULT_FORM_DATA: StructureFormInput = {
 
 export function StructureForm({ structure, isOpen, onClose }: Props) {
   const { createStructure, updateStructure, isLoading, error } = useStructureMutation()
+  const { data: timeSignatures = ['4/4'], isLoading: isLoadingTimeSignatures } = useEnum('time_signature_enum')
   const navigate = useNavigate()
   const formRef = useRef<HTMLFormElement>(null)
 
@@ -156,11 +158,12 @@ export function StructureForm({ structure, isOpen, onClose }: Props) {
       <Select
         label="Time signature"
         id="time_signature"
-        options={['4/4', '3/4']}
-        placeholder="Select a time signature"
+        options={timeSignatures}
+        placeholder={isLoadingTimeSignatures ? "Loading..." : "Select a time signature"}
         value={formData.time_signature}
         onChange={(value) => setFormData({ ...formData, time_signature: value as string })}
         required={true}
+        disabled={isLoadingTimeSignatures}
       />
       {/* <Select
         label="Key"
@@ -176,7 +179,8 @@ export function StructureForm({ structure, isOpen, onClose }: Props) {
       <Button
         variant="panelDefault"
         className="h-21 w-full
-            border-b border-base-700"
+            border-b border-base-700
+            relative"
         type="submit"
         disabled={isLoading}
       >
