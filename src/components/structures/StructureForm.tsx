@@ -7,6 +7,7 @@ import { formatSecondsToTime } from '../../utils/timeUtils'
 import { Button } from '../buttons/Button'
 import { useNavigate } from 'react-router-dom'
 import { registerFormShortcutBlocker } from '../../utils/shortcuts'
+import { Select } from '../form/Select'
 
 type Props = {
   structure?: Structure | null
@@ -142,7 +143,7 @@ export function StructureForm({ structure, isOpen, onClose }: Props) {
       </div>
 
       {/* TODO: add a dropdown for the time signature with possible values coming from supabase */}
-      <TextField
+      {/* <TextField
         variant="panel"
         label="Time signature"
         id="time_signature"
@@ -150,15 +151,23 @@ export function StructureForm({ structure, isOpen, onClose }: Props) {
         onChange={(value) => setFormData({ ...formData, time_signature: value as string })}
         type="text"
         required={true}
-      />
+      /> */}
 
-      {/* <TextField
-        variant="panel"
+      <Select
+        label="Time signature"
+        id="time_signature"
+        options={['4/4', '3/4']}
+        placeholder="Select a time signature"
+        value={formData.time_signature}
+        onChange={(value) => setFormData({ ...formData, time_signature: value as string })}
+        required={true}
+      />
+      {/* <Select
         label="Key"
         id="key"
+        options={['C', 'D', 'E', 'F', 'G', 'A', 'B']}
         value={formData.key}
         onChange={(value) => setFormData({ ...formData, key: value as string })}
-        type="text"
         required={false}
       /> */}
 

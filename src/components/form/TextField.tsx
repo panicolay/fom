@@ -78,7 +78,7 @@ export function TextField({
         }}
         className={`
                     outline-none
-                    ${error ? 'text-red-500' : 'text-base-200 focus:text-base-100'}
+                    ${error ? 'text-red-500' : 'text-base-200 focus:text-base-100 transition-colors duration-160'}
                     `}
         required={required}
         min={min}
