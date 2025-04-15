@@ -3,9 +3,7 @@ import { Button } from './Button'
 
 describe('Hello component', () => {
   it('renders the name', () => {
-    render(<Button/>)
+    render(<Button />)
     expect(screen.getByRole('button')).toBeInTheDocument()
   })
 })
-
-

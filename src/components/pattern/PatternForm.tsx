@@ -137,6 +137,38 @@ export function PatternForm({
     }
   }
 
+  const handleStartChange = (value: number) => {
+    const patternGoesOverSongLength = value + formData.length * formData.repeat > totalBars
+    if (patternGoesOverSongLength) {
+      setFormData({ ...formData, start: totalBars - formData.length * formData.repeat })
+    } else {
+      setFormData({ ...formData, start: value })
+    }
+  }
+
+  const handleLengthChange = (value: number) => {
+    const patternGoesOverSongLength = formData.start + value * formData.repeat > totalBars
+    // Determine the maximum allowed length of a pattern given its start position and number of repetitions.
+    const maxLength = Math.floor((totalBars - formData.start) / formData.repeat)
+    if (patternGoesOverSongLength) {
+      setFormData({ ...formData, length: maxLength })
+    } else {
+      setFormData({ ...formData, length: value })
+    }
+  }
+
+  const handleRepeatChange = (value: number) => {
+    const patternGoesOverSongLength = (repeat: number) =>
+      formData.start + formData.length * repeat > totalBars
+
+    let repeat = value
+    while (patternGoesOverSongLength(repeat) && repeat > 0) {
+      repeat--
+    }
+
+    setFormData({ ...formData, repeat })
+  }
+
   return (
     <form onSubmit={handleSubmit} className="flex flex-col">
       <div className="flex w-full divide-x">
@@ -146,7 +178,7 @@ export function PatternForm({
           id="start"
           className="flex-1 min-w-0"
           value={formData.start.toString()}
-          onChange={(value) => setFormData({ ...formData, start: Number(value) })}
+          onChange={(value) => handleStartChange(value as number)}
           type="number"
           required
           error={errors.start}
@@ -158,8 +190,8 @@ export function PatternForm({
           label="length"
           id="length"
           className="flex-1 min-w-0"
-          value={formData.length.toString()}
-          onChange={(value) => setFormData({ ...formData, length: Number(value) })}
+          value={formData.length}
+          onChange={(value) => handleLengthChange(value as number)}
           type="number"
           required
           error={errors.length}
@@ -170,8 +202,8 @@ export function PatternForm({
           label="reps."
           id="reps"
           className="flex-1 min-w-0"
-          value={formData.repeat.toString()}
-          onChange={(value) => setFormData({ ...formData, repeat: Number(value) })}
+          value={formData.repeat}
+          onChange={(value) => handleRepeatChange(value as number)}
           type="number"
           required
           error={errors.repeat}
